@@ -1,0 +1,13 @@
+# Filesystem considerations
+# -------------------------
+# In the WORKSPACE directory, avoid creating bazel-* symlinks. These require .gitignore and complicates things. For https://github.com/bazelbuild/rules_typescript/issues/12 this is a workaround for the common scenario where `tsconfig.json` is found in the WORKSPACE directory. 
+# We recommend running `bazel info output_base` to find out the location of outputs
+build --symlink_prefix=/
+
+# Avoid stat'ing input files to improve performance
+build --watchfs
+
+# avoid legacy external runfiles
+build --nolegacy_external_runfiles
+run --nolegacy_external_runfiles
+test --nolegacy_external_runfiles
