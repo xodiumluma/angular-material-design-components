@@ -1,0 +1,67 @@
+# Filesystem considerations
+# -------------------------
+# In the WORKSPACE directory, avoid creating bazel-* symlinks. These require .gitignore and complicates things. For https://github.com/bazelbuild/rules_typescript/issues/12 this is a workaround for the common scenario where `tsconfig.json` is found in the WORKSPACE directory. 
+# We recommend running `bazel info output_base` to find out the location of outputs
+build --symlink_prefix=/
+
+# Avoid stat'ing input files to improve performance
+build --watchfs
+
+# avoid legacy external runfiles
+build --nolegacy_external_runfiles
+run --nolegacy_external_runfiles
+test --nolegacy_external_runfiles
+
+# We need this flag to prevent the bazel cache from being invalidated when running `yarn bazel`
+build --incompatible_strict_action_env
+
+# Don't build runfile forests as a default policy
+# Create the forest on demand if the execution strategy depends on the runfile
+# https://github.com/bazelbuild/bazel/issues/6627
+# https://github.com/bazelbuild/bazel/commit/03246077f948f2790a83520e7dccc2625650df
+build --nobuild_runfile_links
+
+# Controlling output
+# ------------------
+# Try this for your default bazel query output mode
+# It's more helpful with extra details - "ng_module rule //foo:bar" instead of "//foo:bar"
+query --output=label_kind
+
+# Failing tests go to the log file and stay silent
+test --test_output=errors
+
+# Stampling configurations
+# ------------------------
+# Use either "--config=release" -r "--config=snapshot-build"
+
+# Stamp the version
+# https://docs.bazel.build/versions/master/user-manual.html#flag--workspace_status_command
+build:release --workspace status command="yarn -s ng-dev release build-env-stamp --mode=release"
+build:release --stamp
+
+build:snapshot-build --workspace_status_command="yarn -s ng-dev release build-env-stamp --mode=release"
+build:snapshot-build --stamp
+
+# Bazel custom flags
+# ------------------
+build --flag_alias=partial_compilation=@npm//@angular/bazel/src:partial_compilation
+
+# Compile with Ivy
+# ----------------
+build --define=angular_ivy_enabled=True
+
+# Remote execution config
+# -----------------------
+build:remote --remote_instance_name=projects/internal-200822/instances/primary_instance
+
+# remote executor https://github.com/bazelbuild/bazel/issues/7254
+build:remote --define=EXECUTOR=remote
+
+# specify that we are using GCP k8-based containers - for host and target CPU
+build:remote --cpu=k8
+build:remote --host_cpu=k8
+
+# configure remote build execution servers
+build:remote --remote_cache=remotebuildexecution.googleapis.com
+build:remote --remote_executor=remotebuildexecution.googleapis.com
+build:remote --google_default_credentials=True
