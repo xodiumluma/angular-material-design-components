@@ -73,3 +73,4 @@ build:remote --extra_toolchains=@npm//@angular/dev-infra-private/bazel/remote-ex
 build:remote --extra_execution_platforms=@npm//@angular/dev-infra-private/bazel/remote-execution:platform_with_network
 build:remote --host_platform=@npm//@angular/dev-infra-private/bazel/remote-execution:platform_with_network
 build:remote --platforms=@npm//@angular/dev-infra-private/bazel/remote-execution:platform_with_network
+
