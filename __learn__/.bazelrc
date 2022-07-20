@@ -49,3 +49,19 @@ build --flag_alias=partial_compilation=@npm//@angular/bazel/src:partial_compilat
 # Compile with Ivy
 # ----------------
 build --define=angular_ivy_enabled=True
+
+# Remote execution config
+# -----------------------
+build:remote --remote_instance_name=projects/internal-200822/instances/primary_instance
+
+# remote executor https://github.com/bazelbuild/bazel/issues/7254
+build:remote --define=EXECUTOR=remote
+
+# specify that we are using GCP k8-based containers - for host and target CPU
+build:remote --cpu=k8
+build:remote --host_cpu=k8
+
+# configure remote build execution servers
+build:remote --remote_cache=remotebuildexecution.googleapis.com
+build:remote --remote_executor=remotebuildexecution.googleapis.com
+build:remote --google_default_credentials=True
