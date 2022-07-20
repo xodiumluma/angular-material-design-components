@@ -65,3 +65,12 @@ build:remote --host_cpu=k8
 build:remote --remote_cache=remotebuildexecution.googleapis.com
 build:remote --remote_executor=remotebuildexecution.googleapis.com
 build:remote --google_default_credentials=True
+
+# Configure toolchain and platform for remote build execution
+# Platform is provided by shared dev-infra package and targets k8 remote containers
+build:remote --crosstool_top=@npm//@angular/dev-infra-private/bazel/remote-execution/cpp:cc_toolchain_suite
+build:remote --extra_toolchains=@npm//@angular/dev-infra-private/bazel/remote-execution/cpp:cc_toolchain
+build:remote --extra_execution_platforms=@npm//@angular/dev-infra-private/bazel/remote-execution:platform_with_network
+build:remote --host_platform=@npm//@angular/dev-infra-private/bazel/remote-execution:platform_with_network
+build:remote --platforms=@npm//@angular/dev-infra-private/bazel/remote-execution:platform_with_network
+
