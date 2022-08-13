@@ -115,7 +115,7 @@ describe('CdkOption and CdkListbox', () => {
       expect(listbox.value).toEqual([]);
       for (let i = 0; i < options.length; i++) {
         expect(options[i].isSelected()).toBeFalse();
-        expect(optionEls[i].hasAttribute('aria-selected')).toBeFalse();
+        expect(optionEls[i].getAttribute('aria-selected')).toBe('false');
       }
       expect(fixture.componentInstance.changedOption).toBeUndefined();
     });
@@ -908,8 +908,8 @@ describe('CdkOption and CdkListbox', () => {
          [cdkListboxDisabled]="isListboxDisabled"
          [cdkListboxUseActiveDescendant]="isActiveDescendant"
          [cdkListboxOrientation]="orientation"
-         [cdkListboxKeyboardNavigationWraps]="navigationWraps"
-         [cdkListboxKeyboardNavigationSkipsDisabled]="navigationSkipsDisabled"
+         [cdkListboxNavigationWrapDisabled]="!navigationWraps"
+         [cdkListboxNavigatesDisabledOptions]="!navigationSkipsDisabled"
          (cdkListboxValueChange)="onSelectionChange($event)">
       <div cdkOption="apple"
            [cdkOptionDisabled]="isAppleDisabled"

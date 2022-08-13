@@ -1,3 +1,78 @@
+<a name="14.2.0-next.2"></a>
+# 14.2.0-next.2 "maple-mantis" (2022-08-11)
+### material
+| Commit | Type | Description |
+| -- | -- | -- |
+| [657774e29b](https://github.com/angular/components/commit/657774e29b90ab3d66f7abdbeadd7fafcae9b407) | feat | **datepicker:** Allow user to jump between start and end dates with arrow keys ([#25359](https://github.com/angular/components/pull/25359)) |
+| [225273825a](https://github.com/angular/components/commit/225273825ac3aefe423432a819aee48b92be52c0) | fix | **chips:** `selectable="false"` doesn't work on initial assignment ([#24906](https://github.com/angular/components/pull/24906)) |
+| [484058b80e](https://github.com/angular/components/commit/484058b80ee335414d9523d16cd669c449ef3762) | fix | **tooltip:** avoid problem when triggers hide animation for not visible tooltip ([#24652](https://github.com/angular/components/pull/24652)) |
+### material-experimental
+| Commit | Type | Description |
+| -- | -- | -- |
+| [7c0f56335a](https://github.com/angular/components/commit/7c0f56335a39d33f2962b78bdc23390c38aba033) | fix | **mdc-list:** set a role on MatNavList and MatActionList ([#25412](https://github.com/angular/components/pull/25412)) |
+## Special Thanks
+Egor Volvachev, Karl Seamon, Miles Malerba, Wagner Maciel and Zach Arend
+
+<!-- CHANGELOG SPLIT MARKER -->
+
+<a name="14.1.2"></a>
+# 14.1.2 "cedar-cicada" (2022-08-11)
+### material
+| Commit | Type | Description |
+| -- | -- | -- |
+| [69b29046d5](https://github.com/angular/components/commit/69b29046d5ce96f3ba4fac3f039c9ac4ae314227) | fix | **chips:** `selectable="false"` doesn't work on initial assignment ([#24906](https://github.com/angular/components/pull/24906)) |
+| [0f2ec70c86](https://github.com/angular/components/commit/0f2ec70c869a1f6f42b02a59c37c922b34c84e9d) | fix | **tooltip:** avoid problem when triggers hide animation for not visible tooltip ([#24652](https://github.com/angular/components/pull/24652)) |
+### material-experimental
+| Commit | Type | Description |
+| -- | -- | -- |
+| [0a4d8e9fc4](https://github.com/angular/components/commit/0a4d8e9fc4a42398b5339ca50c1222f6bd7d66ab) | fix | **mdc-list:** set a role on MatNavList and MatActionList ([#25412](https://github.com/angular/components/pull/25412)) |
+## Special Thanks
+Egor Volvachev, Miles Malerba, Wagner Maciel and Zach Arend
+
+<!-- CHANGELOG SPLIT MARKER -->
+
+<a name="14.2.0-next.1"></a>
+# 14.2.0-next.1 "corundum-cat" (2022-08-03)
+### cdk
+| Commit | Type | Description |
+| -- | -- | -- |
+| [bf2723c8b](https://github.com/angular/components/commit/bf2723c8bde4bd966fe66d5e9d04b41c7b2ab493) | fix | **dialog:** use config injector if provided ([#25332](https://github.com/angular/components/pull/25332)) |
+| [82be1d709](https://github.com/angular/components/commit/82be1d709aecceeebf7a8c491ae7594f5b38016a) | fix | **drag-drop:** expose pickup position in constrainPosition callback ([#25341](https://github.com/angular/components/pull/25341)) |
+| [aea1a5d67](https://github.com/angular/components/commit/aea1a5d67cc17b60d696f98068f39a0404f94a81) | fix | **overlay:** detach overlay when portal is destroyed from the outside ([#25212](https://github.com/angular/components/pull/25212)) |
+| [96b2d3461](https://github.com/angular/components/commit/96b2d3461e69fa53ee387bb7bea2f2741702c795) | fix | **schematics:** strip bom from sass files ([#25364](https://github.com/angular/components/pull/25364)) |
+### cdk-experimental
+| Commit | Type | Description |
+| -- | -- | -- |
+| [aaa9d93c9](https://github.com/angular/components/commit/aaa9d93c927c630eba3e4743d6a38f186aa08094) | fix | **listbox:** fix issue with aria-selected ([#25373](https://github.com/angular/components/pull/25373)) |
+### material-experimental
+| Commit | Type | Description |
+| -- | -- | -- |
+| [f214a2ce0](https://github.com/angular/components/commit/f214a2ce0790cbb497805c71540d23469d419fb3) | fix | **mdc-chips:** don't use button element if chip row isn't editable ([#25327](https://github.com/angular/components/pull/25327)) |
+| [aa008def1](https://github.com/angular/components/commit/aa008def1624cc391b05aff53e1622621e35b32b) | fix | **mdc-slider:** skip resizing while the user is dragging ([#25318](https://github.com/angular/components/pull/25318)) |
+## Special Thanks
+Amadou Sall, Kristiyan Kostadinov, Miles Malerba, Paul Gschwendtner, Serge and Wagner Maciel
+
+<!-- CHANGELOG SPLIT MARKER -->
+
+<a name="14.1.1"></a>
+# 14.1.1 "moissanite-mango" (2022-08-03)
+### cdk
+| Commit | Type | Description |
+| -- | -- | -- |
+| [251c9abdf](https://github.com/angular/components/commit/251c9abdfe9c37caac132682fed0b9ca24bf681d) | fix | **dialog:** use config injector if provided ([#25332](https://github.com/angular/components/pull/25332)) |
+| [636dd60ee](https://github.com/angular/components/commit/636dd60ee1b162245537dd97964970cb88b68d83) | fix | **drag-drop:** expose pickup position in constrainPosition callback ([#25341](https://github.com/angular/components/pull/25341)) |
+| [aea1a5d67](https://github.com/angular/components/commit/aea1a5d67cc17b60d696f98068f39a0404f94a81) | fix | **overlay:** detach overlay when portal is destroyed from the outside ([#25212](https://github.com/angular/components/pull/25212)) |
+| [63ca33bc8](https://github.com/angular/components/commit/63ca33bc8642975ee7133c08041b5ceacccf6f3d) | fix | **schematics:** strip bom from sass files ([#25364](https://github.com/angular/components/pull/25364)) |
+### material-experimental
+| Commit | Type | Description |
+| -- | -- | -- |
+| [e045e8d49](https://github.com/angular/components/commit/e045e8d49247805bb531fcdcc950b6c5a10b1de8) | fix | **mdc-chips:** don't use button element if chip row isn't editable ([#25327](https://github.com/angular/components/pull/25327)) |
+| [394b93f18](https://github.com/angular/components/commit/394b93f18032e8d05e48c07bd36dbe44a83b87f5) | fix | **mdc-slider:** skip resizing while the user is dragging ([#25318](https://github.com/angular/components/pull/25318)) |
+## Special Thanks
+Amadou Sall, Kristiyan Kostadinov, Paul Gschwendtner and Serge
+
+<!-- CHANGELOG SPLIT MARKER -->
+
 <a name="14.1.0"></a>
 # 14.1.0 "neon-plate" (2022-07-20)
 ### cdk

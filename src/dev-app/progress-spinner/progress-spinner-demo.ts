@@ -9,9 +9,9 @@
 import {Component} from '@angular/core';
 import {ThemePalette} from '@angular/material/core';
 import {FormsModule} from '@angular/forms';
-import {MatButtonModule} from '@angular/material/button';
+import {MatLegacyButtonModule} from '@angular/material/legacy-button';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
-import {MatCheckboxModule} from '@angular/material/checkbox';
+import {MatLegacyCheckboxModule} from '@angular/material/legacy-checkbox';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 @Component({
@@ -21,9 +21,9 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
   standalone: true,
   imports: [
     FormsModule,
-    MatButtonModule,
+    MatLegacyButtonModule,
     MatButtonToggleModule,
-    MatCheckboxModule,
+    MatLegacyCheckboxModule,
     MatProgressSpinnerModule,
   ],
 })

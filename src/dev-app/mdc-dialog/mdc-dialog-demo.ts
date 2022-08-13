@@ -14,14 +14,14 @@ import {
   MatDialogConfig,
   MatDialogRef,
   MatDialogModule,
-} from '@angular/material-experimental/mdc-dialog';
+} from '@angular/material/dialog';
 import {FormsModule} from '@angular/forms';
-import {MatButtonModule} from '@angular/material-experimental/mdc-button';
+import {MatButtonModule} from '@angular/material/button';
 import {MatCardModule} from '@angular/material/card';
-import {MatCheckboxModule} from '@angular/material-experimental/mdc-checkbox';
+import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
-import {MatSelectModule} from '@angular/material-experimental/mdc-select';
+import {MatSelectModule} from '@angular/material/select';
 import {DragDropModule} from '@angular/cdk/drag-drop';
 
 const defaultDialogConfig = new MatDialogConfig();

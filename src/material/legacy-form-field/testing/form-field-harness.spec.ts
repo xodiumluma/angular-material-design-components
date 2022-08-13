@@ -1,4 +1,4 @@
-import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import {MatLegacyAutocompleteModule} from '@angular/material/legacy-autocomplete';
 import {MatNativeDateModule} from '@angular/material/core';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {
@@ -8,8 +8,8 @@ import {
 import {MatLegacyFormFieldModule} from '@angular/material/legacy-form-field';
 import {MatLegacyInputModule} from '@angular/material/legacy-input';
 import {MatLegacyInputHarness} from '@angular/material/legacy-input/testing';
-import {MatSelectModule} from '@angular/material/select';
-import {MatSelectHarness} from '@angular/material/select/testing';
+import {MatLegacySelectModule} from '@angular/material/legacy-select';
+import {MatLegacySelectHarness} from '@angular/material/legacy-select/testing';
 
 import {MatLegacyFormFieldHarness} from './form-field-harness';
 import {runHarnessTests} from '@angular/material/form-field/testing/shared.spec';
@@ -18,16 +18,16 @@ describe('Non-MDC-based MatFormFieldHarness', () => {
   runHarnessTests(
     [
       MatLegacyFormFieldModule,
-      MatAutocompleteModule,
+      MatLegacyAutocompleteModule,
       MatLegacyInputModule,
-      MatSelectModule,
+      MatLegacySelectModule,
       MatNativeDateModule,
       MatDatepickerModule,
     ],
     {
       formFieldHarness: MatLegacyFormFieldHarness as any,
       inputHarness: MatLegacyInputHarness,
-      selectHarness: MatSelectHarness,
+      selectHarness: MatLegacySelectHarness,
       datepickerInputHarness: MatDatepickerInputHarness,
       dateRangeInputHarness: MatDateRangeInputHarness,
       isMdcImplementation: false,

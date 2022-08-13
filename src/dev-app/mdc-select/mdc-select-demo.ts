@@ -8,13 +8,13 @@
 
 import {Component} from '@angular/core';
 import {FormControl, Validators, FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {ErrorStateMatcher, ThemePalette} from '@angular/material-experimental/mdc-core';
-import {MatSelectChange, MatSelectModule} from '@angular/material-experimental/mdc-select';
+import {ErrorStateMatcher, ThemePalette} from '@angular/material/core';
+import {MatSelectChange, MatSelectModule} from '@angular/material/select';
 import {FloatLabelType} from '@angular/material/form-field';
 import {CommonModule} from '@angular/common';
 import {MatCardModule} from '@angular/material/card';
 import {MatIconModule} from '@angular/material/icon';
-import {MatButtonModule} from '@angular/material-experimental/mdc-button';
+import {MatButtonModule} from '@angular/material/button';
 import {MatInputModule} from '@angular/material/input';
 
 /** Error any time control is invalid */

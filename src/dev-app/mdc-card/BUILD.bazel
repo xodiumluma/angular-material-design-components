@@ -10,9 +10,9 @@ ng_module(
         ":mdc_card_demo_scss",
     ],
     deps = [
-        "//src/material-experimental/mdc-button",
-        "//src/material-experimental/mdc-checkbox",
+        "//src/material/button",
         "//src/material/card",
+        "//src/material/checkbox",
     ],
 )
 

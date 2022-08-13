@@ -11,11 +11,11 @@ ng_module(
         ":mdc_checkbox_demo_scss",
     ],
     deps = [
-        "//src/material-experimental/mdc-checkbox",
-        "//src/material-experimental/mdc-core",
-        "//src/material-experimental/mdc-select",
+        "//src/material/checkbox",
+        "//src/material/core",
         "//src/material/form-field",
         "//src/material/input",
+        "//src/material/select",
         "@npm//@angular/forms",
     ],
 )

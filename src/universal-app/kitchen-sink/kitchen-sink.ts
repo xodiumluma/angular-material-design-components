@@ -4,29 +4,29 @@ import {ScrollingModule, ViewportRuler} from '@angular/cdk/scrolling';
 import {CdkTableModule, DataSource} from '@angular/cdk/table';
 import {Component, ElementRef, NgModule, ErrorHandler} from '@angular/core';
 import {MatNativeDateModule, MatRippleModule} from '@angular/material/core';
-import {MatAutocompleteModule} from '@angular/material/autocomplete';
-import {MatButtonModule} from '@angular/material/button';
+import {MatLegacyAutocompleteModule} from '@angular/material/legacy-autocomplete';
+import {MatLegacyButtonModule} from '@angular/material/legacy-button';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import {MatLegacyCardModule} from '@angular/material/legacy-card';
-import {MatCheckboxModule} from '@angular/material/checkbox';
-import {MatChipsModule} from '@angular/material/chips';
+import {MatLegacyCheckboxModule} from '@angular/material/legacy-checkbox';
+import {MatLegacyChipsModule} from '@angular/material/legacy-chips';
 import {MatTableModule} from '@angular/material/table';
 import {MatDatepickerModule} from '@angular/material/datepicker';
-import {MatDialogModule, MatDialog} from '@angular/material/dialog';
+import {MatLegacyDialogModule, MatLegacyDialog} from '@angular/material/legacy-dialog';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {MatGridListModule} from '@angular/material/grid-list';
 import {MatIconModule} from '@angular/material/icon';
 import {MatLegacyInputModule} from '@angular/material/legacy-input';
-import {MatListModule} from '@angular/material/list';
-import {MatMenuModule} from '@angular/material/menu';
+import {MatLegacyListModule} from '@angular/material/legacy-list';
+import {MatLegacyMenuModule} from '@angular/material/legacy-menu';
 import {MatPaginatorModule} from '@angular/material/paginator';
 import {MatLegacyProgressBarModule} from '@angular/material/legacy-progress-bar';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
-import {MatRadioModule} from '@angular/material/radio';
-import {MatSelectModule} from '@angular/material/select';
+import {MatLegacyRadioModule} from '@angular/material/legacy-radio';
+import {MatLegacySelectModule} from '@angular/material/legacy-select';
 import {MatSidenavModule} from '@angular/material/sidenav';
-import {MatSliderModule} from '@angular/material/slider';
-import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import {MatLegacySliderModule} from '@angular/material/legacy-slider';
+import {MatLegacySlideToggleModule} from '@angular/material/legacy-slide-toggle';
 import {MatSnackBarModule, MatSnackBar} from '@angular/material/snack-bar';
 import {MatTabsModule} from '@angular/material/tabs';
 import {MatToolbarModule} from '@angular/material/toolbar';
@@ -78,7 +78,7 @@ export class KitchenSink {
 
   constructor(
     snackBar: MatSnackBar,
-    dialog: MatDialog,
+    dialog: MatLegacyDialog,
     viewportRuler: ViewportRuler,
     focusMonitor: FocusMonitor,
     elementRef: ElementRef<HTMLElement>,
@@ -98,33 +98,33 @@ export class KitchenSink {
 
 @NgModule({
   imports: [
-    MatAutocompleteModule,
+    MatLegacyAutocompleteModule,
     MatBadgeModule,
     MatBottomSheetModule,
-    MatButtonModule,
+    MatLegacyButtonModule,
     MatButtonToggleModule,
     MatLegacyCardModule,
-    MatCheckboxModule,
-    MatChipsModule,
+    MatLegacyCheckboxModule,
+    MatLegacyChipsModule,
     MatDatepickerModule,
-    MatDialogModule,
+    MatLegacyDialogModule,
     MatDividerModule,
     MatLegacyFormFieldModule,
     MatGridListModule,
     MatIconModule,
     MatLegacyInputModule,
-    MatListModule,
-    MatMenuModule,
+    MatLegacyListModule,
+    MatLegacyMenuModule,
     MatNativeDateModule,
     MatPaginatorModule,
     MatLegacyProgressBarModule,
     MatProgressSpinnerModule,
-    MatRadioModule,
+    MatLegacyRadioModule,
     MatRippleModule,
-    MatSelectModule,
+    MatLegacySelectModule,
     MatSidenavModule,
-    MatSliderModule,
-    MatSlideToggleModule,
+    MatLegacySliderModule,
+    MatLegacySlideToggleModule,
     MatSnackBarModule,
     MatTabsModule,
     MatToolbarModule,

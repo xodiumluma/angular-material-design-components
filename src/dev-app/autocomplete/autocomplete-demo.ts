@@ -9,8 +9,8 @@
 import {Component, ViewChild} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormControl, FormsModule, NgModel, ReactiveFormsModule} from '@angular/forms';
-import {MatAutocompleteModule} from '@angular/material/autocomplete';
-import {MatButtonModule} from '@angular/material/button';
+import {MatLegacyAutocompleteModule} from '@angular/material/legacy-autocomplete';
+import {MatLegacyButtonModule} from '@angular/material/legacy-button';
 import {MatLegacyCardModule} from '@angular/material/legacy-card';
 import {MatLegacyFormFieldModule} from '@angular/material/legacy-form-field';
 import {MatLegacyInputModule} from '@angular/material/legacy-input';
@@ -35,8 +35,8 @@ export interface StateGroup {
   imports: [
     CommonModule,
     FormsModule,
-    MatAutocompleteModule,
-    MatButtonModule,
+    MatLegacyAutocompleteModule,
+    MatLegacyButtonModule,
     MatLegacyCardModule,
     MatLegacyFormFieldModule,
     MatLegacyInputModule,

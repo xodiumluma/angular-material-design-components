@@ -9,14 +9,14 @@
 import {Component, TemplateRef} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormControl, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
-import {MatButtonModule} from '@angular/material/button';
+import {MatLegacyButtonModule} from '@angular/material/legacy-button';
 import {MatLegacyCardModule} from '@angular/material/legacy-card';
 import {ErrorStateMatcher, ThemePalette} from '@angular/material/core';
-import {MatDialog, MatDialogModule} from '@angular/material/dialog';
+import {MatLegacyDialog, MatLegacyDialogModule} from '@angular/material/legacy-dialog';
 import {FloatLabelType, MatLegacyFormFieldModule} from '@angular/material/legacy-form-field';
 import {MatIconModule} from '@angular/material/icon';
 import {MatLegacyInputModule} from '@angular/material/legacy-input';
-import {MatSelectChange, MatSelectModule} from '@angular/material/select';
+import {MatSelectChange, MatLegacySelectModule} from '@angular/material/legacy-select';
 
 /** Error any time control is invalid */
 export class MyErrorStateMatcher implements ErrorStateMatcher {
@@ -36,13 +36,13 @@ export class MyErrorStateMatcher implements ErrorStateMatcher {
   imports: [
     CommonModule,
     FormsModule,
-    MatButtonModule,
+    MatLegacyButtonModule,
     MatLegacyCardModule,
-    MatDialogModule,
+    MatLegacyDialogModule,
     MatLegacyFormFieldModule,
     MatIconModule,
     MatLegacyInputModule,
-    MatSelectModule,
+    MatLegacySelectModule,
     ReactiveFormsModule,
   ],
 })
@@ -152,7 +152,7 @@ export class SelectDemo {
     {value: 'indramon-5', viewValue: 'Indramon'},
   ];
 
-  constructor(private _dialog: MatDialog) {}
+  constructor(private _dialog: MatLegacyDialog) {}
 
   toggleDisabled() {
     this.foodControl.enabled ? this.foodControl.disable() : this.foodControl.enable();

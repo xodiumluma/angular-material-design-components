@@ -1,7 +1,7 @@
 import {CommonModule} from '@angular/common';
 import {NgModule} from '@angular/core';
-import {MatButtonModule} from '@angular/material/button';
-import {MatCheckboxModule} from '@angular/material/checkbox';
+import {MatLegacyButtonModule} from '@angular/material/legacy-button';
+import {MatLegacyCheckboxModule} from '@angular/material/legacy-checkbox';
 import {MatIconModule} from '@angular/material/icon';
 import {MatLegacyInputModule} from '@angular/material/legacy-input';
 import {MatLegacyProgressBarModule} from '@angular/material/legacy-progress-bar';
@@ -34,8 +34,8 @@ const EXAMPLES = [
 @NgModule({
   imports: [
     CommonModule,
-    MatButtonModule,
-    MatCheckboxModule,
+    MatLegacyButtonModule,
+    MatLegacyCheckboxModule,
     MatIconModule,
     MatLegacyInputModule,
     MatLegacyProgressBarModule,

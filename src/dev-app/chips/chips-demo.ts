@@ -10,10 +10,10 @@ import {Component} from '@angular/core';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
-import {MatButtonModule} from '@angular/material/button';
+import {MatLegacyButtonModule} from '@angular/material/legacy-button';
 import {MatLegacyCardModule} from '@angular/material/legacy-card';
-import {MatCheckboxModule} from '@angular/material/checkbox';
-import {MatChipInputEvent, MatChipsModule} from '@angular/material/chips';
+import {MatLegacyCheckboxModule} from '@angular/material/legacy-checkbox';
+import {MatLegacyChipInputEvent, MatLegacyChipsModule} from '@angular/material/legacy-chips';
 import {ThemePalette} from '@angular/material/core';
 import {MatLegacyFormFieldModule} from '@angular/material/legacy-form-field';
 import {MatIconModule} from '@angular/material/icon';
@@ -36,10 +36,10 @@ export interface DemoColor {
   imports: [
     CommonModule,
     FormsModule,
-    MatButtonModule,
+    MatLegacyButtonModule,
     MatLegacyCardModule,
-    MatCheckboxModule,
-    MatChipsModule,
+    MatLegacyCheckboxModule,
+    MatLegacyChipsModule,
     MatLegacyFormFieldModule,
     MatIconModule,
     MatToolbarModule,
@@ -79,7 +79,7 @@ export class ChipsDemo {
     this.message = message;
   }
 
-  add(event: MatChipInputEvent): void {
+  add(event: MatLegacyChipInputEvent): void {
     const value = (event.value || '').trim();
 
     // Add our person

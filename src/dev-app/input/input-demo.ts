@@ -9,15 +9,15 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormControl, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
-import {MatButtonModule} from '@angular/material/button';
+import {MatLegacyButtonModule} from '@angular/material/legacy-button';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import {MatLegacyCardModule} from '@angular/material/legacy-card';
-import {MatCheckboxModule} from '@angular/material/checkbox';
+import {MatLegacyCheckboxModule} from '@angular/material/legacy-checkbox';
 import {ErrorStateMatcher} from '@angular/material/core';
 import {FloatLabelType, MatLegacyFormFieldModule} from '@angular/material/legacy-form-field';
 import {MatIconModule} from '@angular/material/icon';
 import {MatLegacyInputModule} from '@angular/material/legacy-input';
-import {MatSelectModule} from '@angular/material/select';
+import {MatLegacySelectModule} from '@angular/material/legacy-select';
 import {MatTabsModule} from '@angular/material/tabs';
 import {MatToolbarModule} from '@angular/material/toolbar';
 
@@ -34,14 +34,14 @@ const EMAIL_REGEX = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA
   imports: [
     CommonModule,
     FormsModule,
-    MatButtonModule,
+    MatLegacyButtonModule,
     MatButtonToggleModule,
     MatLegacyCardModule,
-    MatCheckboxModule,
+    MatLegacyCheckboxModule,
     MatLegacyFormFieldModule,
     MatIconModule,
     MatLegacyInputModule,
-    MatSelectModule,
+    MatLegacySelectModule,
     MatTabsModule,
     MatToolbarModule,
     ReactiveFormsModule,
