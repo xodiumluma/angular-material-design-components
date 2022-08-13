@@ -10,11 +10,11 @@ import {Component, TemplateRef, ViewChild, ViewEncapsulation} from '@angular/cor
 import {Directionality} from '@angular/cdk/bidi';
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
-import {MatButtonModule} from '@angular/material/button';
-import {MatCheckboxModule} from '@angular/material/checkbox';
+import {MatLegacyButtonModule} from '@angular/material/legacy-button';
+import {MatLegacyCheckboxModule} from '@angular/material/legacy-checkbox';
 import {MatLegacyFormFieldModule} from '@angular/material/legacy-form-field';
 import {MatLegacyInputModule} from '@angular/material/legacy-input';
-import {MatSelectModule} from '@angular/material/select';
+import {MatLegacySelectModule} from '@angular/material/legacy-select';
 import {
   MatSnackBar,
   MatSnackBarConfig,
@@ -32,11 +32,11 @@ import {
   imports: [
     CommonModule,
     FormsModule,
-    MatButtonModule,
-    MatCheckboxModule,
+    MatLegacyButtonModule,
+    MatLegacyCheckboxModule,
     MatLegacyFormFieldModule,
     MatLegacyInputModule,
-    MatSelectModule,
+    MatLegacySelectModule,
     MatSnackBarModule,
   ],
 })

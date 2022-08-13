@@ -2,9 +2,9 @@ import {CommonModule} from '@angular/common';
 import {NgModule} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {MatLegacyCardModule} from '@angular/material/legacy-card';
-import {MatCheckboxModule} from '@angular/material/checkbox';
+import {MatLegacyCheckboxModule} from '@angular/material/legacy-checkbox';
 import {MatLegacyInputModule} from '@angular/material/legacy-input';
-import {MatSliderModule} from '@angular/material/slider';
+import {MatLegacySliderModule} from '@angular/material/legacy-slider';
 import {SliderConfigurableExample} from './slider-configurable/slider-configurable-example';
 import {SliderFormattingExample} from './slider-formatting/slider-formatting-example';
 import {SliderOverviewExample} from './slider-overview/slider-overview-example';
@@ -29,9 +29,9 @@ const EXAMPLES = [
     CommonModule,
     FormsModule,
     MatLegacyCardModule,
-    MatCheckboxModule,
+    MatLegacyCheckboxModule,
     MatLegacyInputModule,
-    MatSliderModule,
+    MatLegacySliderModule,
   ],
   declarations: EXAMPLES,
   exports: EXAMPLES,

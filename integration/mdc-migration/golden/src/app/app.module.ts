@@ -7,7 +7,7 @@ import {ReactiveFormsModule} from '@angular/forms';
 import {MatAutocompleteModule} from '@angular/material-experimental/mdc-autocomplete';
 import {MatButtonModule} from '@angular/material-experimental/mdc-button';
 import {MatCardModule} from '@angular/material-experimental/mdc-card';
-import {MatCheckboxModule} from '@angular/material-experimental/mdc-checkbox';
+import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatChipsModule} from '@angular/material-experimental/mdc-chips';
 import {MatFormFieldModule} from '@angular/material-experimental/mdc-form-field';
 import {MatIconModule} from '@angular/material/icon';
@@ -19,7 +19,7 @@ import {MatProgressBarModule} from '@angular/material-experimental/mdc-progress-
 import {MatProgressSpinnerModule} from '@angular/material-experimental/mdc-progress-spinner';
 import {MatRadioModule} from '@angular/material-experimental/mdc-radio';
 import {MatSelectModule} from '@angular/material-experimental/mdc-select';
-import {MatSlideToggleModule} from '@angular/material-experimental/mdc-slide-toggle';
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import {MatSliderModule} from '@angular/material-experimental/mdc-slider';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatTableModule} from '@angular/material-experimental/mdc-table';

@@ -7,12 +7,14 @@
 import { _AbstractConstructor } from '@angular/material/core';
 import { ActiveDescendantKeyManager } from '@angular/cdk/a11y';
 import { AfterContentInit } from '@angular/core';
+import { AfterViewInit } from '@angular/core';
 import { AnimationTriggerMetadata } from '@angular/animations';
 import { BooleanInput } from '@angular/cdk/coercion';
 import { CanDisable } from '@angular/material/core';
 import { CanDisableRipple } from '@angular/material/core';
 import { CanUpdateErrorState } from '@angular/material/core';
 import { CdkConnectedOverlay } from '@angular/cdk/overlay';
+import { CdkOverlayOrigin } from '@angular/cdk/overlay';
 import { ChangeDetectorRef } from '@angular/core';
 import { ConnectedPosition } from '@angular/cdk/overlay';
 import { _Constructor } from '@angular/material/core';
@@ -29,11 +31,11 @@ import * as i2 from '@angular/common';
 import * as i3 from '@angular/cdk/overlay';
 import * as i4 from '@angular/material/core';
 import * as i5 from '@angular/cdk/scrolling';
-import * as i6 from '@angular/material/legacy-form-field';
+import * as i6 from '@angular/material/form-field';
 import { InjectionToken } from '@angular/core';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
-import { MatLegacyFormField } from '@angular/material/legacy-form-field';
-import { MatLegacyFormFieldControl } from '@angular/material/legacy-form-field';
+import { MatFormField } from '@angular/material/form-field';
+import { MatFormFieldControl } from '@angular/material/form-field';
 import { MatOptgroup } from '@angular/material/core';
 import { MatOption } from '@angular/material/core';
 import { _MatOptionBase } from '@angular/material/core';
@@ -74,31 +76,32 @@ export function MAT_SELECT_SCROLL_STRATEGY_PROVIDER_FACTORY(overlay: Overlay): (
 export const MAT_SELECT_TRIGGER: InjectionToken<MatSelectTrigger>;
 
 // @public (undocumented)
-export class MatSelect extends _MatSelectBase<MatSelectChange> implements OnInit {
-    _calculateOverlayScroll(selectedIndex: number, scrollBuffer: number, maxScroll: number): number;
+export class MatSelect extends _MatSelectBase<MatSelectChange> implements OnInit, AfterViewInit {
+    // (undocumented)
+    close(): void;
     // (undocumented)
     customTrigger: MatSelectTrigger;
     // (undocumented)
     protected _getChangeEvent(value: any): MatSelectChange;
     // (undocumented)
+    ngAfterViewInit(): void;
+    // (undocumented)
     ngOnInit(): void;
-    _offsetY: number;
     // (undocumented)
     open(): void;
     // (undocumented)
     optionGroups: QueryList<MatOptgroup>;
     // (undocumented)
     options: QueryList<MatOption>;
-    // (undocumented)
-    protected _panelDoneAnimating(isOpen: boolean): void;
+    _overlayWidth: number;
     // (undocumented)
     protected _positioningSettled(): void;
     // (undocumented)
     _positions: ConnectedPosition[];
+    _preferredOverlayOrigin: CdkOverlayOrigin | ElementRef | undefined;
     protected _scrollOptionIntoView(index: number): void;
-    _transformOrigin: string;
-    _triggerFontSize: number;
-    _triggerRect: ClientRect;
+    // (undocumented)
+    get shouldLabelFloat(): boolean;
     // (undocumented)
     static ɵcmp: i0.ɵɵComponentDeclaration<MatSelect, "mat-select", ["matSelect"], { "disabled": "disabled"; "disableRipple": "disableRipple"; "tabIndex": "tabIndex"; }, {}, ["customTrigger", "options", "optionGroups"], ["mat-select-trigger", "*"], false>;
     // (undocumented)
@@ -112,8 +115,8 @@ export const matSelectAnimations: {
 };
 
 // @public
-export abstract class _MatSelectBase<C> extends _MatSelectMixinBase implements AfterContentInit, OnChanges, OnDestroy, OnInit, DoCheck, ControlValueAccessor, CanDisable, HasTabIndex, MatLegacyFormFieldControl<any>, CanUpdateErrorState, CanDisableRipple {
-    constructor(_viewportRuler: ViewportRuler, _changeDetectorRef: ChangeDetectorRef, _ngZone: NgZone, _defaultErrorStateMatcher: ErrorStateMatcher, elementRef: ElementRef, _dir: Directionality, _parentForm: NgForm, _parentFormGroup: FormGroupDirective, _parentFormField: MatLegacyFormField, ngControl: NgControl, tabIndex: string, scrollStrategyFactory: any, _liveAnnouncer: LiveAnnouncer, _defaultOptions?: MatSelectConfig | undefined);
+export abstract class _MatSelectBase<C> extends _MatSelectMixinBase implements AfterContentInit, OnChanges, OnDestroy, OnInit, DoCheck, ControlValueAccessor, CanDisable, HasTabIndex, MatFormFieldControl<any>, CanUpdateErrorState, CanDisableRipple {
+    constructor(_viewportRuler: ViewportRuler, _changeDetectorRef: ChangeDetectorRef, _ngZone: NgZone, _defaultErrorStateMatcher: ErrorStateMatcher, elementRef: ElementRef, _dir: Directionality, _parentForm: NgForm, _parentFormGroup: FormGroupDirective, _parentFormField: MatFormField, ngControl: NgControl, tabIndex: string, scrollStrategyFactory: any, _liveAnnouncer: LiveAnnouncer, _defaultOptions?: MatSelectConfig | undefined);
     ariaLabel: string;
     ariaLabelledby: string;
     protected _canOpen(): boolean;
@@ -179,7 +182,7 @@ export abstract class _MatSelectBase<C> extends _MatSelectMixinBase implements A
     readonly _panelDoneAnimatingStream: Subject<string>;
     get panelOpen(): boolean;
     // (undocumented)
-    protected _parentFormField: MatLegacyFormField;
+    protected _parentFormField: MatFormField;
     get placeholder(): string;
     set placeholder(value: string);
     protected abstract _positioningSettled(): void;
@@ -239,7 +242,7 @@ export class MatSelectModule {
     // (undocumented)
     static ɵinj: i0.ɵɵInjectorDeclaration<MatSelectModule>;
     // (undocumented)
-    static ɵmod: i0.ɵɵNgModuleDeclaration<MatSelectModule, [typeof i1.MatSelect, typeof i1.MatSelectTrigger], [typeof i2.CommonModule, typeof i3.OverlayModule, typeof i4.MatOptionModule, typeof i4.MatCommonModule], [typeof i5.CdkScrollableModule, typeof i6.MatLegacyFormFieldModule, typeof i1.MatSelect, typeof i1.MatSelectTrigger, typeof i4.MatOptionModule, typeof i4.MatCommonModule]>;
+    static ɵmod: i0.ɵɵNgModuleDeclaration<MatSelectModule, [typeof i1.MatSelect, typeof i1.MatSelectTrigger], [typeof i2.CommonModule, typeof i3.OverlayModule, typeof i4.MatOptionModule, typeof i4.MatCommonModule], [typeof i5.CdkScrollableModule, typeof i6.MatFormFieldModule, typeof i1.MatSelect, typeof i1.MatSelectTrigger, typeof i4.MatOptionModule, typeof i4.MatCommonModule]>;
 }
 
 // @public
@@ -249,24 +252,6 @@ export class MatSelectTrigger {
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatSelectTrigger, never>;
 }
-
-// @public
-const SELECT_ITEM_HEIGHT_EM = 3;
-
-// @public
-const SELECT_MULTIPLE_PANEL_PADDING_X: number;
-
-// @public
-const SELECT_PANEL_INDENT_PADDING_X: number;
-
-// @public
-const SELECT_PANEL_MAX_HEIGHT = 256;
-
-// @public
-const SELECT_PANEL_PADDING_X = 16;
-
-// @public
-const SELECT_PANEL_VIEWPORT_PADDING = 8;
 
 // (No @packageDocumentation comment for this package)
 

@@ -1,9 +1,9 @@
 import {CommonModule} from '@angular/common';
 import {NgModule} from '@angular/core';
 import {ReactiveFormsModule} from '@angular/forms';
-import {MatButtonModule} from '@angular/material/button';
+import {MatLegacyButtonModule} from '@angular/material/legacy-button';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
-import {MatCheckboxModule} from '@angular/material/checkbox';
+import {MatLegacyCheckboxModule} from '@angular/material/legacy-checkbox';
 import {MatIconModule} from '@angular/material/icon';
 import {MatLegacyInputModule} from '@angular/material/legacy-input';
 import {MatTabsModule} from '@angular/material/tabs';
@@ -59,9 +59,9 @@ const EXAMPLES = [
 @NgModule({
   imports: [
     CommonModule,
-    MatButtonModule,
+    MatLegacyButtonModule,
     MatButtonToggleModule,
-    MatCheckboxModule,
+    MatLegacyCheckboxModule,
     MatIconModule,
     MatLegacyInputModule,
     MatTabsModule,

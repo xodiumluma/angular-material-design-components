@@ -16,16 +16,16 @@ export const IMPORT_REPLACEMENTS: {[component: string]: {old: string; new: strin
     new: '@angular/material-experimental/mdc-card',
   },
   'checkbox': {
-    old: '@angular/material/checkbox',
-    new: '@angular/material-experimental/mdc-checkbox',
+    old: '@angular/material/legacy-checkbox',
+    new: '@angular/material/checkbox',
   },
   'chips': {
     old: '@angular/material/chips',
     new: '@angular/material-experimental/mdc-chips',
   },
   'dialog': {
-    old: '@angular/material/dialog',
-    new: '@angular/material-experimental/mdc-dialog',
+    old: '@angular/material/legacy-dialog',
+    new: '@angular/material/dialog',
   },
   'autocomplete': {
     old: '@angular/material/autocomplete',
@@ -45,7 +45,7 @@ export const IMPORT_REPLACEMENTS: {[component: string]: {old: string; new: strin
   },
   'core': {
     old: '@angular/material/core',
-    new: '@angular/material-experimental/mdc-core',
+    new: '@angular/material/core',
   },
   'list': {
     old: '@angular/material/list',
@@ -72,8 +72,8 @@ export const IMPORT_REPLACEMENTS: {[component: string]: {old: string; new: strin
     new: '@angular/material-experimental/mdc-sidenav',
   },
   'slide-toggle': {
-    old: '@angular/material/slide-toggle',
-    new: '@angular/material-experimental/mdc-slide-toggle',
+    old: '@angular/material/legacy-slide-toggle',
+    new: '@angular/material/slide-toggle',
   },
   'slider': {
     old: '@angular/material/slider',

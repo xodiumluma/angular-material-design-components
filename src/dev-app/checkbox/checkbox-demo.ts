@@ -7,7 +7,10 @@
  */
 
 import {Component, Directive} from '@angular/core';
-import {MatCheckboxModule, MAT_CHECKBOX_DEFAULT_OPTIONS} from '@angular/material/checkbox';
+import {
+  MatLegacyCheckboxModule,
+  MAT_CHECKBOX_DEFAULT_OPTIONS,
+} from '@angular/material/legacy-checkbox';
 import {ANIMATION_MODULE_TYPE} from '@angular/platform-browser/animations';
 import {MatPseudoCheckboxModule, ThemePalette} from '@angular/material/core';
 import {CommonModule} from '@angular/common';
@@ -15,7 +18,7 @@ import {CheckboxExamplesModule} from '@angular/components-examples/material/chec
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatLegacyFormFieldModule} from '@angular/material/legacy-form-field';
 import {MatLegacyInputModule} from '@angular/material/legacy-input';
-import {MatSelectModule} from '@angular/material/select';
+import {MatLegacySelectModule} from '@angular/material/legacy-select';
 
 export interface Task {
   name: string;
@@ -55,7 +58,7 @@ export class AnimationsNoop {}
   ],
   templateUrl: './nested-checklist.html',
   standalone: true,
-  imports: [CommonModule, MatCheckboxModule, FormsModule],
+  imports: [CommonModule, MatLegacyCheckboxModule, FormsModule],
 })
 export class MatCheckboxDemoNestedChecklist {
   tasks: Task[] = [
@@ -110,10 +113,10 @@ export class MatCheckboxDemoNestedChecklist {
     CheckboxExamplesModule,
     CommonModule,
     FormsModule,
-    MatCheckboxModule,
+    MatLegacyCheckboxModule,
     MatLegacyFormFieldModule,
     MatLegacyInputModule,
-    MatSelectModule,
+    MatLegacySelectModule,
     MatPseudoCheckboxModule,
     ReactiveFormsModule,
     MatCheckboxDemoNestedChecklist,

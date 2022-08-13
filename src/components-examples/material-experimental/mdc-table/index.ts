@@ -1,9 +1,9 @@
 import {CommonModule} from '@angular/common';
 import {NgModule} from '@angular/core';
 import {MatRippleModule} from '@angular/material/core';
-import {MatButtonModule} from '@angular/material/button';
+import {MatLegacyButtonModule} from '@angular/material/legacy-button';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
-import {MatCheckboxModule} from '@angular/material/checkbox';
+import {MatLegacyCheckboxModule} from '@angular/material/legacy-checkbox';
 import {MatIconModule} from '@angular/material/icon';
 import {MatLegacyInputModule} from '@angular/material/legacy-input';
 import {MatPaginatorModule} from '@angular/material/paginator';
@@ -118,9 +118,9 @@ const EXAMPLES = [
 @NgModule({
   imports: [
     CommonModule,
-    MatButtonModule,
+    MatLegacyButtonModule,
     MatButtonToggleModule,
-    MatCheckboxModule,
+    MatLegacyCheckboxModule,
     MatIconModule,
     MatLegacyInputModule,
     MatPaginatorModule,

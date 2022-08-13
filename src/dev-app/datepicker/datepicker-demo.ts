@@ -20,8 +20,8 @@ import {
 } from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {MatButtonModule} from '@angular/material/button';
-import {MatCheckboxModule} from '@angular/material/checkbox';
+import {MatLegacyButtonModule} from '@angular/material/legacy-button';
+import {MatLegacyCheckboxModule} from '@angular/material/legacy-checkbox';
 import {
   DateAdapter,
   MAT_DATE_FORMATS,
@@ -41,7 +41,7 @@ import {
 import {MatLegacyFormFieldModule} from '@angular/material/legacy-form-field';
 import {MatIconModule} from '@angular/material/icon';
 import {MatLegacyInputModule} from '@angular/material/legacy-input';
-import {MatSelectModule} from '@angular/material/select';
+import {MatLegacySelectModule} from '@angular/material/legacy-select';
 import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 
@@ -185,14 +185,14 @@ export class CustomHeaderNgContent<D> {
   imports: [
     CommonModule,
     FormsModule,
-    MatButtonModule,
-    MatCheckboxModule,
+    MatLegacyButtonModule,
+    MatLegacyCheckboxModule,
     MatDatepickerModule,
     MatLegacyFormFieldModule,
     MatIconModule,
     MatLegacyInputModule,
     MatNativeDateModule,
-    MatSelectModule,
+    MatLegacySelectModule,
     ReactiveFormsModule,
     CustomHeader,
     CustomHeaderNgContent,

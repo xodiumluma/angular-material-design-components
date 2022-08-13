@@ -7,19 +7,19 @@
  */
 
 import {
+  BaseHarnessFilters,
+  ComponentHarness,
+  ComponentHarnessConstructor,
   HarnessPredicate,
   parallel,
-  ComponentHarness,
-  BaseHarnessFilters,
-  ComponentHarnessConstructor,
 } from '@angular/cdk/testing';
-import {MatFormFieldControlHarness} from '@angular/material/form-field/testing/control';
 import {
   MatOptionHarness,
   MatOptgroupHarness,
   OptionHarnessFilters,
   OptgroupHarnessFilters,
 } from '@angular/material/core/testing';
+import {MatFormFieldControlHarness} from '@angular/material/form-field/testing/control';
 import {SelectHarnessFilters} from './select-harness-filters';
 
 export abstract class _MatSelectHarnessBase<
@@ -159,7 +159,7 @@ export abstract class _MatSelectHarnessBase<
   }
 }
 
-/** Harness for interacting with a standard mat-select in tests. */
+/** Harness for interacting with an MDC-based mat-select in tests. */
 export class MatSelectHarness extends _MatSelectHarnessBase<
   typeof MatOptionHarness,
   MatOptionHarness,
@@ -168,18 +168,20 @@ export class MatSelectHarness extends _MatSelectHarnessBase<
   MatOptgroupHarness,
   OptgroupHarnessFilters
 > {
-  static hostSelector = '.mat-select';
-  protected _prefix = 'mat';
+  static hostSelector = '.mat-mdc-select';
+  protected _prefix = 'mat-mdc';
   protected _optionClass = MatOptionHarness;
   protected _optionGroupClass = MatOptgroupHarness;
 
   /**
-   * Gets a `HarnessPredicate` that can be used to search for a `MatSelectHarness` that meets
-   * certain criteria.
+   * Gets a `HarnessPredicate` that can be used to search for a select with specific attributes.
    * @param options Options for filtering which select instances are considered a match.
    * @return a `HarnessPredicate` configured with the given options.
    */
-  static with(options: SelectHarnessFilters = {}): HarnessPredicate<MatSelectHarness> {
-    return new HarnessPredicate(MatSelectHarness, options);
+  static with<T extends MatSelectHarness>(
+    this: ComponentHarnessConstructor<T>,
+    options: SelectHarnessFilters = {},
+  ): HarnessPredicate<T> {
+    return new HarnessPredicate(this, options);
   }
 }

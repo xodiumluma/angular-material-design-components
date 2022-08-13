@@ -17,10 +17,10 @@ import {
 } from '@angular/material-experimental/mdc-snack-bar';
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
-import {MatButtonModule} from '@angular/material-experimental/mdc-button';
-import {MatCheckboxModule} from '@angular/material-experimental/mdc-checkbox';
+import {MatButtonModule} from '@angular/material/button';
+import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatInputModule} from '@angular/material/input';
-import {MatSelectModule} from '@angular/material-experimental/mdc-select';
+import {MatSelectModule} from '@angular/material/select';
 
 @Component({
   selector: 'mdc-snack-bar-demo',
