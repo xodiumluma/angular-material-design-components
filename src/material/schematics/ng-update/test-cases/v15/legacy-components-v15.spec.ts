@@ -43,41 +43,121 @@ describe('v15 legacy components migration', () => {
       expect(readLine(TS_FILE_PATH)).withContext(ctx).toEqual(opts.new);
     }
 
-    it('updates import declarations', async () => {
-      await runTypeScriptMigrationTest('named binding', {
-        old: `import {MatButton} from '@angular/material/button';`,
-        new: `import {MatLegacyButton as MatButton} from '@angular/material/legacy-button';`,
+    async function runMultilineTypeScriptMigrationTest(
+      ctx: string,
+      opts: {old: string[]; new: string[]},
+    ) {
+      writeLines(TS_FILE_PATH, opts.old);
+      await runMigration();
+      expect(readLines(TS_FILE_PATH)).withContext(ctx).toEqual(opts.new);
+    }
+
+    describe('material --> legacy', () => {
+      it('updates import declarations', async () => {
+        await runTypeScriptMigrationTest('named binding', {
+          old: `import {MatButton} from '@angular/material/button';`,
+          new: `import {MatLegacyButton as MatButton} from '@angular/material/legacy-button';`,
+        });
+        await runTypeScriptMigrationTest('named binding w/ alias', {
+          old: `import {MatButton as Button} from '@angular/material/button';`,
+          new: `import {MatLegacyButton as Button} from '@angular/material/legacy-button';`,
+        });
+        await runTypeScriptMigrationTest('multiple named bindings', {
+          old: `import {MatButton, MatButtonModule} from '@angular/material/button';`,
+          new: `import {MatLegacyButton as MatButton, MatLegacyButtonModule as MatButtonModule} from '@angular/material/legacy-button';`,
+        });
+        await runTypeScriptMigrationTest('multiple named bindings w/ alias', {
+          old: `import {MatButton, MatButtonModule as ButtonModule} from '@angular/material/button';`,
+          new: `import {MatLegacyButton as MatButton, MatLegacyButtonModule as ButtonModule} from '@angular/material/legacy-button';`,
+        });
+        await runMultilineTypeScriptMigrationTest('specific cases', {
+          old: [
+            `import {ProgressAnimationEnd, ProgressBarMode} from '@angular/material/progress-bar';`,
+            `import {ProgressSpinnerMode} from '@angular/material/progress-spinner';`,
+            `import {AutoFocusTarget, DialogRole, DialogPosition, _closeDialogVia, MatTestDialogOpener} from '@angular/material/dialog';`,
+            `import {SimpleSnackBar, TextOnlySnackBar} from '@angular/material/snack-bar';`,
+          ],
+          new: [
+            `import {LegacyProgressAnimationEnd as ProgressAnimationEnd, LegacyProgressBarMode as ProgressBarMode} from '@angular/material/legacy-progress-bar';`,
+            `import {LegacyProgressSpinnerMode as ProgressSpinnerMode} from '@angular/material/legacy-progress-spinner';`,
+            `import {LegacyAutoFocusTarget as AutoFocusTarget, LegacyDialogRole as DialogRole, LegacyDialogPosition as DialogPosition, _closeLegacyDialogVia as _closeDialogVia, MatTestLegacyDialogOpener as MatTestDialogOpener} from '@angular/material/legacy-dialog';`,
+            `import {LegacySimpleSnackBar as SimpleSnackBar, LegacyTextOnlySnackBar as TextOnlySnackBar} from '@angular/material/legacy-snack-bar';`,
+          ],
+        });
+        await runTypeScriptMigrationTest('specific case w/ alias', {
+          old: `import {ProgressBarMode as MatProgressBarMode} from '@angular/material/progress-bar';`,
+          new: `import {LegacyProgressBarMode as MatProgressBarMode} from '@angular/material/legacy-progress-bar';`,
+        });
       });
-      await runTypeScriptMigrationTest('named binding w/ alias', {
-        old: `import {MatButton as Button} from '@angular/material/button';`,
-        new: `import {MatLegacyButton as Button} from '@angular/material/legacy-button';`,
+
+      it('updates import expressions', async () => {
+        await runTypeScriptMigrationTest('destructured & awaited', {
+          old: `const {MatButton} = await import('@angular/material/button');`,
+          new: `const {MatLegacyButton: MatButton} = await import('@angular/material/legacy-button');`,
+        });
+        await runTypeScriptMigrationTest('destructured & awaited w/ alias', {
+          old: `const {MatButton: Button} = await import('@angular/material/button');`,
+          new: `const {MatLegacyButton: Button} = await import('@angular/material/legacy-button');`,
+        });
+        await runTypeScriptMigrationTest('promise', {
+          old: `const promise = import('@angular/material/button');`,
+          new: `const promise = import('@angular/material/legacy-button');`,
+        });
+        await runTypeScriptMigrationTest('.then', {
+          old: `import('@angular/material/button').then(() => {});`,
+          new: `import('@angular/material/legacy-button').then(() => {});`,
+        });
       });
-      await runTypeScriptMigrationTest('multiple named bindings', {
-        old: `import {MatButton, MatButtonModule} from '@angular/material/button';`,
-        new: `import {MatLegacyButton as MatButton, MatLegacyButtonModule as MatButtonModule} from '@angular/material/legacy-button';`,
-      });
-      await runTypeScriptMigrationTest('multiple named bindings w/ alias', {
-        old: `import {MatButton, MatButtonModule as ButtonModule} from '@angular/material/button';`,
-        new: `import {MatLegacyButton as MatButton, MatLegacyButtonModule as ButtonModule} from '@angular/material/legacy-button';`,
+
+      it('does not update non-legacy imports', async () => {
+        await runTypeScriptMigrationTest('non-legacy component', {
+          old: `import {MatButtonToggleModule} from '@angular/material/button-toggle';`,
+          new: `import {MatButtonToggleModule} from '@angular/material/button-toggle';`,
+        });
+        await runTypeScriptMigrationTest('non-legacy symbol', {
+          old: `import {VERSION} from '@angular/material/core`,
+          new: `import {VERSION} from '@angular/material/legacy-core`,
+        });
       });
     });
 
-    it('updates import expressions', async () => {
-      await runTypeScriptMigrationTest('destructured & awaited', {
-        old: `const {MatButton} = await import('@angular/material/button');`,
-        new: `const {MatLegacyButton: MatButton} = await import('@angular/material/legacy-button');`,
+    describe('material-experimental --> material', () => {
+      it('updates import declarations', async () => {
+        await runTypeScriptMigrationTest('named binding', {
+          old: `import {MatButton} from '@angular/material-experimental/mdc-button';`,
+          new: `import {MatButton} from '@angular/material/button';`,
+        });
+        await runTypeScriptMigrationTest('named binding w/ alias', {
+          old: `import {MatButton as Button} from '@angular/material-experimental/mdc-button';`,
+          new: `import {MatButton as Button} from '@angular/material/button';`,
+        });
+        await runTypeScriptMigrationTest('multiple named bindings', {
+          old: `import {MatButton, MatButtonModule} from '@angular/material-experimental/mdc-button';`,
+          new: `import {MatButton, MatButtonModule} from '@angular/material/button';`,
+        });
+        await runTypeScriptMigrationTest('multiple named bindings w/ alias', {
+          old: `import {MatButton, MatButtonModule as ButtonModule} from '@angular/material-experimental/mdc-button';`,
+          new: `import {MatButton, MatButtonModule as ButtonModule} from '@angular/material/button';`,
+        });
       });
-      await runTypeScriptMigrationTest('destructured & awaited w/ alias', {
-        old: `const {MatButton: Button} = await import('@angular/material/button');`,
-        new: `const {MatLegacyButton: Button} = await import('@angular/material/legacy-button');`,
-      });
-      await runTypeScriptMigrationTest('promise', {
-        old: `const promise = import('@angular/material/button');`,
-        new: `const promise = import('@angular/material/legacy-button');`,
-      });
-      await runTypeScriptMigrationTest('.then', {
-        old: `import('@angular/material/button').then(() => {});`,
-        new: `import('@angular/material/legacy-button').then(() => {});`,
+
+      it('updates import expressions', async () => {
+        await runTypeScriptMigrationTest('destructured & awaited', {
+          old: `const {MatButton} = await import('@angular/material-experimental/mdc-button');`,
+          new: `const {MatButton} = await import('@angular/material/button');`,
+        });
+        await runTypeScriptMigrationTest('destructured & awaited w/ alias', {
+          old: `const {MatButton: Button} = await import('@angular/material-experimental/mdc-button');`,
+          new: `const {MatButton: Button} = await import('@angular/material/button');`,
+        });
+        await runTypeScriptMigrationTest('promise', {
+          old: `const promise = import('@angular/material-experimental/mdc-button');`,
+          new: `const promise = import('@angular/material/button');`,
+        });
+        await runTypeScriptMigrationTest('.then', {
+          old: `import('@angular/material-experimental/mdc-button').then(() => {});`,
+          new: `import('@angular/material/button').then(() => {});`,
+        });
       });
     });
   });
@@ -90,8 +170,20 @@ describe('v15 legacy components migration', () => {
     }
 
     it('updates all mixins', async () => {
-      const oldFile: string[] = [`@use '@angular/material' as mat;`];
-      const newFile: string[] = [`@use '@angular/material' as mat;`];
+      const oldFile: string[] = [
+        `@use '@angular/material' as mat;`,
+        `@include mat.all-component-themes($theme);`,
+        `@include mat.all-component-colors($theme);`,
+        `@include mat.all-component-densities($theme);`,
+        `@include mat.all-component-typographies($theme);`,
+      ];
+      const newFile: string[] = [
+        `@use '@angular/material' as mat;`,
+        `@include mat.all-legacy-component-themes($theme);`,
+        `@include mat.all-legacy-component-colors($theme);`,
+        `@include mat.all-legacy-component-densities($theme);`,
+        `@include mat.all-legacy-component-typographies($theme);`,
+      ];
       for (let i = 0; i < COMPONENTS.length; i++) {
         oldFile.push(
           ...[

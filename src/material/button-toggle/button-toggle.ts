@@ -155,13 +155,7 @@ export class MatButtonToggleGroup implements ControlValueAccessor, OnInit, After
   }
   set name(value: string) {
     this._name = value;
-
-    if (this._buttonToggles) {
-      this._buttonToggles.forEach(toggle => {
-        toggle.name = this._name;
-        toggle._markForCheck();
-      });
-    }
+    this._markButtonsForCheck();
   }
   private _name = `mat-button-toggle-group-${uniqueIdCounter++}`;
 
@@ -210,6 +204,7 @@ export class MatButtonToggleGroup implements ControlValueAccessor, OnInit, After
   }
   set multiple(value: BooleanInput) {
     this._multiple = coerceBooleanProperty(value);
+    this._markButtonsForCheck();
   }
 
   /** Whether multiple button toggle group is disabled. */
@@ -219,10 +214,7 @@ export class MatButtonToggleGroup implements ControlValueAccessor, OnInit, After
   }
   set disabled(value: BooleanInput) {
     this._disabled = coerceBooleanProperty(value);
-
-    if (this._buttonToggles) {
-      this._buttonToggles.forEach(toggle => toggle._markForCheck());
-    }
+    this._markButtonsForCheck();
   }
 
   /** Event emitted when the group's value changes. */
@@ -272,10 +264,8 @@ export class MatButtonToggleGroup implements ControlValueAccessor, OnInit, After
   }
 
   /** Dispatch change event with current selection and group value. */
-  _emitChangeEvent(): void {
-    const selected = this.selected;
-    const source = Array.isArray(selected) ? selected[selected.length - 1] : selected;
-    const event = new MatButtonToggleChange(source!, this.value);
+  _emitChangeEvent(toggle: MatButtonToggle): void {
+    const event = new MatButtonToggleChange(toggle, this.value);
     this._controlValueAccessorChangeFn(event.value);
     this.change.emit(event);
   }
@@ -313,9 +303,9 @@ export class MatButtonToggleGroup implements ControlValueAccessor, OnInit, After
     // the side-effect is that we may end up updating the model value out of sequence in others
     // The `deferEvents` flag allows us to decide whether to do it on a case-by-case basis.
     if (deferEvents) {
-      Promise.resolve().then(() => this._updateModelValue(isUserInput));
+      Promise.resolve().then(() => this._updateModelValue(toggle, isUserInput));
     } else {
-      this._updateModelValue(isUserInput);
+      this._updateModelValue(toggle, isUserInput);
     }
   }
 
@@ -377,15 +367,20 @@ export class MatButtonToggleGroup implements ControlValueAccessor, OnInit, After
   }
 
   /** Syncs up the group's value with the model and emits the change event. */
-  private _updateModelValue(isUserInput: boolean) {
+  private _updateModelValue(toggle: MatButtonToggle, isUserInput: boolean) {
     // Only emit the change event for user input.
     if (isUserInput) {
-      this._emitChangeEvent();
+      this._emitChangeEvent(toggle);
     }
 
     // Note: we emit this one no matter whether it was a user interaction, because
     // it is used by Angular to sync up the two-way data binding.
     this.valueChange.emit(this.value);
+  }
+
+  /** Marks all of the child button toggles to be checked. */
+  private _markButtonsForCheck() {
+    this._buttonToggles?.forEach(toggle => toggle._markForCheck());
   }
 }
 
@@ -420,7 +415,6 @@ export class MatButtonToggle
   extends _MatButtonToggleBase
   implements OnInit, AfterViewInit, CanDisableRipple, OnDestroy
 {
-  private _isSingleSelector = false;
   private _checked = false;
 
   /**
@@ -521,12 +515,7 @@ export class MatButtonToggle
 
   ngOnInit() {
     const group = this.buttonToggleGroup;
-    this._isSingleSelector = group && !group.multiple;
     this.id = this.id || `mat-button-toggle-${uniqueIdCounter++}`;
-
-    if (this._isSingleSelector) {
-      this.name = group.name;
-    }
 
     if (group) {
       if (group._isPrechecked(this)) {
@@ -564,7 +553,7 @@ export class MatButtonToggle
 
   /** Checks the button toggle due to an interaction with the underlying native button. */
   _onButtonClick() {
-    const newChecked = this._isSingleSelector ? true : !this._checked;
+    const newChecked = this._isSingleSelector() ? true : !this._checked;
 
     if (newChecked !== this._checked) {
       this._checked = newChecked;
@@ -586,5 +575,18 @@ export class MatButtonToggle
     // When the group value changes, the button will not be notified.
     // Use `markForCheck` to explicit update button toggle's status.
     this._changeDetectorRef.markForCheck();
+  }
+
+  /** Gets the name that should be assigned to the inner DOM node. */
+  _getButtonName(): string | null {
+    if (this._isSingleSelector()) {
+      return this.buttonToggleGroup.name;
+    }
+    return this.name || null;
+  }
+
+  /** Whether the toggle is in single selection mode. */
+  private _isSingleSelector(): boolean {
+    return this.buttonToggleGroup && !this.buttonToggleGroup.multiple;
   }
 }

@@ -17,7 +17,7 @@ describe('button runtime code', () => {
 
   async function runMigrationTest(oldFileContent: string, newFileContent: string) {
     cliAppTree.overwrite(APP_MODULE_FILE, oldFileContent);
-    const tree = await migrateComponents(['button'], runner, cliAppTree);
+    const tree = await migrateComponents(['button', 'card'], runner, cliAppTree);
     expect(tree.readContent(APP_MODULE_FILE)).toBe(newFileContent);
   }
 
@@ -104,6 +104,125 @@ describe('button runtime code', () => {
 
         @NgModule({imports: [MatButtonModule]})
         export class AppModule {}
+      `,
+      );
+    });
+
+    it('should migrate styles for a component', async () => {
+      await runMigrationTest(
+        `
+        @Component({
+          selector: 'button-example',
+          template: '<button mat-button>Learn More</button>',
+          styles: ['.mat-button { background: lavender; }'],
+        })
+        class ButtonExample {}
+      `,
+        `
+        @Component({
+          selector: 'button-example',
+          template: '<button mat-button>Learn More</button>',
+          styles: ['.mat-mdc-button { background: lavender; }'],
+        })
+        class ButtonExample {}
+      `,
+      );
+    });
+
+    it('should migrate multiline styles for a component', async () => {
+      // Note: The spaces in the last style are to perserve indentation on the
+      // new line between the comment and rule
+      await runMigrationTest(
+        `
+        @Component({
+          selector: "button-example",
+          template: "<button mat-button>Learn More</button>",
+          styles: [
+            ".mat-button { padding: 12px; }",
+            "::ng-deep .mat-button-wrapper{ color: darkblue; }"
+          ],
+        })
+        class ButtonExample {}
+      `,
+        `
+        @Component({
+          selector: "button-example",
+          template: "<button mat-button>Learn More</button>",
+          styles: [
+            ".mat-mdc-button { padding: 12px; }",
+            \`
+            /* TODO: The following rule targets internal classes of button that may no longer apply for the MDC version. */
+            \n            ::ng-deep .mat-button-wrapper{ color: darkblue; }\`
+          ],
+        })
+        class ButtonExample {}
+      `,
+      );
+    });
+
+    it('should migrate template for a component', async () => {
+      await runMigrationTest(
+        `
+        @Component({
+          selector: 'card-example',
+          template: '<mat-card>Learn More</mat-card>',
+        })
+        class CardExample {}
+      `,
+        `
+        @Component({
+          selector: 'card-example',
+          template: '<mat-card appearance="outlined">Learn More</mat-card>',
+        })
+        class CardExample {}
+      `,
+      );
+    });
+
+    it('should migrate multiline template for a component', async () => {
+      // Note: The spaces in the last style are to perserve indentation on the
+      // new line between the comment and rule
+      await runMigrationTest(
+        `
+        @Component({
+          selector: 'card-example',
+          template: \`<mat-card>
+            Learn More
+          </mat-card>
+          \`,
+        })
+        class CardExample {}
+      `,
+        `
+        @Component({
+          selector: 'card-example',
+          template: \`<mat-card appearance="outlined">
+            Learn More
+          </mat-card>
+          \`,
+        })
+        class CardExample {}
+      `,
+      );
+    });
+
+    it('should migrate template and styles for a component', async () => {
+      await runMigrationTest(
+        `
+        @Component({
+          selector: 'card-example',
+          template: '<mat-card>Learn More</mat-card>',
+          styles: ['.mat-card { padding-right: 4px; }'],
+        })
+        class CardExample {}
+      `,
+        `
+        @Component({
+          selector: 'card-example',
+          template: '<mat-card appearance="outlined">Learn More</mat-card>',
+          styles: ['.mat-mdc-card { padding-right: 4px; }'],
+        })
+        class CardExample {}
       `,
       );
     });

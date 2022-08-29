@@ -47,6 +47,7 @@ export class MatButtonToggle extends _MatButtonToggleBase implements OnInit, Aft
     get disabled(): boolean;
     set disabled(value: BooleanInput);
     focus(options?: FocusOptions): void;
+    _getButtonName(): string | null;
     id: string;
     _markForCheck(): void;
     name: string;
@@ -91,7 +92,7 @@ export class MatButtonToggleGroup implements ControlValueAccessor, OnInit, After
     _controlValueAccessorChangeFn: (value: any) => void;
     get disabled(): boolean;
     set disabled(value: BooleanInput);
-    _emitChangeEvent(): void;
+    _emitChangeEvent(toggle: MatButtonToggle): void;
     _isPrechecked(toggle: MatButtonToggle): boolean;
     _isSelected(toggle: MatButtonToggle): boolean;
     get multiple(): boolean;
