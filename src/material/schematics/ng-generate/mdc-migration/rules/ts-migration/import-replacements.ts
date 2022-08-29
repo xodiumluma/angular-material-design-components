@@ -60,8 +60,8 @@ export const IMPORT_REPLACEMENTS: {[component: string]: {old: string; new: strin
     new: '@angular/material-experimental/mdc-progress-bar',
   },
   'progress-spinner': {
-    old: '@angular/material/progress-spinner',
-    new: '@angular/material-experimental/mdc-progress-spinner',
+    old: '@angular/material/legacy-progress-spinner',
+    new: '@angular/material/progress-spinner',
   },
   'radio': {
     old: '@angular/material/radio',
@@ -80,20 +80,20 @@ export const IMPORT_REPLACEMENTS: {[component: string]: {old: string; new: strin
     new: '@angular/material-experimental/mdc-slider',
   },
   'snack-bar': {
-    old: '@angular/material/snack-bar',
-    new: '@angular/material-experimental/mdc-snack-bar',
+    old: '@angular/material/legacy-snack-bar',
+    new: '@angular/material/snack-bar',
   },
   'table': {
-    old: '@angular/material/table',
-    new: '@angular/material-experimental/mdc-table',
+    old: '@angular/material/legacy-table',
+    new: '@angular/material/table',
   },
   'tabs': {
-    old: '@angular/material/tabs',
-    new: '@angular/material-experimental/mdc-tabs',
+    old: '@angular/material/legacy-tabs',
+    new: '@angular/material/tabs',
   },
   'paginator': {
-    old: '@angular/material/paginator',
-    new: '@angular/material-experimental/mdc-paginator',
+    old: '@angular/material/legacy-paginator',
+    new: '@angular/material/paginator',
   },
   'tooltip': {
     old: '@angular/material/tooltip',

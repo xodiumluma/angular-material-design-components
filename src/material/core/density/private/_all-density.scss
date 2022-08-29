@@ -1,5 +1,7 @@
 @use '../../theming/theming';
 @use '../../../button/button-theme';
+@use '../../../button/icon-button-theme';
+@use '../../../button/fab-theme';
 @use '../../../expansion/expansion-theme';
 @use '../../../stepper/stepper-theme';
 @use '../../../toolbar/toolbar-theme';
@@ -9,12 +11,12 @@
 @use '../../../button-toggle/button-toggle-theme';
 @use '../../../card/card-theme';
 @use '../../../progress-bar/progress-bar-theme';
+@use '../../../progress-spinner/progress-spinner-theme';
 @use '../../../tooltip/tooltip-theme';
 @use '../../../input/input-theme';
 @use '../../../autocomplete/autocomplete-theme';
 @use '../../../checkbox/checkbox-theme';
-@use '../../../core/option/option-theme';
-@use '../../../core/option/optgroup-theme';
+@use '../../../core/core-theme';
 @use '../../../select/select-theme';
 @use '../../../dialog/dialog-theme';
 @use '../../../chips/chips-theme';
@@ -23,14 +25,15 @@
 @use '../../../slider/slider-theme';
 @use '../../../menu/menu-theme';
 @use '../../../list/list-theme';
+@use '../../../tabs/tabs-theme';
+@use '../../../snack-bar/snack-bar-theme';
+@use '../../../table/table-theme';
 
 @mixin private-all-unmigrated-component-densities($config) {
-  @include button-theme.density($config);
   @include expansion-theme.density($config);
   @include stepper-theme.density($config);
   @include toolbar-theme.density($config);
   @include tree-theme.density($config);
-  @include paginator-theme.density($config);
   @include button-toggle-theme.density($config);
 }
 
@@ -53,10 +56,10 @@
   @include form-field-theme.density($config);
   @include card-theme.density($config);
   @include progress-bar-theme.density($config);
+  @include progress-spinner-theme.density($config);
   @include tooltip-theme.density($config);
   @include input-theme.density($config);
-  @include option-theme.density($config);
-  @include optgroup-theme.density($config);
+  @include core-theme.density($config);
   @include select-theme.density($config);
   @include checkbox-theme.density($config);
   @include autocomplete-theme.density($config);
@@ -67,6 +70,13 @@
   @include slider-theme.density($config);
   @include menu-theme.density($config);
   @include list-theme.density($config);
+  @include paginator-theme.density($config);
+  @include tabs-theme.density($config);
+  @include snack-bar-theme.density($config);
+  @include button-theme.density($config);
+  @include icon-button-theme.density($config);
+  @include fab-theme.density($config);
+  @include table-theme.density($config);
   @include private-all-unmigrated-component-densities($config);
 }
 
