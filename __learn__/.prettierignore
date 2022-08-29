@@ -1,0 +1,13 @@
+# generated infrastucture files
+.yarn/releases/*.cjs
+
+# these cannot be formatted - they are schematic ng-generate template files
+src/material/schematics/ng-generate/*/files/**/*
+src/cdk/schematics/ng-generate/*/files/**/*
+
+# expected output tests could be broken if the schematic ng-update test cases are formatted
+# we shouldn't format generated code
+src/cdk/schematics/ng-update/test-cases/**/*_input.ts
+src/cdk/schematics/ng-update/test-cases/**/*_expected_output.ts
+src/material/schematics/ng-update/test-cases/**/*_input.ts
+src/material/schematics/ng-update/test-cases/**/*_expected_output.ts
