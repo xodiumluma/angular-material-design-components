@@ -4,29 +4,29 @@
 
 ```ts
 
-import { getMatInputUnsupportedTypeError } from '@angular/material/input';
+import { getMatInputUnsupportedTypeError as getMatLegacyInputUnsupportedTypeError } from '@angular/material/input';
 import * as i0 from '@angular/core';
 import * as i2 from '@angular/cdk/text-field';
 import * as i3 from '@angular/material/legacy-form-field';
 import * as i4 from '@angular/material/core';
-import { MAT_INPUT_VALUE_ACCESSOR } from '@angular/material/input';
+import { MAT_INPUT_VALUE_ACCESSOR as MAT_LEGACY_INPUT_VALUE_ACCESSOR } from '@angular/material/input';
 import { MatInput } from '@angular/material/input';
 
-export { getMatInputUnsupportedTypeError }
+export { getMatLegacyInputUnsupportedTypeError }
 
-export { MAT_INPUT_VALUE_ACCESSOR }
+export { MAT_LEGACY_INPUT_VALUE_ACCESSOR }
 
-// @public
+// @public @deprecated
 export class MatLegacyInput extends MatInput {
     // (undocumented)
     protected _getPlaceholder(): string | null;
     // (undocumented)
-    static ɵdir: i0.ɵɵDirectiveDeclaration<MatLegacyInput, "input[matInput], textarea[matInput], select[matNativeControl],      input[matNativeControl], textarea[matNativeControl]", ["matInput"], {}, {}, never, never, false>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<MatLegacyInput, "input[matInput], textarea[matInput], select[matNativeControl],      input[matNativeControl], textarea[matNativeControl]", ["matInput"], {}, {}, never, never, false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatLegacyInput, never>;
 }
 
-// @public (undocumented)
+// @public @deprecated (undocumented)
 export class MatLegacyInputModule {
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatLegacyInputModule, never>;

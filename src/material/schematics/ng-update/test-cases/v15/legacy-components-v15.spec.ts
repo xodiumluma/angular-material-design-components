@@ -88,6 +88,10 @@ describe('v15 legacy components migration', () => {
           old: `import {ProgressBarMode as MatProgressBarMode} from '@angular/material/progress-bar';`,
           new: `import {LegacyProgressBarMode as MatProgressBarMode} from '@angular/material/legacy-progress-bar';`,
         });
+        await runTypeScriptMigrationTest('test code', {
+          old: `import {MatButtonHarness, ButtonHarnessFilters} from '@angular/material/button/testing';`,
+          new: `import {MatLegacyButtonHarness as MatButtonHarness, LegacyButtonHarnessFilters as ButtonHarnessFilters} from '@angular/material/legacy-button/testing';`,
+        });
       });
 
       it('updates import expressions', async () => {
@@ -114,9 +118,30 @@ describe('v15 legacy components migration', () => {
           old: `import {MatButtonToggleModule} from '@angular/material/button-toggle';`,
           new: `import {MatButtonToggleModule} from '@angular/material/button-toggle';`,
         });
-        await runTypeScriptMigrationTest('non-legacy symbol', {
-          old: `import {VERSION} from '@angular/material/core`,
-          new: `import {VERSION} from '@angular/material/legacy-core`,
+      });
+
+      it('splits @angular/material/core imports', async () => {
+        await runMultilineTypeScriptMigrationTest('core imports', {
+          old: [
+            `import {VERSION, MatOption} from '@angular/material/core';`,
+            `import {CanDisable} from '@angular/material/core';`,
+            `import {MatOptionHarness} from '@angular/material/core/testing';`,
+            `import {VERSION as a, MatOption as b} from '@angular/material/core';`,
+            `const {mixinDisable, MatOptgroup} = await import('@angular/material/core');`,
+            `const {mixinDisable: c, MatOptgroup: d} = await import('@angular/material/core');`,
+          ],
+          new: [
+            `import {VERSION} from '@angular/material/core';`,
+            `import {MatLegacyOption as MatOption} from '@angular/material/legacy-core';`,
+            `import {CanDisable} from '@angular/material/core';`,
+            `import {MatLegacyOptionHarness as MatOptionHarness} from '@angular/material/legacy-core/testing';`,
+            `import {VERSION as a} from '@angular/material/core';`,
+            `import {MatLegacyOption as b} from '@angular/material/legacy-core';`,
+            `const {mixinDisable} = await import('@angular/material/core');`,
+            `const {MatLegacyOptgroup: MatOptgroup} = await import('@angular/material/legacy-core');`,
+            `const {mixinDisable: c} = await import('@angular/material/core');`,
+            `const {MatLegacyOptgroup: d} = await import('@angular/material/legacy-core');`,
+          ],
         });
       });
     });
@@ -138,6 +163,10 @@ describe('v15 legacy components migration', () => {
         await runTypeScriptMigrationTest('multiple named bindings w/ alias', {
           old: `import {MatButton, MatButtonModule as ButtonModule} from '@angular/material-experimental/mdc-button';`,
           new: `import {MatButton, MatButtonModule as ButtonModule} from '@angular/material/button';`,
+        });
+        await runTypeScriptMigrationTest('test code', {
+          old: `import {MatButtonHarness, ButtonHarnessFilters} from '@angular/material-experimental/mdc-button/testing';`,
+          new: `import {MatButtonHarness, ButtonHarnessFilters} from '@angular/material/button/testing';`,
         });
       });
 
@@ -174,14 +203,14 @@ describe('v15 legacy components migration', () => {
         `@use '@angular/material' as mat;`,
         `@include mat.all-component-themes($theme);`,
         `@include mat.all-component-colors($theme);`,
-        `@include mat.all-component-densities($theme);`,
+        `@include mat.private-all-component-densities($theme);`,
         `@include mat.all-component-typographies($theme);`,
       ];
       const newFile: string[] = [
         `@use '@angular/material' as mat;`,
         `@include mat.all-legacy-component-themes($theme);`,
         `@include mat.all-legacy-component-colors($theme);`,
-        `@include mat.all-legacy-component-densities($theme);`,
+        `@include mat.private-all-legacy-component-densities($theme);`,
         `@include mat.all-legacy-component-typographies($theme);`,
       ];
       for (let i = 0; i < COMPONENTS.length; i++) {
@@ -233,6 +262,21 @@ describe('v15 legacy components migration', () => {
       await runSassMigrationTest('button-toggle', {
         old: [`@use '@angular/material' as mat;`, `@include mat.button-toggle-theme($theme);`],
         new: [`@use '@angular/material' as mat;`, `@include mat.button-toggle-theme($theme);`],
+      });
+    });
+
+    it('updates sass functions', async () => {
+      await runSassMigrationTest('variable assignment', {
+        old: [
+          `@use '@angular/material' as mat;`,
+          `$typography: mat.define-typography-config();`,
+          `@include mat.all-component-typographies(mat.define-typography-config());`,
+        ],
+        new: [
+          `@use '@angular/material' as mat;`,
+          `$typography: mat.define-legacy-typography-config();`,
+          `@include mat.all-legacy-component-typographies(mat.define-legacy-typography-config());`,
+        ],
       });
     });
   });

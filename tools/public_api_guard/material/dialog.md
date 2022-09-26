@@ -46,6 +46,14 @@ export type AutoFocusTarget = 'dialog' | 'first-tabbable' | 'first-heading';
 export function _closeDialogVia<R>(ref: MatDialogRef<R>, interactionType: FocusOrigin, result?: R): void;
 
 // @public
+export const _defaultParams: {
+    params: {
+        enterAnimationDuration: string;
+        exitAnimationDuration: string;
+    };
+};
+
+// @public
 export interface DialogPosition {
     bottom?: string;
     left?: string;
@@ -94,7 +102,7 @@ export class MatDialog extends _MatDialogBase<MatDialogContainer> {
 export class MatDialogActions {
     align?: 'start' | 'center' | 'end';
     // (undocumented)
-    static ɵdir: i0.ɵɵDirectiveDeclaration<MatDialogActions, "[mat-dialog-actions], mat-dialog-actions, [matDialogActions]", never, { "align": "align"; }, {}, never, never, false>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<MatDialogActions, "[mat-dialog-actions], mat-dialog-actions, [matDialogActions]", never, { "align": "align"; }, {}, never, never, false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatDialogActions, never>;
 }
@@ -112,6 +120,8 @@ export abstract class _MatDialogBase<C extends _MatDialogContainerBase> implemen
     readonly afterAllClosed: Observable<void>;
     get afterOpened(): Subject<MatDialogRef<any>>;
     closeAll(): void;
+    // (undocumented)
+    protected dialogConfigClass: typeof MatDialogConfig;
     getDialogById(id: string): MatDialogRef<any> | undefined;
     // (undocumented)
     protected _idPrefix: string;
@@ -145,7 +155,7 @@ export class MatDialogClose implements OnInit, OnChanges {
     _onButtonClick(event: MouseEvent): void;
     type: 'submit' | 'button' | 'reset';
     // (undocumented)
-    static ɵdir: i0.ɵɵDirectiveDeclaration<MatDialogClose, "[mat-dialog-close], [matDialogClose]", ["matDialogClose"], { "ariaLabel": "aria-label"; "type": "type"; "dialogResult": "mat-dialog-close"; "_matDialogClose": "matDialogClose"; }, {}, never, never, false>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<MatDialogClose, "[mat-dialog-close], [matDialogClose]", ["matDialogClose"], { "ariaLabel": "aria-label"; "type": "type"; "dialogResult": "mat-dialog-close"; "_matDialogClose": "matDialogClose"; }, {}, never, never, false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatDialogClose, [{ optional: true; }, null, null]>;
 }
@@ -155,6 +165,7 @@ export class MatDialogConfig<D = any> {
     ariaDescribedBy?: string | null;
     ariaLabel?: string | null;
     ariaLabelledBy?: string | null;
+    ariaModal?: boolean;
     autoFocus?: AutoFocusTarget | string | boolean;
     backdropClass?: string | string[];
     closeOnNavigation?: boolean;
@@ -163,8 +174,8 @@ export class MatDialogConfig<D = any> {
     delayFocusTrap?: boolean;
     direction?: Direction;
     disableClose?: boolean;
-    enterAnimationDuration?: string;
-    exitAnimationDuration?: string;
+    enterAnimationDuration?: string | number;
+    exitAnimationDuration?: string | number;
     hasBackdrop?: boolean;
     height?: string;
     id?: string;
@@ -192,7 +203,7 @@ export class MatDialogContainer extends _MatDialogContainerBase implements OnDes
     ngOnDestroy(): void;
     _startExitAnimation(): void;
     // (undocumented)
-    static ɵcmp: i0.ɵɵComponentDeclaration<MatDialogContainer, "mat-dialog-container", never, {}, {}, never, never, false>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<MatDialogContainer, "mat-dialog-container", never, {}, {}, never, never, false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatDialogContainer, [null, null, { optional: true; }, null, null, null, null, { optional: true; }, null]>;
 }
@@ -206,7 +217,7 @@ export abstract class _MatDialogContainerBase extends CdkDialogContainer<MatDial
     protected _openAnimationDone(totalTime: number): void;
     abstract _startExitAnimation(): void;
     // (undocumented)
-    static ɵcmp: i0.ɵɵComponentDeclaration<_MatDialogContainerBase, "ng-component", never, {}, {}, never, never, false>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<_MatDialogContainerBase, "ng-component", never, {}, {}, never, never, false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<_MatDialogContainerBase, [null, null, { optional: true; }, null, null, null, null, null]>;
 }
@@ -214,7 +225,7 @@ export abstract class _MatDialogContainerBase extends CdkDialogContainer<MatDial
 // @public
 export class MatDialogContent {
     // (undocumented)
-    static ɵdir: i0.ɵɵDirectiveDeclaration<MatDialogContent, "[mat-dialog-content], mat-dialog-content, [matDialogContent]", never, {}, {}, never, never, false>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<MatDialogContent, "[mat-dialog-content], mat-dialog-content, [matDialogContent]", never, {}, {}, never, never, false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatDialogContent, never>;
 }
@@ -268,7 +279,7 @@ export class MatDialogTitle implements OnInit {
     // (undocumented)
     ngOnInit(): void;
     // (undocumented)
-    static ɵdir: i0.ɵɵDirectiveDeclaration<MatDialogTitle, "[mat-dialog-title], [matDialogTitle]", ["matDialogTitle"], { "id": "id"; }, {}, never, never, false>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<MatDialogTitle, "[mat-dialog-title], [matDialogTitle]", ["matDialogTitle"], { "id": "id"; }, {}, never, never, false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatDialogTitle, [{ optional: true; }, null, null]>;
 }

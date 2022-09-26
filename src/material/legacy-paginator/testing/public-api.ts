@@ -6,8 +6,17 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-export * from './paginator-harness';
+export {MatLegacyPaginatorHarness} from './paginator-harness';
 export {
-  _MatPaginatorHarnessBase,
-  PaginatorHarnessFilters,
+  /**
+   * @deprecated Use `_MatPaginatorHarnessBase` from `@angular/material/paginator/testing` instead. See https://material.angular.io/guide/mdc-migration for information about migrating.
+   * @breaking-change 17.0.0
+   */
+  _MatPaginatorHarnessBase as _MatLegacyPaginatorHarnessBase,
+
+  /**
+   * @deprecated Use `PaginatorHarnessFilters` from `@angular/material/paginator/testing` instead. See https://material.angular.io/guide/mdc-migration for information about migrating.
+   * @breaking-change 17.0.0
+   */
+  PaginatorHarnessFilters as LegacyPaginatorHarnessFilters,
 } from '@angular/material/paginator/testing';

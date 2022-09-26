@@ -10,20 +10,24 @@ import {HarnessPredicate} from '@angular/cdk/testing';
 import {
   MatLegacyOptgroupHarness,
   MatLegacyOptionHarness,
-  OptgroupHarnessFilters,
-  OptionHarnessFilters,
+  LegacyOptgroupHarnessFilters,
+  LegacyOptionHarnessFilters,
 } from '@angular/material/legacy-core/testing';
 import {_MatAutocompleteHarnessBase} from '@angular/material/autocomplete/testing';
-import {AutocompleteHarnessFilters} from './autocomplete-harness-filters';
+import {LegacyAutocompleteHarnessFilters} from './autocomplete-harness-filters';
 
-/** Harness for interacting with a standard mat-autocomplete in tests. */
+/**
+ * Harness for interacting with a standard mat-autocomplete in tests.
+ * @deprecated Use `MatAutocompleteHarness` from `@angular/material/autocomplete/testing` instead. See https://material.angular.io/guide/mdc-migration for information about migrating.
+ * @breaking-change 17.0.0
+ */
 export class MatLegacyAutocompleteHarness extends _MatAutocompleteHarnessBase<
   typeof MatLegacyOptionHarness,
   MatLegacyOptionHarness,
-  OptionHarnessFilters,
+  LegacyOptionHarnessFilters,
   typeof MatLegacyOptgroupHarness,
   MatLegacyOptgroupHarness,
-  OptgroupHarnessFilters
+  LegacyOptgroupHarnessFilters
 > {
   protected _prefix = 'mat';
   protected _optionClass = MatLegacyOptionHarness;
@@ -39,7 +43,7 @@ export class MatLegacyAutocompleteHarness extends _MatAutocompleteHarnessBase<
    * @return a `HarnessPredicate` configured with the given options.
    */
   static with(
-    options: AutocompleteHarnessFilters = {},
+    options: LegacyAutocompleteHarnessFilters = {},
   ): HarnessPredicate<MatLegacyAutocompleteHarness> {
     return new HarnessPredicate(MatLegacyAutocompleteHarness, options).addOption(
       'value',

@@ -8,30 +8,70 @@
 
 import {BaseHarnessFilters} from '@angular/cdk/testing';
 
-export interface ListHarnessFilters extends BaseHarnessFilters {}
+/**
+ * @deprecated Use `ListHarnessFilters` from `@angular/material/list/testing` instead. See https://material.angular.io/guide/mdc-migration for information about migrating.
+ * @breaking-change 17.0.0
+ */
+export interface LegacyListHarnessFilters extends BaseHarnessFilters {}
 
-export interface ActionListHarnessFilters extends BaseHarnessFilters {}
+/**
+ * @deprecated Use `ActionListHarnessFilters` from `@angular/material/list/testing` instead. See https://material.angular.io/guide/mdc-migration for information about migrating.
+ * @breaking-change 17.0.0
+ */
+export interface LegacyActionListHarnessFilters extends BaseHarnessFilters {}
 
-export interface NavListHarnessFilters extends BaseHarnessFilters {}
+/**
+ * @deprecated Use `NavListHarnessFilters` from `@angular/material/list/testing` instead. See https://material.angular.io/guide/mdc-migration for information about migrating.
+ * @breaking-change 17.0.0
+ */
+export interface LegacyNavListHarnessFilters extends BaseHarnessFilters {}
 
-export interface SelectionListHarnessFilters extends BaseHarnessFilters {}
+/**
+ * @deprecated Use `SelectionListHarnessFilters` from `@angular/material/list/testing` instead. See https://material.angular.io/guide/mdc-migration for information about migrating.
+ * @breaking-change 17.0.0
+ */
+export interface LegacySelectionListHarnessFilters extends BaseHarnessFilters {}
 
-export interface BaseListItemHarnessFilters extends BaseHarnessFilters {
+/**
+ * @deprecated Use `BaseListItemHarnessFilters` from `@angular/material/list/testing` instead. See https://material.angular.io/guide/mdc-migration for information about migrating.
+ * @breaking-change 17.0.0
+ */
+export interface LegacyBaseListItemHarnessFilters extends BaseHarnessFilters {
   text?: string | RegExp;
 }
 
-export interface ListItemHarnessFilters extends BaseListItemHarnessFilters {}
+/**
+ * @deprecated Use `ListItemHarnessFilters` from `@angular/material/list/testing` instead. See https://material.angular.io/guide/mdc-migration for information about migrating.
+ * @breaking-change 17.0.0
+ */
+export interface LegacyListItemHarnessFilters extends LegacyBaseListItemHarnessFilters {}
 
-export interface ActionListItemHarnessFilters extends BaseListItemHarnessFilters {}
+/**
+ * @deprecated Use `ActionListItemHarnessFilters` from `@angular/material/list/testing` instead. See https://material.angular.io/guide/mdc-migration for information about migrating.
+ * @breaking-change 17.0.0
+ */
+export interface LegacyActionListItemHarnessFilters extends LegacyBaseListItemHarnessFilters {}
 
-export interface NavListItemHarnessFilters extends BaseListItemHarnessFilters {
+/**
+ * @deprecated Use `NavListItemHarnessFilters` from `@angular/material/list/testing` instead. See https://material.angular.io/guide/mdc-migration for information about migrating.
+ * @breaking-change 17.0.0
+ */
+export interface LegacyNavListItemHarnessFilters extends LegacyBaseListItemHarnessFilters {
   href?: string | RegExp | null;
 }
 
-export interface ListOptionHarnessFilters extends BaseListItemHarnessFilters {
+/**
+ * @deprecated Use `ListOptionHarnessFilters` from `@angular/material/list/testing` instead. See https://material.angular.io/guide/mdc-migration for information about migrating.
+ * @breaking-change 17.0.0
+ */
+export interface LegacyListOptionHarnessFilters extends LegacyBaseListItemHarnessFilters {
   selected?: boolean;
 }
 
-export interface SubheaderHarnessFilters extends BaseHarnessFilters {
+/**
+ * @deprecated Use `SubheaderHarnessFilters` from `@angular/material/list/testing` instead. See https://material.angular.io/guide/mdc-migration for information about migrating.
+ * @breaking-change 17.0.0
+ */
+export interface LegacySubheaderHarnessFilters extends BaseHarnessFilters {
   text?: string | RegExp;
 }

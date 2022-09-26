@@ -21,16 +21,15 @@ import {
   ViewEncapsulation,
 } from '@angular/core';
 import {defaultParams} from './dialog-animations';
-import {
-  _MatDialogContainerBase,
-  MatDialogConfig,
-  matDialogAnimations,
-} from '@angular/material/dialog';
+import {MatLegacyDialogConfig} from './dialog-config';
+import {_MatDialogContainerBase, matDialogAnimations} from '@angular/material/dialog';
 
 /**
  * Internal component that wraps user-provided dialog content.
  * Animation is based on https://material.io/guidelines/motion/choreography.html.
  * @docs-private
+ * @deprecated Use `MatDialogContainer` from `@angular/material/dialog` instead. See https://material.angular.io/guide/mdc-migration for information about migrating.
+ * @breaking-change 17.0.0
  */
 @Component({
   selector: 'mat-dialog-container',
@@ -90,7 +89,7 @@ export class MatLegacyDialogContainer extends _MatDialogContainerBase {
     elementRef: ElementRef,
     focusTrapFactory: FocusTrapFactory,
     @Optional() @Inject(DOCUMENT) document: any,
-    dialogConfig: MatDialogConfig,
+    dialogConfig: MatLegacyDialogConfig,
     checker: InteractivityChecker,
     ngZone: NgZone,
     overlayRef: OverlayRef,

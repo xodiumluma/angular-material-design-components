@@ -29,7 +29,11 @@ import {
   MatCheckboxDefaultOptions,
 } from '@angular/material/checkbox';
 
-/** Change event object emitted by a checkbox. */
+/**
+ * Change event object emitted by a checkbox.
+ * @deprecated Use `MatCheckboxChange` from `@angular/material/checkbox` instead. See https://material.angular.io/guide/mdc-migration for information about migrating.
+ * @breaking-change 17.0.0
+ */
 export class MatLegacyCheckboxChange {
   /** The source checkbox of the event. */
   source: MatLegacyCheckbox;
@@ -40,8 +44,10 @@ export class MatLegacyCheckboxChange {
  * Provider Expression that allows mat-checkbox to register as a ControlValueAccessor.
  * This allows it to support [(ngModel)].
  * @docs-private
+ * @deprecated Use `MAT_CHECKBOX_CONTROL_VALUE_ACCESSOR` from `@angular/material/checkbox` instead. See https://material.angular.io/guide/mdc-migration for information about migrating.
+ * @breaking-change 17.0.0
  */
-export const MAT_CHECKBOX_CONTROL_VALUE_ACCESSOR: any = {
+export const MAT_LEGACY_CHECKBOX_CONTROL_VALUE_ACCESSOR: any = {
   provide: NG_VALUE_ACCESSOR,
   useExisting: forwardRef(() => MatLegacyCheckbox),
   multi: true,
@@ -54,6 +60,8 @@ export const MAT_CHECKBOX_CONTROL_VALUE_ACCESSOR: any = {
  * so there is no need to provide them yourself. However, if you want to omit a label and still
  * have the checkbox be accessible, you may supply an [aria-label] input.
  * See: https://material.io/design/components/selection-controls.html
+ * @deprecated Use `MatCheckbox` from `@angular/material/checkbox` instead. See https://material.angular.io/guide/mdc-migration for information about migrating.
+ * @breaking-change 17.0.0
  */
 @Component({
   selector: 'mat-checkbox',
@@ -72,7 +80,7 @@ export const MAT_CHECKBOX_CONTROL_VALUE_ACCESSOR: any = {
     '[class.mat-checkbox-label-before]': 'labelPosition == "before"',
     '[class._mat-animation-noopable]': `_animationMode === 'NoopAnimations'`,
   },
-  providers: [MAT_CHECKBOX_CONTROL_VALUE_ACCESSOR],
+  providers: [MAT_LEGACY_CHECKBOX_CONTROL_VALUE_ACCESSOR],
   inputs: ['disableRipple', 'color', 'tabIndex'],
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,

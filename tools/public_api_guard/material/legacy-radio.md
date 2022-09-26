@@ -9,9 +9,9 @@ import { ElementRef } from '@angular/core';
 import { FocusMonitor } from '@angular/cdk/a11y';
 import * as i0 from '@angular/core';
 import * as i2 from '@angular/material/core';
-import { MAT_RADIO_DEFAULT_OPTIONS } from '@angular/material/radio';
-import { MAT_RADIO_DEFAULT_OPTIONS_FACTORY } from '@angular/material/radio';
-import { MAT_RADIO_GROUP } from '@angular/material/radio';
+import { MAT_RADIO_DEFAULT_OPTIONS as MAT_LEGACY_RADIO_DEFAULT_OPTIONS } from '@angular/material/radio';
+import { MAT_RADIO_DEFAULT_OPTIONS_FACTORY as MAT_LEGACY_RADIO_DEFAULT_OPTIONS_FACTORY } from '@angular/material/radio';
+import { MAT_RADIO_GROUP as MAT_LEGACY_RADIO_GROUP } from '@angular/material/radio';
 import { MatRadioChange as MatLegacyRadioChange } from '@angular/material/radio';
 import { MatRadioDefaultOptions as MatLegacyRadioDefaultOptions } from '@angular/material/radio';
 import { _MatRadioButtonBase } from '@angular/material/radio';
@@ -19,20 +19,20 @@ import { _MatRadioGroupBase } from '@angular/material/radio';
 import { QueryList } from '@angular/core';
 import { UniqueSelectionDispatcher } from '@angular/cdk/collections';
 
-export { MAT_RADIO_DEFAULT_OPTIONS }
+export { MAT_LEGACY_RADIO_DEFAULT_OPTIONS }
 
-export { MAT_RADIO_DEFAULT_OPTIONS_FACTORY }
+export { MAT_LEGACY_RADIO_DEFAULT_OPTIONS_FACTORY }
 
-export { MAT_RADIO_GROUP }
+export { MAT_LEGACY_RADIO_GROUP }
 
-// @public
-export const MAT_RADIO_GROUP_CONTROL_VALUE_ACCESSOR: any;
+// @public @deprecated
+export const MAT_LEGACY_RADIO_GROUP_CONTROL_VALUE_ACCESSOR: any;
 
-// @public
+// @public @deprecated
 export class MatLegacyRadioButton extends _MatRadioButtonBase {
     constructor(radioGroup: MatLegacyRadioGroup, elementRef: ElementRef, changeDetector: ChangeDetectorRef, focusMonitor: FocusMonitor, radioDispatcher: UniqueSelectionDispatcher, animationMode?: string, providerOverride?: MatLegacyRadioDefaultOptions, tabIndex?: string);
     // (undocumented)
-    static ɵcmp: i0.ɵɵComponentDeclaration<MatLegacyRadioButton, "mat-radio-button", ["matRadioButton"], { "disableRipple": "disableRipple"; "tabIndex": "tabIndex"; }, {}, never, ["*"], false>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<MatLegacyRadioButton, "mat-radio-button", ["matRadioButton"], { "disableRipple": "disableRipple"; "tabIndex": "tabIndex"; }, {}, never, ["*"], false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatLegacyRadioButton, [{ optional: true; }, null, null, null, null, { optional: true; }, { optional: true; }, { attribute: "tabindex"; }]>;
 }
@@ -41,17 +41,17 @@ export { MatLegacyRadioChange }
 
 export { MatLegacyRadioDefaultOptions }
 
-// @public
+// @public @deprecated
 export class MatLegacyRadioGroup extends _MatRadioGroupBase<MatLegacyRadioButton> {
     // (undocumented)
     _radios: QueryList<MatLegacyRadioButton>;
     // (undocumented)
-    static ɵdir: i0.ɵɵDirectiveDeclaration<MatLegacyRadioGroup, "mat-radio-group", ["matRadioGroup"], {}, {}, ["_radios"], never, false>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<MatLegacyRadioGroup, "mat-radio-group", ["matRadioGroup"], {}, {}, ["_radios"], never, false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatLegacyRadioGroup, never>;
 }
 
-// @public (undocumented)
+// @public @deprecated (undocumented)
 export class MatLegacyRadioModule {
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatLegacyRadioModule, never>;

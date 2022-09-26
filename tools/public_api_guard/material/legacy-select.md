@@ -13,45 +13,35 @@ import * as i4 from '@angular/material/legacy-core';
 import * as i5 from '@angular/material/core';
 import * as i6 from '@angular/cdk/scrolling';
 import * as i7 from '@angular/material/legacy-form-field';
-import { MAT_SELECT_CONFIG } from '@angular/material/select';
-import { MAT_SELECT_SCROLL_STRATEGY } from '@angular/material/select';
-import { MAT_SELECT_SCROLL_STRATEGY_PROVIDER } from '@angular/material/select';
-import { MAT_SELECT_SCROLL_STRATEGY_PROVIDER_FACTORY } from '@angular/material/select';
-import { MAT_SELECT_TRIGGER } from '@angular/material/select';
+import { MAT_SELECT_CONFIG as MAT_LEGACY_SELECT_CONFIG } from '@angular/material/select';
+import { MAT_SELECT_SCROLL_STRATEGY as MAT_LEGACY_SELECT_SCROLL_STRATEGY } from '@angular/material/select';
+import { MAT_SELECT_SCROLL_STRATEGY_PROVIDER as MAT_LEGACY_SELECT_SCROLL_STRATEGY_PROVIDER } from '@angular/material/select';
+import { MAT_SELECT_SCROLL_STRATEGY_PROVIDER_FACTORY as MAT_LEGACY_SELECT_SCROLL_STRATEGY_PROVIDER_FACTORY } from '@angular/material/select';
+import { MAT_SELECT_TRIGGER as MAT_LEGACY_SELECT_TRIGGER } from '@angular/material/select';
 import { MatLegacyOptgroup } from '@angular/material/legacy-core';
 import { MatLegacyOption } from '@angular/material/legacy-core';
+import { MatSelectConfig as MatLegacySelectConfig } from '@angular/material/select';
 import { _MatSelectBase } from '@angular/material/select';
-import { MatSelectConfig } from '@angular/material/select';
 import { OnInit } from '@angular/core';
 import { QueryList } from '@angular/core';
 
-export { MAT_SELECT_CONFIG }
+export { MAT_LEGACY_SELECT_CONFIG }
 
-export { MAT_SELECT_SCROLL_STRATEGY }
+export { MAT_LEGACY_SELECT_SCROLL_STRATEGY }
 
-export { MAT_SELECT_SCROLL_STRATEGY_PROVIDER }
+export { MAT_LEGACY_SELECT_SCROLL_STRATEGY_PROVIDER }
 
-export { MAT_SELECT_SCROLL_STRATEGY_PROVIDER_FACTORY }
+export { MAT_LEGACY_SELECT_SCROLL_STRATEGY_PROVIDER_FACTORY }
 
-export { MAT_SELECT_TRIGGER }
+export { MAT_LEGACY_SELECT_TRIGGER }
 
-// @public (undocumented)
-export class MatLegacySelectModule {
-    // (undocumented)
-    static ɵfac: i0.ɵɵFactoryDeclaration<MatLegacySelectModule, never>;
-    // (undocumented)
-    static ɵinj: i0.ɵɵInjectorDeclaration<MatLegacySelectModule>;
-    // (undocumented)
-    static ɵmod: i0.ɵɵNgModuleDeclaration<MatLegacySelectModule, [typeof i1.MatLegacySelect, typeof i1.MatLegacySelectTrigger], [typeof i2.CommonModule, typeof i3.OverlayModule, typeof i4.MatLegacyOptionModule, typeof i5.MatCommonModule], [typeof i6.CdkScrollableModule, typeof i7.MatLegacyFormFieldModule, typeof i1.MatLegacySelect, typeof i1.MatLegacySelectTrigger, typeof i4.MatLegacyOptionModule, typeof i5.MatCommonModule]>;
-}
-
-// @public (undocumented)
-export class MatSelect extends _MatSelectBase<MatSelectChange> implements OnInit {
+// @public @deprecated (undocumented)
+export class MatLegacySelect extends _MatSelectBase<MatLegacySelectChange> implements OnInit {
     _calculateOverlayScroll(selectedIndex: number, scrollBuffer: number, maxScroll: number): number;
     // (undocumented)
-    customTrigger: MatSelectTrigger;
+    customTrigger: MatLegacySelectTrigger;
     // (undocumented)
-    protected _getChangeEvent(value: any): MatSelectChange;
+    protected _getChangeEvent(value: any): MatLegacySelectChange;
     // (undocumented)
     protected _getOverlayMinWidth(): number;
     // (undocumented)
@@ -73,52 +63,62 @@ export class MatSelect extends _MatSelectBase<MatSelectChange> implements OnInit
     _transformOrigin: string;
     _triggerFontSize: number;
     // (undocumented)
-    static ɵcmp: i0.ɵɵComponentDeclaration<MatSelect, "mat-select", ["matSelect"], { "disabled": "disabled"; "disableRipple": "disableRipple"; "tabIndex": "tabIndex"; }, {}, ["customTrigger", "options", "optionGroups"], ["mat-select-trigger", "*"], false>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<MatLegacySelect, "mat-select", ["matSelect"], { "disabled": "disabled"; "disableRipple": "disableRipple"; "tabIndex": "tabIndex"; }, {}, ["customTrigger", "options", "optionGroups"], ["mat-select-trigger", "*"], false, never>;
     // (undocumented)
-    static ɵfac: i0.ɵɵFactoryDeclaration<MatSelect, never>;
+    static ɵfac: i0.ɵɵFactoryDeclaration<MatLegacySelect, never>;
 }
 
-// @public
-export const matSelectAnimations: {
+// @public @deprecated
+export const matLegacySelectAnimations: {
     readonly transformPanelWrap: AnimationTriggerMetadata;
     readonly transformPanel: AnimationTriggerMetadata;
 };
 
-// @public
-export class MatSelectChange {
+// @public @deprecated
+export class MatLegacySelectChange {
     constructor(
-    source: MatSelect,
+    source: MatLegacySelect,
     value: any);
-    source: MatSelect;
+    source: MatLegacySelect;
     value: any;
 }
 
-export { MatSelectConfig }
+export { MatLegacySelectConfig }
 
-// @public
-export class MatSelectTrigger {
+// @public @deprecated (undocumented)
+export class MatLegacySelectModule {
     // (undocumented)
-    static ɵdir: i0.ɵɵDirectiveDeclaration<MatSelectTrigger, "mat-select-trigger", never, {}, {}, never, never, false>;
+    static ɵfac: i0.ɵɵFactoryDeclaration<MatLegacySelectModule, never>;
     // (undocumented)
-    static ɵfac: i0.ɵɵFactoryDeclaration<MatSelectTrigger, never>;
+    static ɵinj: i0.ɵɵInjectorDeclaration<MatLegacySelectModule>;
+    // (undocumented)
+    static ɵmod: i0.ɵɵNgModuleDeclaration<MatLegacySelectModule, [typeof i1.MatLegacySelect, typeof i1.MatLegacySelectTrigger], [typeof i2.CommonModule, typeof i3.OverlayModule, typeof i4.MatLegacyOptionModule, typeof i5.MatCommonModule], [typeof i6.CdkScrollableModule, typeof i7.MatLegacyFormFieldModule, typeof i1.MatLegacySelect, typeof i1.MatLegacySelectTrigger, typeof i4.MatLegacyOptionModule, typeof i5.MatCommonModule]>;
 }
 
-// @public
+// @public @deprecated
+export class MatLegacySelectTrigger {
+    // (undocumented)
+    static ɵdir: i0.ɵɵDirectiveDeclaration<MatLegacySelectTrigger, "mat-select-trigger", never, {}, {}, never, never, false, never>;
+    // (undocumented)
+    static ɵfac: i0.ɵɵFactoryDeclaration<MatLegacySelectTrigger, never>;
+}
+
+// @public @deprecated
 const SELECT_ITEM_HEIGHT_EM = 3;
 
-// @public
+// @public @deprecated
 const SELECT_MULTIPLE_PANEL_PADDING_X: number;
 
-// @public
+// @public @deprecated
 const SELECT_PANEL_INDENT_PADDING_X: number;
 
-// @public
+// @public @deprecated
 const SELECT_PANEL_MAX_HEIGHT = 256;
 
-// @public
+// @public @deprecated
 const SELECT_PANEL_PADDING_X = 16;
 
-// @public
+// @public @deprecated
 const SELECT_PANEL_VIEWPORT_PADDING = 8;
 
 // (No @packageDocumentation comment for this package)

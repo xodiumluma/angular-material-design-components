@@ -8,9 +8,13 @@
 
 import {ContentContainerComponentHarness, HarnessPredicate} from '@angular/cdk/testing';
 import {coerceBooleanProperty} from '@angular/cdk/coercion';
-import {LegacyButtonHarnessFilters} from './button-harness-filters';
+import {ButtonHarnessFilters} from '@angular/material/button/testing';
 
-/** Harness for interacting with a standard mat-button in tests. */
+/**
+ * Harness for interacting with a standard mat-button in tests.
+ * @deprecated Use `MatButtonHarness` from `@angular/material/button/testing` instead. See https://material.angular.io/guide/mdc-migration for information about migrating.
+ * @breaking-change 17.0.0
+ */
 export class MatLegacyButtonHarness extends ContentContainerComponentHarness {
   // TODO(jelbourn) use a single class, like `.mat-button-base`
   /** The selector for the host element of a button instance. */
@@ -23,7 +27,7 @@ export class MatLegacyButtonHarness extends ContentContainerComponentHarness {
    * @param options Options for filtering which button instances are considered a match.
    * @return a `HarnessPredicate` configured with the given options.
    */
-  static with(options: LegacyButtonHarnessFilters = {}): HarnessPredicate<MatLegacyButtonHarness> {
+  static with(options: ButtonHarnessFilters = {}): HarnessPredicate<MatLegacyButtonHarness> {
     return new HarnessPredicate(MatLegacyButtonHarness, options).addOption(
       'text',
       options.text,

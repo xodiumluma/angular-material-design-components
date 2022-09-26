@@ -18,18 +18,17 @@ import {
   ViewEncapsulation,
 } from '@angular/core';
 import {
-  _countGroupLabelsBeforeOption,
-  _getOptionScrollPosition,
-  MAT_OPTGROUP,
-  MAT_OPTION_PARENT_COMPONENT,
-  _MatOptionBase,
+  _countGroupLabelsBeforeLegacyOption,
+  _getLegacyOptionScrollPosition,
+  MAT_LEGACY_OPTGROUP,
+  MAT_LEGACY_OPTION_PARENT_COMPONENT,
   MatLegacyOption,
   MatLegacyOptgroup,
 } from '@angular/material/legacy-core';
 import {MAT_SELECT_TRIGGER, _MatSelectBase} from '@angular/material/select';
 import {MatLegacyFormFieldControl} from '@angular/material/legacy-form-field';
 import {take, takeUntil} from 'rxjs/operators';
-import {matSelectAnimations} from './select-animations';
+import {matLegacySelectAnimations} from './select-animations';
 
 /**
  * The following style constants are necessary to save here in order
@@ -37,16 +36,32 @@ import {matSelectAnimations} from './select-animations';
  * the trigger element.
  */
 
-/** The max height of the select's overlay panel. */
+/**
+ * The max height of the select's overlay panel.
+ * @deprecated Use `SELECT_PANEL_MAX_HEIGHT` from `@angular/material/select` instead. See https://material.angular.io/guide/mdc-migration for information about migrating.
+ * @breaking-change 17.0.0
+ */
 export const SELECT_PANEL_MAX_HEIGHT = 256;
 
-/** The panel's padding on the x-axis. */
+/**
+ * The panel's padding on the x-axis.
+ * @deprecated Use `SELECT_PANEL_PADDING_X` from `@angular/material/select` instead. See https://material.angular.io/guide/mdc-migration for information about migrating.
+ * @breaking-change 17.0.0
+ */
 export const SELECT_PANEL_PADDING_X = 16;
 
-/** The panel's x axis padding if it is indented (e.g. there is an option group). */
+/**
+ * The panel's x axis padding if it is indented (e.g. there is an option group).
+ * @deprecated Use `SELECT_PANEL_INDENT_PADDING_X` from `@angular/material/select` instead. See https://material.angular.io/guide/mdc-migration for information about migrating.
+ * @breaking-change 17.0.0
+ */
 export const SELECT_PANEL_INDENT_PADDING_X = SELECT_PANEL_PADDING_X * 2;
 
-/** The height of the select items in `em` units. */
+/**
+ * The height of the select items in `em` units.
+ * @deprecated Use `SELECT_ITEM_HEIGHT_EM` from `@angular/material/select` instead. See https://material.angular.io/guide/mdc-migration for information about migrating.
+ * @breaking-change 17.0.0
+ */
 export const SELECT_ITEM_HEIGHT_EM = 3;
 
 // TODO(josephperrott): Revert to a constant after 2018 spec updates are fully merged.
@@ -58,16 +73,25 @@ export const SELECT_ITEM_HEIGHT_EM = 3;
  * (SELECT_PANEL_PADDING_X * 1.5) + 16 = 40
  * The padding is multiplied by 1.5 because the checkbox's margin is half the padding.
  * The checkbox width is 16px.
+ *
+ * @deprecated Use `SELECT_MULTIPLE_PANEL_PADDING_X` from `@angular/material/select` instead. See https://material.angular.io/guide/mdc-migration for information about migrating.
+ * @breaking-change 17.0.0
  */
 export const SELECT_MULTIPLE_PANEL_PADDING_X = SELECT_PANEL_PADDING_X * 1.5 + 16;
 
 /**
  * The select panel will only "fit" inside the viewport if it is positioned at
  * this value or more away from the viewport boundary.
+ * @deprecated Use `SELECT_PANEL_VIEWPORT_PADDING` from `@angular/material/select` instead. See https://material.angular.io/guide/mdc-migration for information about migrating.
+ * @breaking-change 17.0.0
  */
 export const SELECT_PANEL_VIEWPORT_PADDING = 8;
 
-/** Change event object that is emitted when the select value has changed. */
+/**
+ * Change event object that is emitted when the select value has changed.
+ * @deprecated Use `MatSelectChange` from `@angular/material/select` instead. See https://material.angular.io/guide/mdc-migration for information about migrating.
+ * @breaking-change 17.0.0
+ */
 export class MatLegacySelectChange {
   constructor(
     /** Reference to the select that emitted the change event. */
@@ -79,6 +103,8 @@ export class MatLegacySelectChange {
 
 /**
  * Allows the user to customize the trigger that is displayed when the select has a value.
+ * @deprecated Use `MatSelectTrigger` from `@angular/material/select` instead. See https://material.angular.io/guide/mdc-migration for information about migrating.
+ * @breaking-change 17.0.0
  */
 @Directive({
   selector: 'mat-select-trigger',
@@ -86,6 +112,10 @@ export class MatLegacySelectChange {
 })
 export class MatLegacySelectTrigger {}
 
+/**
+ * @deprecated Use `MatSelect` from `@angular/material/select` instead. See https://material.angular.io/guide/mdc-migration for information about migrating.
+ * @breaking-change 17.0.0
+ */
 @Component({
   selector: 'mat-select',
   exportAs: 'matSelect',
@@ -120,10 +150,13 @@ export class MatLegacySelectTrigger {}
     '(focus)': '_onFocus()',
     '(blur)': '_onBlur()',
   },
-  animations: [matSelectAnimations.transformPanelWrap, matSelectAnimations.transformPanel],
+  animations: [
+    matLegacySelectAnimations.transformPanelWrap,
+    matLegacySelectAnimations.transformPanel,
+  ],
   providers: [
     {provide: MatLegacyFormFieldControl, useExisting: MatLegacySelect},
-    {provide: MAT_OPTION_PARENT_COMPONENT, useExisting: MatLegacySelect},
+    {provide: MAT_LEGACY_OPTION_PARENT_COMPONENT, useExisting: MatLegacySelect},
   ],
 })
 export class MatLegacySelect extends _MatSelectBase<MatLegacySelectChange> implements OnInit {
@@ -148,7 +181,8 @@ export class MatLegacySelect extends _MatSelectBase<MatLegacySelectChange> imple
 
   @ContentChildren(MatLegacyOption, {descendants: true}) options: QueryList<MatLegacyOption>;
 
-  @ContentChildren(MAT_OPTGROUP, {descendants: true}) optionGroups: QueryList<MatLegacyOptgroup>;
+  @ContentChildren(MAT_LEGACY_OPTGROUP, {descendants: true})
+  optionGroups: QueryList<MatLegacyOptgroup>;
 
   @ContentChild(MAT_SELECT_TRIGGER) customTrigger: MatLegacySelectTrigger;
 
@@ -226,7 +260,7 @@ export class MatLegacySelect extends _MatSelectBase<MatLegacySelectChange> imple
 
   /** Scrolls the active option into view. */
   protected _scrollOptionIntoView(index: number): void {
-    const labelCount = _countGroupLabelsBeforeOption(index, this.options, this.optionGroups);
+    const labelCount = _countGroupLabelsBeforeLegacyOption(index, this.options, this.optionGroups);
     const itemHeight = this._getItemHeight();
 
     if (index === 0 && labelCount === 1) {
@@ -235,7 +269,7 @@ export class MatLegacySelect extends _MatSelectBase<MatLegacySelectChange> imple
       // top of the option, because it allows the user to read the top group's label.
       this.panel.nativeElement.scrollTop = 0;
     } else {
-      this.panel.nativeElement.scrollTop = _getOptionScrollPosition(
+      this.panel.nativeElement.scrollTop = _getLegacyOptionScrollPosition(
         (index + labelCount) * itemHeight,
         itemHeight,
         this.panel.nativeElement.scrollTop,
@@ -459,7 +493,7 @@ export class MatLegacySelect extends _MatSelectBase<MatLegacySelectChange> imple
       );
     }
 
-    selectedOptionOffset += _countGroupLabelsBeforeOption(
+    selectedOptionOffset += _countGroupLabelsBeforeLegacyOption(
       selectedOptionOffset,
       this.options,
       this.optionGroups,

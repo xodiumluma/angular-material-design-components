@@ -21,8 +21,8 @@ import * as i0 from '@angular/core';
 import * as i3 from '@angular/material/core';
 import * as i4 from '@angular/common';
 import * as i5 from '@angular/material/divider';
-import { MAT_LIST } from '@angular/material/list';
-import { MAT_NAV_LIST } from '@angular/material/list';
+import { MAT_LIST as MAT_LEGACY_LIST } from '@angular/material/list';
+import { MAT_NAV_LIST as MAT_LEGACY_NAV_LIST } from '@angular/material/list';
 import { MatLine } from '@angular/material/core';
 import { OnChanges } from '@angular/core';
 import { OnDestroy } from '@angular/core';
@@ -33,14 +33,14 @@ import { SimpleChanges } from '@angular/core';
 import { Subject } from 'rxjs';
 import { ThemePalette } from '@angular/material/core';
 
-export { MAT_LIST }
+export { MAT_LEGACY_LIST }
 
-export { MAT_NAV_LIST }
+export { MAT_LEGACY_NAV_LIST }
 
-// @public
-export const MAT_SELECTION_LIST_VALUE_ACCESSOR: any;
+// @public @deprecated
+export const MAT_LEGACY_SELECTION_LIST_VALUE_ACCESSOR: any;
 
-// @public (undocumented)
+// @public @deprecated (undocumented)
 export class MatLegacyList extends _MatListBase implements CanDisable, CanDisableRipple, OnChanges, OnDestroy {
     constructor(_elementRef: ElementRef<HTMLElement>);
     // (undocumented)
@@ -51,28 +51,28 @@ export class MatLegacyList extends _MatListBase implements CanDisable, CanDisabl
     ngOnDestroy(): void;
     readonly _stateChanges: Subject<void>;
     // (undocumented)
-    static ɵcmp: i0.ɵɵComponentDeclaration<MatLegacyList, "mat-list, mat-action-list", ["matList"], { "disableRipple": "disableRipple"; "disabled": "disabled"; }, {}, never, ["*"], false>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<MatLegacyList, "mat-list, mat-action-list", ["matList"], { "disableRipple": "disableRipple"; "disabled": "disabled"; }, {}, never, ["*"], false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatLegacyList, never>;
 }
 
-// @public
+// @public @deprecated
 export class MatLegacyListAvatarCssMatStyler {
     // (undocumented)
-    static ɵdir: i0.ɵɵDirectiveDeclaration<MatLegacyListAvatarCssMatStyler, "[mat-list-avatar], [matListAvatar]", never, {}, {}, never, never, false>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<MatLegacyListAvatarCssMatStyler, "[mat-list-avatar], [matListAvatar]", never, {}, {}, never, never, false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatLegacyListAvatarCssMatStyler, never>;
 }
 
-// @public
+// @public @deprecated
 export class MatLegacyListIconCssMatStyler {
     // (undocumented)
-    static ɵdir: i0.ɵɵDirectiveDeclaration<MatLegacyListIconCssMatStyler, "[mat-list-icon], [matListIcon]", never, {}, {}, never, never, false>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<MatLegacyListIconCssMatStyler, "[mat-list-icon], [matListIcon]", never, {}, {}, never, never, false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatLegacyListIconCssMatStyler, never>;
 }
 
-// @public
+// @public @deprecated
 export class MatLegacyListItem extends _MatListItemMixinBase implements AfterContentInit, CanDisableRipple, OnDestroy {
     constructor(_element: ElementRef<HTMLElement>, _changeDetectorRef: ChangeDetectorRef, navList?: MatLegacyNavList, list?: MatLegacyList);
     // (undocumented)
@@ -90,12 +90,12 @@ export class MatLegacyListItem extends _MatListItemMixinBase implements AfterCon
     // (undocumented)
     ngOnDestroy(): void;
     // (undocumented)
-    static ɵcmp: i0.ɵɵComponentDeclaration<MatLegacyListItem, "mat-list-item, a[mat-list-item], button[mat-list-item]", ["matListItem"], { "disableRipple": "disableRipple"; "disabled": "disabled"; }, {}, ["_avatar", "_icon", "_lines"], ["[mat-list-avatar], [mat-list-icon], [matListAvatar], [matListIcon]", "[mat-line], [matLine]", "*"], false>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<MatLegacyListItem, "mat-list-item, a[mat-list-item], button[mat-list-item]", ["matListItem"], { "disableRipple": "disableRipple"; "disabled": "disabled"; }, {}, ["_avatar", "_icon", "_lines"], ["[mat-list-avatar], [mat-list-icon], [matListAvatar], [matListIcon]", "[mat-line], [matLine]", "*"], false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatLegacyListItem, [null, null, { optional: true; }, { optional: true; }]>;
 }
 
-// @public (undocumented)
+// @public @deprecated (undocumented)
 export class MatLegacyListModule {
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatLegacyListModule, never>;
@@ -105,7 +105,7 @@ export class MatLegacyListModule {
     static ɵmod: i0.ɵɵNgModuleDeclaration<MatLegacyListModule, [typeof i1.MatLegacyList, typeof i1.MatLegacyNavList, typeof i1.MatLegacyListItem, typeof i1.MatLegacyListAvatarCssMatStyler, typeof i1.MatLegacyListIconCssMatStyler, typeof i1.MatLegacyListSubheaderCssMatStyler, typeof i2.MatLegacySelectionList, typeof i2.MatLegacyListOption], [typeof i3.MatLineModule, typeof i3.MatRippleModule, typeof i3.MatCommonModule, typeof i3.MatPseudoCheckboxModule, typeof i4.CommonModule], [typeof i1.MatLegacyList, typeof i1.MatLegacyNavList, typeof i1.MatLegacyListItem, typeof i1.MatLegacyListAvatarCssMatStyler, typeof i3.MatLineModule, typeof i3.MatCommonModule, typeof i1.MatLegacyListIconCssMatStyler, typeof i1.MatLegacyListSubheaderCssMatStyler, typeof i3.MatPseudoCheckboxModule, typeof i2.MatLegacySelectionList, typeof i2.MatLegacyListOption, typeof i5.MatDividerModule]>;
 }
 
-// @public
+// @public @deprecated
 export class MatLegacyListOption extends _MatListOptionBase implements AfterContentInit, OnDestroy, OnInit, FocusableOption, CanDisableRipple {
     constructor(_element: ElementRef<HTMLElement>, _changeDetector: ChangeDetectorRef,
     selectionList: MatLegacySelectionList);
@@ -147,23 +147,23 @@ export class MatLegacyListOption extends _MatListOptionBase implements AfterCont
     get value(): any;
     set value(newValue: any);
     // (undocumented)
-    static ɵcmp: i0.ɵɵComponentDeclaration<MatLegacyListOption, "mat-list-option", ["matListOption"], { "disableRipple": "disableRipple"; "checkboxPosition": "checkboxPosition"; "color": "color"; "value": "value"; "disabled": "disabled"; "selected": "selected"; }, { "selectedChange": "selectedChange"; }, ["_avatar", "_icon", "_lines"], ["*", "[mat-list-avatar], [mat-list-icon], [matListAvatar], [matListIcon]"], false>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<MatLegacyListOption, "mat-list-option", ["matListOption"], { "disableRipple": "disableRipple"; "checkboxPosition": "checkboxPosition"; "color": "color"; "value": "value"; "disabled": "disabled"; "selected": "selected"; }, { "selectedChange": "selectedChange"; }, ["_avatar", "_icon", "_lines"], ["*", "[mat-list-avatar], [mat-list-icon], [matListAvatar], [matListIcon]"], false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatLegacyListOption, never>;
 }
 
-// @public
+// @public @deprecated
 export type MatLegacyListOptionCheckboxPosition = 'before' | 'after';
 
-// @public
+// @public @deprecated
 export class MatLegacyListSubheaderCssMatStyler {
     // (undocumented)
-    static ɵdir: i0.ɵɵDirectiveDeclaration<MatLegacyListSubheaderCssMatStyler, "[mat-subheader], [matSubheader]", never, {}, {}, never, never, false>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<MatLegacyListSubheaderCssMatStyler, "[mat-subheader], [matSubheader]", never, {}, {}, never, never, false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatLegacyListSubheaderCssMatStyler, never>;
 }
 
-// @public (undocumented)
+// @public @deprecated (undocumented)
 export class MatLegacyNavList extends _MatListBase implements CanDisable, CanDisableRipple, OnChanges, OnDestroy {
     // (undocumented)
     ngOnChanges(): void;
@@ -171,12 +171,12 @@ export class MatLegacyNavList extends _MatListBase implements CanDisable, CanDis
     ngOnDestroy(): void;
     readonly _stateChanges: Subject<void>;
     // (undocumented)
-    static ɵcmp: i0.ɵɵComponentDeclaration<MatLegacyNavList, "mat-nav-list", ["matNavList"], { "disableRipple": "disableRipple"; "disabled": "disabled"; }, {}, never, ["*"], false>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<MatLegacyNavList, "mat-nav-list", ["matNavList"], { "disableRipple": "disableRipple"; "disabled": "disabled"; }, {}, never, ["*"], false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatLegacyNavList, never>;
 }
 
-// @public
+// @public @deprecated
 export class MatLegacySelectionList extends _MatSelectionListBase implements CanDisableRipple, AfterContentInit, ControlValueAccessor, OnDestroy, OnChanges {
     constructor(_element: ElementRef<HTMLElement>, _changeDetector: ChangeDetectorRef, _focusMonitor: FocusMonitor);
     color: ThemePalette;
@@ -211,12 +211,12 @@ export class MatLegacySelectionList extends _MatSelectionListBase implements Can
     _value: string[] | null;
     writeValue(values: string[]): void;
     // (undocumented)
-    static ɵcmp: i0.ɵɵComponentDeclaration<MatLegacySelectionList, "mat-selection-list", ["matSelectionList"], { "disableRipple": "disableRipple"; "color": "color"; "compareWith": "compareWith"; "disabled": "disabled"; "multiple": "multiple"; }, { "selectionChange": "selectionChange"; }, ["options"], ["*"], false>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<MatLegacySelectionList, "mat-selection-list", ["matSelectionList"], { "disableRipple": "disableRipple"; "color": "color"; "compareWith": "compareWith"; "disabled": "disabled"; "multiple": "multiple"; }, { "selectionChange": "selectionChange"; }, ["options"], ["*"], false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatLegacySelectionList, never>;
 }
 
-// @public
+// @public @deprecated
 export class MatLegacySelectionListChange {
     constructor(
     source: MatLegacySelectionList,

@@ -21,19 +21,19 @@ import { _MatSlideToggleRequiredValidatorModule as _MatLegacySlideToggleRequired
 import { ThemePalette } from '@angular/material/core';
 import { Type } from '@angular/core';
 
-// @public
+// @public @deprecated
 export const MAT_LEGACY_SLIDE_TOGGLE_DEFAULT_OPTIONS: InjectionToken<MatLegacySlideToggleDefaultOptions>;
 
 export { MAT_LEGACY_SLIDE_TOGGLE_REQUIRED_VALIDATOR }
 
-// @public
+// @public @deprecated
 export const MAT_LEGACY_SLIDE_TOGGLE_VALUE_ACCESSOR: {
     provide: InjectionToken<readonly ControlValueAccessor[]>;
     useExisting: Type<any>;
     multi: boolean;
 };
 
-// @public
+// @public @deprecated
 export class MatLegacySlideToggle extends _MatLegacySlideToggleBase<MatLegacySlideToggleChange> {
     constructor(elementRef: ElementRef, focusMonitor: FocusMonitor, changeDetectorRef: ChangeDetectorRef, tabIndex: string, defaults: MatLegacySlideToggleDefaultOptions, animationMode?: string);
     // (undocumented)
@@ -44,14 +44,14 @@ export class MatLegacySlideToggle extends _MatLegacySlideToggleBase<MatLegacySli
     _onInputClick(event: Event): void;
     _onLabelTextChange(): void;
     // (undocumented)
-    static ɵcmp: i0.ɵɵComponentDeclaration<MatLegacySlideToggle, "mat-slide-toggle", ["matSlideToggle"], { "disabled": "disabled"; "disableRipple": "disableRipple"; "color": "color"; "tabIndex": "tabIndex"; }, {}, never, ["*"], false>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<MatLegacySlideToggle, "mat-slide-toggle", ["matSlideToggle"], { "disabled": "disabled"; "disableRipple": "disableRipple"; "color": "color"; "tabIndex": "tabIndex"; }, {}, never, ["*"], false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatLegacySlideToggle, [null, null, null, { attribute: "tabindex"; }, null, { optional: true; }]>;
 }
 
 export { _MatLegacySlideToggleBase }
 
-// @public
+// @public @deprecated
 export class MatLegacySlideToggleChange {
     constructor(
     source: MatLegacySlideToggle,
@@ -60,13 +60,13 @@ export class MatLegacySlideToggleChange {
     source: MatLegacySlideToggle;
 }
 
-// @public
+// @public @deprecated
 export interface MatLegacySlideToggleDefaultOptions {
     color?: ThemePalette;
     disableToggleValue?: boolean;
 }
 
-// @public (undocumented)
+// @public @deprecated (undocumented)
 export class MatLegacySlideToggleModule {
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatLegacySlideToggleModule, never>;

@@ -8,14 +8,21 @@
 
 import {HarnessPredicate} from '@angular/cdk/testing';
 import {MatLegacyListHarnessBase} from './list-harness-base';
-import {ActionListHarnessFilters, ActionListItemHarnessFilters} from './list-harness-filters';
+import {
+  LegacyActionListHarnessFilters,
+  LegacyActionListItemHarnessFilters,
+} from './list-harness-filters';
 import {getListItemPredicate, MatLegacyListItemHarnessBase} from './list-item-harness-base';
 
-/** Harness for interacting with a standard mat-action-list in tests. */
+/**
+ * Harness for interacting with a standard mat-action-list in tests.
+ * @deprecated Use `MatActionListHarness` from `@angular/material/list/testing` instead. See https://material.angular.io/guide/mdc-migration for information about migrating.
+ * @breaking-change 17.0.0
+ */
 export class MatLegacyActionListHarness extends MatLegacyListHarnessBase<
   typeof MatLegacyActionListItemHarness,
   MatLegacyActionListItemHarness,
-  ActionListItemHarnessFilters
+  LegacyActionListItemHarnessFilters
 > {
   /** The selector for the host element of a `MatActionList` instance. */
   static hostSelector = 'mat-action-list.mat-list';
@@ -27,7 +34,7 @@ export class MatLegacyActionListHarness extends MatLegacyListHarnessBase<
    * @return a `HarnessPredicate` configured with the given options.
    */
   static with(
-    options: ActionListHarnessFilters = {},
+    options: LegacyActionListHarnessFilters = {},
   ): HarnessPredicate<MatLegacyActionListHarness> {
     return new HarnessPredicate(MatLegacyActionListHarness, options);
   }
@@ -35,7 +42,11 @@ export class MatLegacyActionListHarness extends MatLegacyListHarnessBase<
   override _itemHarness = MatLegacyActionListItemHarness;
 }
 
-/** Harness for interacting with an action list item. */
+/**
+ * Harness for interacting with an action list item.
+ * @deprecated Use `MatActionListItemHarness` from `@angular/material/list/testing` instead. See https://material.angular.io/guide/mdc-migration for information about migrating.
+ * @breaking-change 17.0.0
+ */
 export class MatLegacyActionListItemHarness extends MatLegacyListItemHarnessBase {
   /** The selector for the host element of a `MatListItem` instance. */
   static hostSelector = `${MatLegacyActionListHarness.hostSelector} .mat-list-item`;
@@ -47,7 +58,7 @@ export class MatLegacyActionListItemHarness extends MatLegacyListItemHarnessBase
    * @return a `HarnessPredicate` configured with the given options.
    */
   static with(
-    options: ActionListItemHarnessFilters = {},
+    options: LegacyActionListItemHarnessFilters = {},
   ): HarnessPredicate<MatLegacyActionListItemHarness> {
     return getListItemPredicate(MatLegacyActionListItemHarness, options);
   }

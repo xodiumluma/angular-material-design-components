@@ -5,30 +5,30 @@
 ```ts
 
 import { HarnessPredicate } from '@angular/cdk/testing';
+import { MenuHarnessFilters as LegacyMenuHarnessFilters } from '@angular/material/menu/testing';
+import { MenuItemHarnessFilters as LegacyMenuItemHarnessFilters } from '@angular/material/menu/testing';
 import { _MatMenuHarnessBase } from '@angular/material/menu/testing';
 import { _MatMenuItemHarnessBase } from '@angular/material/menu/testing';
-import { MenuHarnessFilters } from '@angular/material/menu/testing';
-import { MenuItemHarnessFilters } from '@angular/material/menu/testing';
 
-// @public
-export class MatLegacyMenuHarness extends _MatMenuHarnessBase<typeof MatLegacyMenuItemHarness, MatLegacyMenuItemHarness, MenuItemHarnessFilters> {
+export { LegacyMenuHarnessFilters }
+
+export { LegacyMenuItemHarnessFilters }
+
+// @public @deprecated
+export class MatLegacyMenuHarness extends _MatMenuHarnessBase<typeof MatLegacyMenuItemHarness, MatLegacyMenuItemHarness, LegacyMenuItemHarnessFilters> {
     static hostSelector: string;
     // (undocumented)
     protected _itemClass: typeof MatLegacyMenuItemHarness;
-    static with(options?: MenuHarnessFilters): HarnessPredicate<MatLegacyMenuHarness>;
+    static with(options?: LegacyMenuHarnessFilters): HarnessPredicate<MatLegacyMenuHarness>;
 }
 
-// @public
+// @public @deprecated
 export class MatLegacyMenuItemHarness extends _MatMenuItemHarnessBase<typeof MatLegacyMenuHarness, MatLegacyMenuHarness> {
     static hostSelector: string;
     // (undocumented)
     protected _menuClass: typeof MatLegacyMenuHarness;
-    static with(options?: MenuItemHarnessFilters): HarnessPredicate<MatLegacyMenuItemHarness>;
+    static with(options?: LegacyMenuItemHarnessFilters): HarnessPredicate<MatLegacyMenuItemHarness>;
 }
-
-export { MenuHarnessFilters }
-
-export { MenuItemHarnessFilters }
 
 // (No @packageDocumentation comment for this package)
 

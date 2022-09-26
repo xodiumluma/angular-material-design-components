@@ -7,11 +7,11 @@
  */
 
 import {NgModule} from '@angular/core';
-import {MatLegacySlideToggleModule} from '@angular/material/legacy-slide-toggle';
-import {SlideToggleE2E} from './slide-toggle-e2e';
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import {SlideToggleE2e} from './slide-toggle-e2e';
 
 @NgModule({
-  imports: [MatLegacySlideToggleModule],
-  declarations: [SlideToggleE2E],
+  imports: [MatSlideToggleModule],
+  declarations: [SlideToggleE2e],
 })
 export class SlideToggleE2eModule {}

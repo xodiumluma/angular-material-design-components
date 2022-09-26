@@ -13,7 +13,10 @@ import {
   ContentContainerComponentHarness,
   parallel,
 } from '@angular/cdk/testing';
-import {BaseListItemHarnessFilters, SubheaderHarnessFilters} from './list-harness-filters';
+import {
+  LegacyBaseListItemHarnessFilters,
+  LegacySubheaderHarnessFilters,
+} from './list-harness-filters';
 
 const iconSelector = '.mat-list-icon';
 const avatarSelector = '.mat-list-avatar';
@@ -25,10 +28,12 @@ const avatarSelector = '.mat-list-avatar';
  * @param harnessType A constructor for a list item harness.
  * @param options An instance of `BaseListItemHarnessFilters` to apply.
  * @return A `HarnessPredicate` for the given harness type with the given options applied.
+ * @deprecated Use `getListItemPredicate` from `@angular/material/list/testing` instead. See https://material.angular.io/guide/mdc-migration for information about migrating.
+ * @breaking-change 17.0.0
  */
 export function getListItemPredicate<H extends MatLegacyListItemHarnessBase>(
   harnessType: ComponentHarnessConstructor<H>,
-  options: BaseListItemHarnessFilters,
+  options: LegacyBaseListItemHarnessFilters,
 ): HarnessPredicate<H> {
   return new HarnessPredicate(harnessType, options).addOption(
     'text',
@@ -37,11 +42,17 @@ export function getListItemPredicate<H extends MatLegacyListItemHarnessBase>(
   );
 }
 
-/** Harness for interacting with a list subheader. */
+/**
+ * Harness for interacting with a list subheader.
+ * @deprecated Use `MatSubheaderHarness` from `@angular/material/list/testing` instead. See https://material.angular.io/guide/mdc-migration for information about migrating.
+ * @breaking-change 17.0.0
+ */
 export class MatLegacySubheaderHarness extends ComponentHarness {
   static hostSelector = '.mat-subheader';
 
-  static with(options: SubheaderHarnessFilters = {}): HarnessPredicate<MatLegacySubheaderHarness> {
+  static with(
+    options: LegacySubheaderHarnessFilters = {},
+  ): HarnessPredicate<MatLegacySubheaderHarness> {
     return new HarnessPredicate(MatLegacySubheaderHarness, options).addOption(
       'text',
       options.text,
@@ -55,7 +66,11 @@ export class MatLegacySubheaderHarness extends ComponentHarness {
   }
 }
 
-/** Selectors for the various list item sections that may contain user content. */
+/**
+ * Selectors for the various list item sections that may contain user content.
+ * @deprecated Use `enum` from `@angular/material/list/testing` instead. See https://material.angular.io/guide/mdc-migration for information about migrating.
+ * @breaking-change 17.0.0
+ */
 export const enum MatLegacyListItemSection {
   CONTENT = '.mat-list-item-content',
   // TODO(mmalerba): consider adding sections for leading/trailing icons.
@@ -64,6 +79,8 @@ export const enum MatLegacyListItemSection {
 /**
  * Shared behavior among the harnesses for the various `MatListItem` flavors.
  * @docs-private
+ * @deprecated Use `class` from `@angular/material/list/testing` instead. See https://material.angular.io/guide/mdc-migration for information about migrating.
+ * @breaking-change 17.0.0
  */
 export abstract class MatLegacyListItemHarnessBase extends ContentContainerComponentHarness<MatLegacyListItemSection> {
   private _lines = this.locatorForAll('.mat-line');

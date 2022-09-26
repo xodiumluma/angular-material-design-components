@@ -13,8 +13,8 @@ import {DevAppDirectionality} from './dev-app-directionality';
 import {DevAppRippleOptions} from './ripple-options';
 import {CommonModule, DOCUMENT} from '@angular/common';
 import {MatSidenavModule} from '@angular/material/sidenav';
-import {MatLegacyListModule} from '@angular/material/legacy-list';
-import {MatLegacyButtonModule} from '@angular/material/legacy-button';
+import {MatListModule} from '@angular/material/list';
+import {MatButtonModule} from '@angular/material/button';
 import {RouterModule} from '@angular/router';
 import {MatIconModule} from '@angular/material/icon';
 import {MatToolbarModule} from '@angular/material/toolbar';
@@ -32,9 +32,9 @@ export const ANIMATIONS_STORAGE_KEY = 'ANGULAR_COMPONENTS_ANIMATIONS_DISABLED';
   standalone: true,
   imports: [
     CommonModule,
-    MatLegacyButtonModule,
+    MatButtonModule,
     MatIconModule,
-    MatLegacyListModule,
+    MatListModule,
     MatSidenavModule,
     MatToolbarModule,
     RouterModule,
@@ -52,7 +52,7 @@ export class DevAppLayout {
     {name: 'CDK Menu', route: '/cdk-menu'},
     {name: 'Autocomplete', route: '/autocomplete'},
     {name: 'Badge', route: '/badge'},
-    {name: 'Bottom sheet', route: '/bottom-sheet'},
+    {name: 'Bottom Sheet', route: '/bottom-sheet'},
     {name: 'Button Toggle', route: '/button-toggle'},
     {name: 'Button', route: '/button'},
     {name: 'Card', route: '/card'},
@@ -103,25 +103,26 @@ export class DevAppLayout {
     {name: 'Typography', route: '/typography'},
     {name: 'Virtual Scrolling', route: '/virtual-scroll'},
     {name: 'YouTube Player', route: '/youtube-player'},
-    {name: 'MDC Autocomplete', route: '/mdc-autocomplete'},
-    {name: 'MDC Button', route: '/mdc-button'},
     {name: 'MDC Chips', route: '/mdc-chips'},
-    {name: 'MDC Dialog', route: '/mdc-dialog'},
-    {name: 'MDC Menu', route: '/mdc-menu'},
-    {name: 'MDC Progress Bar', route: '/mdc-progress-bar'},
-    {name: 'MDC Progress Spinner', route: '/mdc-progress-spinner'},
-    {name: 'MDC Radio', route: '/mdc-radio'},
-    {name: 'MDC Slide Toggle', route: '/mdc-slide-toggle'},
     {name: 'MDC Slider', route: '/mdc-slider'},
-    {name: 'MDC Tabs', route: '/mdc-tabs'},
+    {name: 'Legacy Autocomplete', route: '/legacy-autocomplete'},
+    {name: 'Legacy Button', route: '/legacy-button'},
     {name: 'Legacy Card', route: '/legacy-card'},
     {name: 'Legacy Checkbox', route: '/legacy-checkbox'},
+    {name: 'Legacy Dialog', route: '/legacy-dialog'},
     {name: 'Legacy Input', route: '/legacy-input'},
     {name: 'Legacy List', route: '/legacy-list'},
+    {name: 'Legacy Menu', route: '/legacy-menu'},
     {name: 'Legacy Paginator', route: '/legacy-paginator'},
+    {name: 'Legacy Progress Bar', route: '/legacy-progress-bar'},
+    {name: 'Legacy Progress Spinner', route: '/legacy-progress-spinner'},
+    {name: 'Legacy Radio', route: '/legacy-radio'},
     {name: 'Legacy Select', route: '/legacy-select'},
+    {name: 'Legacy Slider', route: '/legacy-slider'},
+    {name: 'Legacy Slide Toggle', route: '/legacy-slide-toggle'},
     {name: 'Legacy Snack Bar', route: '/legacy-snack-bar'},
     {name: 'Legacy Table', route: '/legacy-table'},
+    {name: 'Legacy Tabs', route: '/legacy-tabs'},
     {name: 'Legacy Tooltip', route: '/legacy-tooltip'},
   ];
 

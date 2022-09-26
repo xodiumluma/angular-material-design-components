@@ -28,142 +28,142 @@ import { _MatTableDataSource as _MatLegacyTableDataSource } from '@angular/mater
 import { MatTableDataSourcePageEvent as MatLegacyTableDataSourcePageEvent } from '@angular/material/table';
 import { MatTableDataSourcePaginator as MatLegacyTableDataSourcePaginator } from '@angular/material/table';
 
-// @public
+// @public @deprecated
 export class MatLegacyCell extends CdkCell {
     // (undocumented)
-    static ɵdir: i0.ɵɵDirectiveDeclaration<MatLegacyCell, "mat-cell, td[mat-cell]", never, {}, {}, never, never, false>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<MatLegacyCell, "mat-cell, td[mat-cell]", never, {}, {}, never, never, false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatLegacyCell, never>;
 }
 
-// @public
+// @public @deprecated
 export class MatLegacyCellDef extends CdkCellDef {
     // (undocumented)
-    static ɵdir: i0.ɵɵDirectiveDeclaration<MatLegacyCellDef, "[matCellDef]", never, {}, {}, never, never, false>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<MatLegacyCellDef, "[matCellDef]", never, {}, {}, never, never, false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatLegacyCellDef, never>;
 }
 
-// @public
+// @public @deprecated
 export class MatLegacyColumnDef extends CdkColumnDef {
     get name(): string;
     set name(name: string);
     protected _updateColumnCssClassName(): void;
     // (undocumented)
-    static ɵdir: i0.ɵɵDirectiveDeclaration<MatLegacyColumnDef, "[matColumnDef]", never, { "sticky": "sticky"; "name": "matColumnDef"; }, {}, never, never, false>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<MatLegacyColumnDef, "[matColumnDef]", never, { "sticky": "sticky"; "name": "matColumnDef"; }, {}, never, never, false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatLegacyColumnDef, never>;
 }
 
-// @public
+// @public @deprecated
 export class MatLegacyFooterCell extends CdkFooterCell {
     // (undocumented)
-    static ɵdir: i0.ɵɵDirectiveDeclaration<MatLegacyFooterCell, "mat-footer-cell, td[mat-footer-cell]", never, {}, {}, never, never, false>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<MatLegacyFooterCell, "mat-footer-cell, td[mat-footer-cell]", never, {}, {}, never, never, false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatLegacyFooterCell, never>;
 }
 
-// @public
+// @public @deprecated
 export class MatLegacyFooterCellDef extends CdkFooterCellDef {
     // (undocumented)
-    static ɵdir: i0.ɵɵDirectiveDeclaration<MatLegacyFooterCellDef, "[matFooterCellDef]", never, {}, {}, never, never, false>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<MatLegacyFooterCellDef, "[matFooterCellDef]", never, {}, {}, never, never, false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatLegacyFooterCellDef, never>;
 }
 
-// @public
+// @public @deprecated
 export class MatLegacyFooterRow extends CdkFooterRow {
     // (undocumented)
-    static ɵcmp: i0.ɵɵComponentDeclaration<MatLegacyFooterRow, "mat-footer-row, tr[mat-footer-row]", ["matFooterRow"], {}, {}, never, never, false>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<MatLegacyFooterRow, "mat-footer-row, tr[mat-footer-row]", ["matFooterRow"], {}, {}, never, never, false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatLegacyFooterRow, never>;
 }
 
-// @public
+// @public @deprecated
 export class MatLegacyFooterRowDef extends CdkFooterRowDef {
     // (undocumented)
-    static ɵdir: i0.ɵɵDirectiveDeclaration<MatLegacyFooterRowDef, "[matFooterRowDef]", never, { "columns": "matFooterRowDef"; "sticky": "matFooterRowDefSticky"; }, {}, never, never, false>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<MatLegacyFooterRowDef, "[matFooterRowDef]", never, { "columns": "matFooterRowDef"; "sticky": "matFooterRowDefSticky"; }, {}, never, never, false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatLegacyFooterRowDef, never>;
 }
 
-// @public
+// @public @deprecated
 export class MatLegacyHeaderCell extends CdkHeaderCell {
     // (undocumented)
-    static ɵdir: i0.ɵɵDirectiveDeclaration<MatLegacyHeaderCell, "mat-header-cell, th[mat-header-cell]", never, {}, {}, never, never, false>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<MatLegacyHeaderCell, "mat-header-cell, th[mat-header-cell]", never, {}, {}, never, never, false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatLegacyHeaderCell, never>;
 }
 
-// @public
+// @public @deprecated
 export class MatLegacyHeaderCellDef extends CdkHeaderCellDef {
     // (undocumented)
-    static ɵdir: i0.ɵɵDirectiveDeclaration<MatLegacyHeaderCellDef, "[matHeaderCellDef]", never, {}, {}, never, never, false>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<MatLegacyHeaderCellDef, "[matHeaderCellDef]", never, {}, {}, never, never, false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatLegacyHeaderCellDef, never>;
 }
 
-// @public
+// @public @deprecated
 export class MatLegacyHeaderRow extends CdkHeaderRow {
     // (undocumented)
-    static ɵcmp: i0.ɵɵComponentDeclaration<MatLegacyHeaderRow, "mat-header-row, tr[mat-header-row]", ["matHeaderRow"], {}, {}, never, never, false>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<MatLegacyHeaderRow, "mat-header-row, tr[mat-header-row]", ["matHeaderRow"], {}, {}, never, never, false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatLegacyHeaderRow, never>;
 }
 
-// @public
+// @public @deprecated
 export class MatLegacyHeaderRowDef extends CdkHeaderRowDef {
     // (undocumented)
-    static ɵdir: i0.ɵɵDirectiveDeclaration<MatLegacyHeaderRowDef, "[matHeaderRowDef]", never, { "columns": "matHeaderRowDef"; "sticky": "matHeaderRowDefSticky"; }, {}, never, never, false>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<MatLegacyHeaderRowDef, "[matHeaderRowDef]", never, { "columns": "matHeaderRowDef"; "sticky": "matHeaderRowDefSticky"; }, {}, never, never, false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatLegacyHeaderRowDef, never>;
 }
 
-// @public
+// @public @deprecated
 export class MatLegacyNoDataRow extends CdkNoDataRow {
     // (undocumented)
     _contentClassName: string;
     // (undocumented)
-    static ɵdir: i0.ɵɵDirectiveDeclaration<MatLegacyNoDataRow, "ng-template[matNoDataRow]", never, {}, {}, never, never, false>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<MatLegacyNoDataRow, "ng-template[matNoDataRow]", never, {}, {}, never, never, false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatLegacyNoDataRow, never>;
 }
 
-// @public
+// @public @deprecated
 export class MatLegacyRecycleRows {
     // (undocumented)
-    static ɵdir: i0.ɵɵDirectiveDeclaration<MatLegacyRecycleRows, "mat-table[recycleRows], table[mat-table][recycleRows]", never, {}, {}, never, never, false>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<MatLegacyRecycleRows, "mat-table[recycleRows], table[mat-table][recycleRows]", never, {}, {}, never, never, false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatLegacyRecycleRows, never>;
 }
 
-// @public
+// @public @deprecated
 export class MatLegacyRow extends CdkRow {
     // (undocumented)
-    static ɵcmp: i0.ɵɵComponentDeclaration<MatLegacyRow, "mat-row, tr[mat-row]", ["matRow"], {}, {}, never, never, false>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<MatLegacyRow, "mat-row, tr[mat-row]", ["matRow"], {}, {}, never, never, false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatLegacyRow, never>;
 }
 
-// @public
+// @public @deprecated
 export class MatLegacyRowDef<T> extends CdkRowDef<T> {
     // (undocumented)
-    static ɵdir: i0.ɵɵDirectiveDeclaration<MatLegacyRowDef<any>, "[matRowDef]", never, { "columns": "matRowDefColumns"; "when": "matRowDefWhen"; }, {}, never, never, false>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<MatLegacyRowDef<any>, "[matRowDef]", never, { "columns": "matRowDefColumns"; "when": "matRowDefWhen"; }, {}, never, never, false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatLegacyRowDef<any>, never>;
 }
 
-// @public
+// @public @deprecated
 export class MatLegacyTable<T> extends CdkTable<T> {
     protected needsPositionStickyOnElement: boolean;
     protected stickyCssClass: string;
     // (undocumented)
-    static ɵcmp: i0.ɵɵComponentDeclaration<MatLegacyTable<any>, "mat-table, table[mat-table]", ["matTable"], {}, {}, never, ["caption", "colgroup, col"], false>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<MatLegacyTable<any>, "mat-table, table[mat-table]", ["matTable"], {}, {}, never, ["caption", "colgroup, col"], false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatLegacyTable<any>, never>;
 }
 
-// @public
+// @public @deprecated
 export class MatLegacyTableDataSource<T> extends _MatLegacyTableDataSource<T, MatLegacyPaginator> {
 }
 
@@ -173,7 +173,7 @@ export { MatLegacyTableDataSourcePageEvent }
 
 export { MatLegacyTableDataSourcePaginator }
 
-// @public (undocumented)
+// @public @deprecated (undocumented)
 export class MatLegacyTableModule {
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatLegacyTableModule, never>;
@@ -183,10 +183,10 @@ export class MatLegacyTableModule {
     static ɵmod: i0.ɵɵNgModuleDeclaration<MatLegacyTableModule, [typeof i1.MatLegacyTable, typeof i1.MatLegacyRecycleRows, typeof i2.MatLegacyHeaderCellDef, typeof i3.MatLegacyHeaderRowDef, typeof i2.MatLegacyColumnDef, typeof i2.MatLegacyCellDef, typeof i3.MatLegacyRowDef, typeof i2.MatLegacyFooterCellDef, typeof i3.MatLegacyFooterRowDef, typeof i2.MatLegacyHeaderCell, typeof i2.MatLegacyCell, typeof i2.MatLegacyFooterCell, typeof i3.MatLegacyHeaderRow, typeof i3.MatLegacyRow, typeof i3.MatLegacyFooterRow, typeof i3.MatLegacyNoDataRow, typeof i4.MatLegacyTextColumn], [typeof i5.CdkTableModule, typeof i6.MatCommonModule], [typeof i6.MatCommonModule, typeof i1.MatLegacyTable, typeof i1.MatLegacyRecycleRows, typeof i2.MatLegacyHeaderCellDef, typeof i3.MatLegacyHeaderRowDef, typeof i2.MatLegacyColumnDef, typeof i2.MatLegacyCellDef, typeof i3.MatLegacyRowDef, typeof i2.MatLegacyFooterCellDef, typeof i3.MatLegacyFooterRowDef, typeof i2.MatLegacyHeaderCell, typeof i2.MatLegacyCell, typeof i2.MatLegacyFooterCell, typeof i3.MatLegacyHeaderRow, typeof i3.MatLegacyRow, typeof i3.MatLegacyFooterRow, typeof i3.MatLegacyNoDataRow, typeof i4.MatLegacyTextColumn]>;
 }
 
-// @public
+// @public @deprecated
 export class MatLegacyTextColumn<T> extends CdkTextColumn<T> {
     // (undocumented)
-    static ɵcmp: i0.ɵɵComponentDeclaration<MatLegacyTextColumn<any>, "mat-text-column", never, {}, {}, never, never, false>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<MatLegacyTextColumn<any>, "mat-text-column", never, {}, {}, never, never, false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatLegacyTextColumn<any>, never>;
 }

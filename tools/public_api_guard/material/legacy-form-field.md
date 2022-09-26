@@ -15,19 +15,19 @@ import { ChangeDetectorRef } from '@angular/core';
 import { _Constructor } from '@angular/material/core';
 import { Directionality } from '@angular/cdk/bidi';
 import { ElementRef } from '@angular/core';
-import { getMatFormFieldDuplicatedHintError } from '@angular/material/form-field';
-import { getMatFormFieldMissingControlError } from '@angular/material/form-field';
-import { getMatFormFieldPlaceholderConflictError } from '@angular/material/form-field';
+import { getMatFormFieldDuplicatedHintError as getMatLegacyFormFieldDuplicatedHintError } from '@angular/material/form-field';
+import { getMatFormFieldMissingControlError as getMatLegacyFormFieldMissingControlError } from '@angular/material/form-field';
+import { getMatFormFieldPlaceholderConflictError as getMatLegacyFormFieldPlaceholderConflictError } from '@angular/material/form-field';
 import * as i0 from '@angular/core';
 import * as i10 from '@angular/cdk/observers';
 import * as i8 from '@angular/common';
 import * as i9 from '@angular/material/core';
 import { InjectionToken } from '@angular/core';
-import { MAT_ERROR } from '@angular/material/form-field';
-import { MAT_FORM_FIELD } from '@angular/material/form-field';
-import { MAT_PREFIX } from '@angular/material/form-field';
-import { MAT_SUFFIX } from '@angular/material/form-field';
-import { matFormFieldAnimations } from '@angular/material/form-field';
+import { MAT_ERROR as MAT_LEGACY_ERROR } from '@angular/material/form-field';
+import { MAT_FORM_FIELD as MAT_LEGACY_FORM_FIELD } from '@angular/material/form-field';
+import { MAT_PREFIX as MAT_LEGACY_PREFIX } from '@angular/material/form-field';
+import { MAT_SUFFIX as MAT_LEGACY_SUFFIX } from '@angular/material/form-field';
+import { matFormFieldAnimations as matLegacyFormFieldAnimations } from '@angular/material/form-field';
 import { MatFormFieldControl as MatLegacyFormFieldControl } from '@angular/material/form-field';
 import { NgZone } from '@angular/core';
 import { OnDestroy } from '@angular/core';
@@ -35,43 +35,41 @@ import { Platform } from '@angular/cdk/platform';
 import { QueryList } from '@angular/core';
 import { ThemePalette } from '@angular/material/core';
 
-// @public
-export type FloatLabelType = 'always' | 'never' | 'auto';
+export { getMatLegacyFormFieldDuplicatedHintError }
 
-export { getMatFormFieldDuplicatedHintError }
+export { getMatLegacyFormFieldMissingControlError }
 
-export { getMatFormFieldMissingControlError }
+export { getMatLegacyFormFieldPlaceholderConflictError }
 
-export { getMatFormFieldPlaceholderConflictError }
+// @public @deprecated
+export type LegacyFloatLabelType = 'always' | 'never' | 'auto';
 
-export { MAT_ERROR }
+export { MAT_LEGACY_ERROR }
 
-export { MAT_FORM_FIELD }
+export { MAT_LEGACY_FORM_FIELD }
 
-// @public
-export const MAT_FORM_FIELD_DEFAULT_OPTIONS: InjectionToken<MatLegacyFormFieldDefaultOptions>;
+// @public @deprecated
+export const MAT_LEGACY_FORM_FIELD_DEFAULT_OPTIONS: InjectionToken<MatLegacyFormFieldDefaultOptions>;
 
-// @public
-export const _MAT_HINT: InjectionToken<MatLegacyHint>;
+// @public @deprecated
+export const _MAT_LEGACY_HINT: InjectionToken<MatLegacyHint>;
 
-export { MAT_PREFIX }
+export { MAT_LEGACY_PREFIX }
 
-export { MAT_SUFFIX }
+export { MAT_LEGACY_SUFFIX }
 
-export { matFormFieldAnimations }
-
-// @public
+// @public @deprecated
 export class MatLegacyError {
     constructor(ariaLive: string, elementRef: ElementRef);
     // (undocumented)
     id: string;
     // (undocumented)
-    static ɵdir: i0.ɵɵDirectiveDeclaration<MatLegacyError, "mat-error", never, { "id": "id"; }, {}, never, never, false>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<MatLegacyError, "mat-error", never, { "id": "id"; }, {}, never, never, false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatLegacyError, [{ attribute: "aria-live"; }, null]>;
 }
 
-// @public
+// @public @deprecated
 export class MatLegacyFormField extends _MatFormFieldBase implements AfterContentInit, AfterContentChecked, AfterViewInit, OnDestroy, CanColor {
     constructor(elementRef: ElementRef, _changeDetectorRef: ChangeDetectorRef, _dir: Directionality, _defaults: MatLegacyFormFieldDefaultOptions, _platform: Platform, _ngZone: NgZone, _animationMode: string);
     _animateAndLockLabel(): void;
@@ -92,8 +90,8 @@ export class MatLegacyFormField extends _MatFormFieldBase implements AfterConten
     _controlStatic: MatLegacyFormFieldControl<any>;
     // (undocumented)
     _errorChildren: QueryList<MatLegacyError>;
-    get floatLabel(): FloatLabelType;
-    set floatLabel(value: FloatLabelType);
+    get floatLabel(): LegacyFloatLabelType;
+    set floatLabel(value: LegacyFloatLabelType);
     getConnectedOverlayOrigin(): ElementRef;
     _getDisplayedMessages(): 'error' | 'hint';
     getLabelId(): string | null;
@@ -143,25 +141,27 @@ export class MatLegacyFormField extends _MatFormFieldBase implements AfterConten
     updateOutlineGap(): void;
     protected _validateControlChild(): void;
     // (undocumented)
-    static ɵcmp: i0.ɵɵComponentDeclaration<MatLegacyFormField, "mat-form-field", ["matFormField"], { "color": "color"; "appearance": "appearance"; "hideRequiredMarker": "hideRequiredMarker"; "hintLabel": "hintLabel"; "floatLabel": "floatLabel"; }, {}, ["_controlNonStatic", "_controlStatic", "_labelChildNonStatic", "_labelChildStatic", "_placeholderChild", "_errorChildren", "_hintChildren", "_prefixChildren", "_suffixChildren"], ["[matPrefix]", "*", "mat-placeholder", "mat-label", "[matSuffix]", "mat-error", "mat-hint:not([align='end'])", "mat-hint[align='end']"], false>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<MatLegacyFormField, "mat-form-field", ["matFormField"], { "color": "color"; "appearance": "appearance"; "hideRequiredMarker": "hideRequiredMarker"; "hintLabel": "hintLabel"; "floatLabel": "floatLabel"; }, {}, ["_controlNonStatic", "_controlStatic", "_labelChildNonStatic", "_labelChildStatic", "_placeholderChild", "_errorChildren", "_hintChildren", "_prefixChildren", "_suffixChildren"], ["[matPrefix]", "*", "mat-placeholder", "mat-label", "[matSuffix]", "mat-error", "mat-hint:not([align='end'])", "mat-hint[align='end']"], false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatLegacyFormField, [null, null, { optional: true; }, { optional: true; }, null, null, { optional: true; }]>;
 }
 
-// @public
+export { matLegacyFormFieldAnimations }
+
+// @public @deprecated
 export type MatLegacyFormFieldAppearance = 'legacy' | 'standard' | 'fill' | 'outline';
 
 export { MatLegacyFormFieldControl }
 
-// @public
+// @public @deprecated
 export interface MatLegacyFormFieldDefaultOptions {
     appearance?: MatLegacyFormFieldAppearance;
     color?: ThemePalette;
-    floatLabel?: FloatLabelType;
+    floatLabel?: LegacyFloatLabelType;
     hideRequiredMarker?: boolean;
 }
 
-// @public (undocumented)
+// @public @deprecated (undocumented)
 export class MatLegacyFormFieldModule {
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatLegacyFormFieldModule, never>;
@@ -171,20 +171,20 @@ export class MatLegacyFormFieldModule {
     static ɵmod: i0.ɵɵNgModuleDeclaration<MatLegacyFormFieldModule, [typeof i1.MatLegacyError, typeof i2.MatLegacyFormField, typeof i3.MatLegacyHint, typeof i4.MatLegacyLabel, typeof i5.MatLegacyPlaceholder, typeof i6.MatLegacyPrefix, typeof i7.MatLegacySuffix], [typeof i8.CommonModule, typeof i9.MatCommonModule, typeof i10.ObserversModule], [typeof i9.MatCommonModule, typeof i1.MatLegacyError, typeof i2.MatLegacyFormField, typeof i3.MatLegacyHint, typeof i4.MatLegacyLabel, typeof i5.MatLegacyPlaceholder, typeof i6.MatLegacyPrefix, typeof i7.MatLegacySuffix]>;
 }
 
-// @public
+// @public @deprecated
 export class MatLegacyHint {
     align: 'start' | 'end';
     id: string;
     // (undocumented)
-    static ɵdir: i0.ɵɵDirectiveDeclaration<MatLegacyHint, "mat-hint", never, { "align": "align"; "id": "id"; }, {}, never, never, false>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<MatLegacyHint, "mat-hint", never, { "align": "align"; "id": "id"; }, {}, never, never, false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatLegacyHint, never>;
 }
 
-// @public
+// @public @deprecated
 export class MatLegacyLabel {
     // (undocumented)
-    static ɵdir: i0.ɵɵDirectiveDeclaration<MatLegacyLabel, "mat-label", never, {}, {}, never, never, false>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<MatLegacyLabel, "mat-label", never, {}, {}, never, never, false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatLegacyLabel, never>;
 }
@@ -192,23 +192,23 @@ export class MatLegacyLabel {
 // @public @deprecated
 export class MatLegacyPlaceholder {
     // (undocumented)
-    static ɵdir: i0.ɵɵDirectiveDeclaration<MatLegacyPlaceholder, "mat-placeholder", never, {}, {}, never, never, false>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<MatLegacyPlaceholder, "mat-placeholder", never, {}, {}, never, never, false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatLegacyPlaceholder, never>;
 }
 
-// @public
+// @public @deprecated
 export class MatLegacyPrefix {
     // (undocumented)
-    static ɵdir: i0.ɵɵDirectiveDeclaration<MatLegacyPrefix, "[matPrefix]", never, {}, {}, never, never, false>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<MatLegacyPrefix, "[matPrefix]", never, {}, {}, never, never, false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatLegacyPrefix, never>;
 }
 
-// @public
+// @public @deprecated
 export class MatLegacySuffix {
     // (undocumented)
-    static ɵdir: i0.ɵɵDirectiveDeclaration<MatLegacySuffix, "[matSuffix]", never, {}, {}, never, never, false>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<MatLegacySuffix, "[matSuffix]", never, {}, {}, never, never, false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatLegacySuffix, never>;
 }

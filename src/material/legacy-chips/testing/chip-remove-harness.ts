@@ -7,9 +7,13 @@
  */
 
 import {HarnessPredicate, ComponentHarness} from '@angular/cdk/testing';
-import {ChipRemoveHarnessFilters} from './chip-harness-filters';
+import {LegacyChipRemoveHarnessFilters} from './chip-harness-filters';
 
-/** Harness for interacting with a standard Material chip remove button in tests. */
+/**
+ * Harness for interacting with a standard Material chip remove button in tests.
+ * @deprecated Use `MatChipRemoveHarness` from `@angular/material/chips/testing` instead. See https://material.angular.io/guide/mdc-migration for information about migrating.
+ * @breaking-change 17.0.0
+ */
 export class MatLegacyChipRemoveHarness extends ComponentHarness {
   static hostSelector = '.mat-chip-remove';
 
@@ -20,7 +24,7 @@ export class MatLegacyChipRemoveHarness extends ComponentHarness {
    * @return a `HarnessPredicate` configured with the given options.
    */
   static with(
-    options: ChipRemoveHarnessFilters = {},
+    options: LegacyChipRemoveHarnessFilters = {},
   ): HarnessPredicate<MatLegacyChipRemoveHarness> {
     return new HarnessPredicate(MatLegacyChipRemoveHarness, options);
   }
