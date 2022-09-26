@@ -20,7 +20,7 @@ import { MatRipple } from '@angular/material/core';
 import { NgZone } from '@angular/core';
 import { OnDestroy } from '@angular/core';
 
-// @public
+// @public @deprecated
 export class MatLegacyAnchor extends MatLegacyButton implements AfterViewInit, OnDestroy {
     constructor(focusMonitor: FocusMonitor, elementRef: ElementRef, animationMode: string,
     _ngZone?: NgZone | undefined);
@@ -32,12 +32,12 @@ export class MatLegacyAnchor extends MatLegacyButton implements AfterViewInit, O
     ngOnDestroy(): void;
     tabIndex: number;
     // (undocumented)
-    static ɵcmp: i0.ɵɵComponentDeclaration<MatLegacyAnchor, "a[mat-button], a[mat-raised-button], a[mat-icon-button], a[mat-fab],             a[mat-mini-fab], a[mat-stroked-button], a[mat-flat-button]", ["matButton", "matAnchor"], { "disabled": "disabled"; "disableRipple": "disableRipple"; "color": "color"; "tabIndex": "tabIndex"; }, {}, never, ["*"], false>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<MatLegacyAnchor, "a[mat-button], a[mat-raised-button], a[mat-icon-button], a[mat-fab],             a[mat-mini-fab], a[mat-stroked-button], a[mat-flat-button]", ["matButton", "matAnchor"], { "disabled": "disabled"; "disableRipple": "disableRipple"; "color": "color"; "tabIndex": "tabIndex"; }, {}, never, ["*"], false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatLegacyAnchor, [null, null, { optional: true; }, { optional: true; }]>;
 }
 
-// @public
+// @public @deprecated
 export class MatLegacyButton extends _MatButtonBase implements AfterViewInit, OnDestroy, CanDisable, CanColor, CanDisableRipple, FocusableOption {
     constructor(elementRef: ElementRef, _focusMonitor: FocusMonitor, _animationMode: string);
     // (undocumented)
@@ -56,12 +56,12 @@ export class MatLegacyButton extends _MatButtonBase implements AfterViewInit, On
     ngOnDestroy(): void;
     ripple: MatRipple;
     // (undocumented)
-    static ɵcmp: i0.ɵɵComponentDeclaration<MatLegacyButton, "button[mat-button], button[mat-raised-button], button[mat-icon-button],             button[mat-fab], button[mat-mini-fab], button[mat-stroked-button],             button[mat-flat-button]", ["matButton"], { "disabled": "disabled"; "disableRipple": "disableRipple"; "color": "color"; }, {}, never, ["*"], false>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<MatLegacyButton, "button[mat-button], button[mat-raised-button], button[mat-icon-button],             button[mat-fab], button[mat-mini-fab], button[mat-stroked-button],             button[mat-flat-button]", ["matButton"], { "disabled": "disabled"; "disableRipple": "disableRipple"; "color": "color"; }, {}, never, ["*"], false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatLegacyButton, [null, null, { optional: true; }]>;
 }
 
-// @public (undocumented)
+// @public @deprecated (undocumented)
 export class MatLegacyButtonModule {
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatLegacyButtonModule, never>;

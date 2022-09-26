@@ -6,14 +6,18 @@
 
 import { BaseHarnessFilters } from '@angular/cdk/testing';
 import { HarnessPredicate } from '@angular/cdk/testing';
+import { LegacyOptgroupHarnessFilters } from '@angular/material/legacy-core/testing';
+import { LegacyOptionHarnessFilters } from '@angular/material/legacy-core/testing';
 import { MatLegacyOptgroupHarness } from '@angular/material/legacy-core/testing';
 import { MatLegacyOptionHarness } from '@angular/material/legacy-core/testing';
 import { _MatSelectHarnessBase } from '@angular/material/select/testing';
-import { OptgroupHarnessFilters } from '@angular/material/legacy-core/testing';
-import { OptionHarnessFilters } from '@angular/material/legacy-core/testing';
 
-// @public
-export class MatLegacySelectHarness extends _MatSelectHarnessBase<typeof MatLegacyOptionHarness, MatLegacyOptionHarness, OptionHarnessFilters, typeof MatLegacyOptgroupHarness, MatLegacyOptgroupHarness, OptgroupHarnessFilters> {
+// @public @deprecated
+export interface LegacySelectHarnessFilters extends BaseHarnessFilters {
+}
+
+// @public @deprecated
+export class MatLegacySelectHarness extends _MatSelectHarnessBase<typeof MatLegacyOptionHarness, MatLegacyOptionHarness, LegacyOptionHarnessFilters, typeof MatLegacyOptgroupHarness, MatLegacyOptgroupHarness, LegacyOptgroupHarnessFilters> {
     // (undocumented)
     static hostSelector: string;
     // (undocumented)
@@ -22,11 +26,7 @@ export class MatLegacySelectHarness extends _MatSelectHarnessBase<typeof MatLega
     protected _optionGroupClass: typeof MatLegacyOptgroupHarness;
     // (undocumented)
     protected _prefix: string;
-    static with(options?: SelectHarnessFilters): HarnessPredicate<MatLegacySelectHarness>;
-}
-
-// @public
-export interface SelectHarnessFilters extends BaseHarnessFilters {
+    static with(options?: LegacySelectHarnessFilters): HarnessPredicate<MatLegacySelectHarness>;
 }
 
 // (No @packageDocumentation comment for this package)

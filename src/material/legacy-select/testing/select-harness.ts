@@ -11,19 +11,23 @@ import {_MatSelectHarnessBase} from '@angular/material/select/testing';
 import {
   MatLegacyOptionHarness,
   MatLegacyOptgroupHarness,
-  OptionHarnessFilters,
-  OptgroupHarnessFilters,
+  LegacyOptionHarnessFilters,
+  LegacyOptgroupHarnessFilters,
 } from '@angular/material/legacy-core/testing';
-import {SelectHarnessFilters} from './select-harness-filters';
+import {LegacySelectHarnessFilters} from './select-harness-filters';
 
-/** Harness for interacting with a standard mat-select in tests. */
+/**
+ * Harness for interacting with a standard mat-select in tests.
+ * @deprecated Use `MatSelectHarness` from `@angular/material/select/testing` instead. See https://material.angular.io/guide/mdc-migration for information about migrating.
+ * @breaking-change 17.0.0
+ */
 export class MatLegacySelectHarness extends _MatSelectHarnessBase<
   typeof MatLegacyOptionHarness,
   MatLegacyOptionHarness,
-  OptionHarnessFilters,
+  LegacyOptionHarnessFilters,
   typeof MatLegacyOptgroupHarness,
   MatLegacyOptgroupHarness,
-  OptgroupHarnessFilters
+  LegacyOptgroupHarnessFilters
 > {
   static hostSelector = '.mat-select';
   protected _prefix = 'mat';
@@ -36,7 +40,7 @@ export class MatLegacySelectHarness extends _MatSelectHarnessBase<
    * @param options Options for filtering which select instances are considered a match.
    * @return a `HarnessPredicate` configured with the given options.
    */
-  static with(options: SelectHarnessFilters = {}): HarnessPredicate<MatLegacySelectHarness> {
+  static with(options: LegacySelectHarnessFilters = {}): HarnessPredicate<MatLegacySelectHarness> {
     return new HarnessPredicate(MatLegacySelectHarness, options);
   }
 }

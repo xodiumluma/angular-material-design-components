@@ -27,7 +27,7 @@ import { MatSnackBarRef as MatLegacySnackBarRef } from '@angular/material/snack-
 import { MatSnackBarVerticalPosition as MatLegacySnackBarVerticalPosition } from '@angular/material/snack-bar';
 import { Overlay } from '@angular/cdk/overlay';
 
-// @public
+// @public @deprecated
 export class LegacySimpleSnackBar implements LegacyTextOnlySnackBar {
     constructor(snackBarRef: MatLegacySnackBarRef<LegacySimpleSnackBar>, data: any);
     action(): void;
@@ -39,7 +39,7 @@ export class LegacySimpleSnackBar implements LegacyTextOnlySnackBar {
     // (undocumented)
     snackBarRef: MatLegacySnackBarRef<LegacySimpleSnackBar>;
     // (undocumented)
-    static ɵcmp: i0.ɵɵComponentDeclaration<LegacySimpleSnackBar, "simple-snack-bar", never, {}, {}, never, never, false>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<LegacySimpleSnackBar, "simple-snack-bar", never, {}, {}, never, never, false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<LegacySimpleSnackBar, never>;
 }
@@ -52,7 +52,7 @@ export { MAT_LEGACY_SNACK_BAR_DEFAULT_OPTIONS }
 
 export { MAT_LEGACY_SNACK_BAR_DEFAULT_OPTIONS_FACTORY }
 
-// @public
+// @public @deprecated
 export class MatLegacySnackBar extends _MatLegacySnackBarBase {
     constructor(overlay: Overlay, live: LiveAnnouncer, injector: Injector, breakpointObserver: BreakpointObserver, parentSnackBar: MatLegacySnackBar, defaultConfig: MatLegacySnackBarConfig);
     // (undocumented)
@@ -73,12 +73,12 @@ export { _MatLegacySnackBarBase }
 
 export { MatLegacySnackBarConfig }
 
-// @public
+// @public @deprecated
 export class MatLegacySnackBarContainer extends _MatLegacySnackBarContainerBase {
     // (undocumented)
     protected _afterPortalAttached(): void;
     // (undocumented)
-    static ɵcmp: i0.ɵɵComponentDeclaration<MatLegacySnackBarContainer, "snack-bar-container", never, {}, {}, never, never, false>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<MatLegacySnackBarContainer, "snack-bar-container", never, {}, {}, never, never, false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatLegacySnackBarContainer, never>;
 }
@@ -89,7 +89,7 @@ export { MatLegacySnackBarDismiss }
 
 export { MatLegacySnackBarHorizontalPosition }
 
-// @public (undocumented)
+// @public @deprecated (undocumented)
 export class MatLegacySnackBarModule {
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatLegacySnackBarModule, never>;

@@ -7,12 +7,12 @@
  */
 
 import {NgModule} from '@angular/core';
-import {MatLegacyButtonModule} from '@angular/material/legacy-button';
+import {MatButtonModule} from '@angular/material/button';
 import {MatIconModule} from '@angular/material/icon';
-import {ButtonE2E} from './button-e2e';
+import {ButtonE2e} from './button-e2e';
 
 @NgModule({
-  imports: [MatLegacyButtonModule, MatIconModule],
-  declarations: [ButtonE2E],
+  imports: [MatButtonModule, MatIconModule],
+  declarations: [ButtonE2e],
 })
 export class ButtonE2eModule {}

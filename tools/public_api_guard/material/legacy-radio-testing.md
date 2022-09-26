@@ -6,33 +6,33 @@
 
 import { AsyncFactoryFn } from '@angular/cdk/testing';
 import { HarnessPredicate } from '@angular/cdk/testing';
+import { RadioButtonHarnessFilters as LegacyRadioButtonHarnessFilters } from '@angular/material/radio/testing';
+import { RadioGroupHarnessFilters as LegacyRadioGroupHarnessFilters } from '@angular/material/radio/testing';
 import { _MatRadioButtonHarnessBase } from '@angular/material/radio/testing';
 import { _MatRadioGroupHarnessBase } from '@angular/material/radio/testing';
-import { RadioButtonHarnessFilters } from '@angular/material/radio/testing';
-import { RadioGroupHarnessFilters } from '@angular/material/radio/testing';
 import { TestElement } from '@angular/cdk/testing';
 
-// @public
+export { LegacyRadioButtonHarnessFilters }
+
+export { LegacyRadioGroupHarnessFilters }
+
+// @public @deprecated
 export class MatLegacyRadioButtonHarness extends _MatRadioButtonHarnessBase {
     // (undocumented)
     protected _clickLabel: AsyncFactoryFn<TestElement>;
     static hostSelector: string;
     // (undocumented)
     protected _textLabel: AsyncFactoryFn<TestElement>;
-    static with(options?: RadioButtonHarnessFilters): HarnessPredicate<MatLegacyRadioButtonHarness>;
+    static with(options?: LegacyRadioButtonHarnessFilters): HarnessPredicate<MatLegacyRadioButtonHarness>;
 }
 
-// @public
-export class MatLegacyRadioGroupHarness extends _MatRadioGroupHarnessBase<typeof MatLegacyRadioButtonHarness, MatLegacyRadioButtonHarness, RadioButtonHarnessFilters> {
+// @public @deprecated
+export class MatLegacyRadioGroupHarness extends _MatRadioGroupHarnessBase<typeof MatLegacyRadioButtonHarness, MatLegacyRadioButtonHarness, LegacyRadioButtonHarnessFilters> {
     // (undocumented)
     protected _buttonClass: typeof MatLegacyRadioButtonHarness;
     static hostSelector: string;
-    static with(options?: RadioGroupHarnessFilters): HarnessPredicate<MatLegacyRadioGroupHarness>;
+    static with(options?: LegacyRadioGroupHarnessFilters): HarnessPredicate<MatLegacyRadioGroupHarness>;
 }
-
-export { RadioButtonHarnessFilters }
-
-export { RadioGroupHarnessFilters }
 
 // (No @packageDocumentation comment for this package)
 

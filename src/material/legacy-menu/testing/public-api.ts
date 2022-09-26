@@ -6,5 +6,17 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-export * from './menu-harness';
-export {MenuHarnessFilters, MenuItemHarnessFilters} from '@angular/material/menu/testing';
+export {MatLegacyMenuHarness, MatLegacyMenuItemHarness} from './menu-harness';
+export {
+  /**
+   * @deprecated Use `MenuHarnessFilters` from `@angular/material/menu/testing` instead. See https://material.angular.io/guide/mdc-migration for information about migrating.
+   * @breaking-change 17.0.0
+   */
+  MenuHarnessFilters as LegacyMenuHarnessFilters,
+
+  /**
+   * @deprecated Use `MenuItemHarnessFilters` from `@angular/material/menu/testing` instead. See https://material.angular.io/guide/mdc-migration for information about migrating.
+   * @breaking-change 17.0.0
+   */
+  MenuItemHarnessFilters as LegacyMenuItemHarnessFilters,
+} from '@angular/material/menu/testing';

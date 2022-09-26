@@ -9,13 +9,17 @@
 import {ContentContainerComponentHarness, HarnessPredicate, TestKey} from '@angular/cdk/testing';
 import {MatLegacyChipAvatarHarness} from './chip-avatar-harness';
 import {
-  ChipAvatarHarnessFilters,
-  ChipHarnessFilters,
-  ChipRemoveHarnessFilters,
+  LegacyChipAvatarHarnessFilters,
+  LegacyChipHarnessFilters,
+  LegacyChipRemoveHarnessFilters,
 } from './chip-harness-filters';
 import {MatLegacyChipRemoveHarness} from './chip-remove-harness';
 
-/** Harness for interacting with a standard selectable Angular Material chip in tests. */
+/**
+ * Harness for interacting with a standard selectable Angular Material chip in tests.
+ * @deprecated Use `MatChipHarness` from `@angular/material/chips/testing` instead. See https://material.angular.io/guide/mdc-migration for information about migrating.
+ * @breaking-change 17.0.0
+ */
 export class MatLegacyChipHarness extends ContentContainerComponentHarness {
   /** The selector for the host element of a `MatChip` instance. */
   static hostSelector = '.mat-chip';
@@ -26,7 +30,7 @@ export class MatLegacyChipHarness extends ContentContainerComponentHarness {
    * @param options Options for filtering which chip instances are considered a match.
    * @return a `HarnessPredicate` configured with the given options.
    */
-  static with(options: ChipHarnessFilters = {}): HarnessPredicate<MatLegacyChipHarness> {
+  static with(options: LegacyChipHarnessFilters = {}): HarnessPredicate<MatLegacyChipHarness> {
     return new HarnessPredicate(MatLegacyChipHarness, options)
       .addOption('text', options.text, (harness, label) =>
         HarnessPredicate.stringMatches(harness.getText(), label),
@@ -100,7 +104,7 @@ export class MatLegacyChipHarness extends ContentContainerComponentHarness {
    * @param filter Optionally filters which remove buttons are included.
    */
   async getRemoveButton(
-    filter: ChipRemoveHarnessFilters = {},
+    filter: LegacyChipRemoveHarnessFilters = {},
   ): Promise<MatLegacyChipRemoveHarness> {
     return this.locatorFor(MatLegacyChipRemoveHarness.with(filter))();
   }
@@ -110,7 +114,7 @@ export class MatLegacyChipHarness extends ContentContainerComponentHarness {
    * @param filter Optionally filters which avatars are included.
    */
   async getAvatar(
-    filter: ChipAvatarHarnessFilters = {},
+    filter: LegacyChipAvatarHarnessFilters = {},
   ): Promise<MatLegacyChipAvatarHarness | null> {
     return this.locatorForOptional(MatLegacyChipAvatarHarness.with(filter))();
   }

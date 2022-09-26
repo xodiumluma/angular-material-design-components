@@ -19,11 +19,18 @@ import {
   OnDestroy,
   Output,
 } from '@angular/core';
-import {MatLegacyChipsDefaultOptions, MAT_CHIPS_DEFAULT_OPTIONS} from './chip-default-options';
+import {
+  MatLegacyChipsDefaultOptions,
+  MAT_LEGACY_CHIPS_DEFAULT_OPTIONS,
+} from './chip-default-options';
 import {MatLegacyChipList} from './chip-list';
 import {MatLegacyChipTextControl} from './chip-text-control';
 
-/** Represents an input event on a `matChipInput`. */
+/**
+ * Represents an input event on a `matChipInput`.
+ * @deprecated Use `MatChipInputEvent` from `@angular/material/chips` instead. See https://material.angular.io/guide/mdc-migration for information about migrating.
+ * @breaking-change 17.0.0
+ */
 export interface MatLegacyChipInputEvent {
   /**
    * The native `<input>` element that the event is being fired for.
@@ -45,6 +52,8 @@ let nextUniqueId = 0;
 /**
  * Directive that adds chip-specific behaviors to an input element inside `<mat-form-field>`.
  * May be placed inside or outside of an `<mat-chip-list>`.
+ * @deprecated Use `MatChipInput` from `@angular/material/chips` instead. See https://material.angular.io/guide/mdc-migration for information about migrating.
+ * @breaking-change 17.0.0
  */
 @Directive({
   selector: 'input[matChipInputFor]',
@@ -132,7 +141,7 @@ export class MatLegacyChipInput
 
   constructor(
     protected _elementRef: ElementRef<HTMLInputElement>,
-    @Inject(MAT_CHIPS_DEFAULT_OPTIONS) private _defaultOptions: MatLegacyChipsDefaultOptions,
+    @Inject(MAT_LEGACY_CHIPS_DEFAULT_OPTIONS) private _defaultOptions: MatLegacyChipsDefaultOptions,
   ) {
     this.inputElement = this._elementRef.nativeElement as HTMLInputElement;
   }

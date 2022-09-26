@@ -13,10 +13,17 @@ import {
   parallel,
 } from '@angular/cdk/testing';
 import {DividerHarnessFilters, MatDividerHarness} from '@angular/material/divider/testing';
-import {BaseListItemHarnessFilters, SubheaderHarnessFilters} from './list-harness-filters';
+import {
+  LegacyBaseListItemHarnessFilters,
+  LegacySubheaderHarnessFilters,
+} from './list-harness-filters';
 import {MatLegacySubheaderHarness} from './list-item-harness-base';
 
-/** Represents a section of a list falling under a specific header. */
+/**
+ * Represents a section of a list falling under a specific header.
+ * @deprecated Use `ListSection` from `@angular/material/list/testing` instead. See https://material.angular.io/guide/mdc-migration for information about migrating.
+ * @breaking-change 17.0.0
+ */
 export interface ListSection<I> {
   /** The heading for this list section. `undefined` if there is no heading. */
   heading?: string;
@@ -31,11 +38,13 @@ export interface ListSection<I> {
  * @template C The list item harness type that `T` constructs.
  * @template F The filter type used filter list item harness of type `C`.
  * @docs-private
+ * @deprecated Use `class` from `@angular/material/list/testing` instead. See https://material.angular.io/guide/mdc-migration for information about migrating.
+ * @breaking-change 17.0.0
  */
 export abstract class MatLegacyListHarnessBase<
   T extends ComponentHarnessConstructor<C> & {with: (options?: F) => HarnessPredicate<C>},
   C extends ComponentHarness,
-  F extends BaseListItemHarnessFilters,
+  F extends LegacyBaseListItemHarnessFilters,
 > extends ComponentHarness {
   protected _itemHarness: T;
 
@@ -130,7 +139,7 @@ export abstract class MatLegacyListHarnessBase<
   }): Promise<C[]>;
   getItemsWithSubheadersAndDividers(filters: {
     item: false;
-    subheader?: SubheaderHarnessFilters | false;
+    subheader?: LegacySubheaderHarnessFilters | false;
     divider: false;
   }): Promise<MatLegacySubheaderHarness[]>;
   getItemsWithSubheadersAndDividers(filters: {
@@ -140,7 +149,7 @@ export abstract class MatLegacyListHarnessBase<
   }): Promise<MatDividerHarness[]>;
   getItemsWithSubheadersAndDividers(filters: {
     item?: F | false;
-    subheader?: SubheaderHarnessFilters | false;
+    subheader?: LegacySubheaderHarnessFilters | false;
     divider: false;
   }): Promise<(C | MatLegacySubheaderHarness)[]>;
   getItemsWithSubheadersAndDividers(filters: {
@@ -150,18 +159,18 @@ export abstract class MatLegacyListHarnessBase<
   }): Promise<(C | MatDividerHarness)[]>;
   getItemsWithSubheadersAndDividers(filters: {
     item: false;
-    subheader?: false | SubheaderHarnessFilters;
+    subheader?: false | LegacySubheaderHarnessFilters;
     divider?: false | DividerHarnessFilters;
   }): Promise<(MatLegacySubheaderHarness | MatDividerHarness)[]>;
   getItemsWithSubheadersAndDividers(filters?: {
     item?: F | false;
-    subheader?: SubheaderHarnessFilters | false;
+    subheader?: LegacySubheaderHarnessFilters | false;
     divider?: DividerHarnessFilters | false;
   }): Promise<(C | MatLegacySubheaderHarness | MatDividerHarness)[]>;
   async getItemsWithSubheadersAndDividers(
     filters: {
       item?: F | false;
-      subheader?: SubheaderHarnessFilters | false;
+      subheader?: LegacySubheaderHarnessFilters | false;
       divider?: DividerHarnessFilters | false;
     } = {},
   ): Promise<(C | MatLegacySubheaderHarness | MatDividerHarness)[]> {

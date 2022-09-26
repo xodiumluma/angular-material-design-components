@@ -65,7 +65,7 @@ export { MAT_LEGACY_TAB_GROUP }
 
 export { MAT_LEGACY_TABS_CONFIG }
 
-// @public
+// @public @deprecated
 export class MatLegacyInkBar {
     constructor(_elementRef: ElementRef<HTMLElement>, _ngZone: NgZone, _inkBarPositioner: _MatLegacyInkBarPositioner, _animationMode?: string | undefined);
     alignToElement(element: HTMLElement): void;
@@ -74,7 +74,7 @@ export class MatLegacyInkBar {
     hide(): void;
     show(): void;
     // (undocumented)
-    static ɵdir: i0.ɵɵDirectiveDeclaration<MatLegacyInkBar, "mat-ink-bar", never, {}, {}, never, never, false>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<MatLegacyInkBar, "mat-ink-bar", never, {}, {}, never, never, false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatLegacyInkBar, [null, null, null, { optional: true; }]>;
 }
@@ -83,26 +83,26 @@ export { _MatLegacyInkBarPositioner }
 
 export { MatLegacyPaginatedTabHeader }
 
-// @public (undocumented)
+// @public @deprecated (undocumented)
 export class MatLegacyTab extends _MatLegacyTabBase {
     _explicitContent: TemplateRef<any>;
     get templateLabel(): MatTabLabel;
     set templateLabel(value: MatTabLabel);
     // (undocumented)
-    static ɵcmp: i0.ɵɵComponentDeclaration<MatLegacyTab, "mat-tab", ["matTab"], { "disabled": "disabled"; }, {}, ["templateLabel", "_explicitContent"], ["*"], false>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<MatLegacyTab, "mat-tab", ["matTab"], { "disabled": "disabled"; }, {}, ["templateLabel", "_explicitContent"], ["*"], false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatLegacyTab, never>;
 }
 
 export { _MatLegacyTabBase }
 
-// @public
+// @public @deprecated
 export class MatLegacyTabBody extends _MatLegacyTabBodyBase {
     constructor(elementRef: ElementRef<HTMLElement>, dir: Directionality, changeDetectorRef: ChangeDetectorRef);
     // (undocumented)
     _portalHost: CdkPortalOutlet;
     // (undocumented)
-    static ɵcmp: i0.ɵɵComponentDeclaration<MatLegacyTabBody, "mat-tab-body", never, {}, {}, never, never, false>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<MatLegacyTabBody, "mat-tab-body", never, {}, {}, never, never, false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatLegacyTabBody, [null, { optional: true; }, null]>;
 }
@@ -111,11 +111,11 @@ export { _MatLegacyTabBodyBase }
 
 export { MatLegacyTabBodyOriginState }
 
-// @public
+// @public @deprecated
 export class MatLegacyTabBodyPortal extends MatTabBodyPortal {
     constructor(componentFactoryResolver: ComponentFactoryResolver, viewContainerRef: ViewContainerRef, host: MatLegacyTabBody, _document: any);
     // (undocumented)
-    static ɵdir: i0.ɵɵDirectiveDeclaration<MatLegacyTabBodyPortal, "[matTabBodyHost]", never, {}, {}, never, never, false>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<MatLegacyTabBodyPortal, "[matTabBodyHost]", never, {}, {}, never, never, false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatLegacyTabBodyPortal, never>;
 }
@@ -124,15 +124,15 @@ export { MatLegacyTabBodyPositionState }
 
 export { MatLegacyTabChangeEvent }
 
-// @public
+// @public @deprecated
 export class MatLegacyTabContent extends MatTabContent {
     // (undocumented)
-    static ɵdir: i0.ɵɵDirectiveDeclaration<MatLegacyTabContent, "[matTabContent]", never, {}, {}, never, never, false>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<MatLegacyTabContent, "[matTabContent]", never, {}, {}, never, never, false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatLegacyTabContent, never>;
 }
 
-// @public
+// @public @deprecated
 export class MatLegacyTabGroup extends _MatLegacyTabGroupBase {
     constructor(elementRef: ElementRef, changeDetectorRef: ChangeDetectorRef, defaultConfig?: MatLegacyTabsConfig, animationMode?: string);
     // (undocumented)
@@ -142,14 +142,14 @@ export class MatLegacyTabGroup extends _MatLegacyTabGroupBase {
     // (undocumented)
     _tabHeader: MatTabGroupBaseHeader;
     // (undocumented)
-    static ɵcmp: i0.ɵɵComponentDeclaration<MatLegacyTabGroup, "mat-tab-group", ["matTabGroup"], { "color": "color"; "disableRipple": "disableRipple"; }, {}, ["_allTabs"], never, false>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<MatLegacyTabGroup, "mat-tab-group", ["matTabGroup"], { "color": "color"; "disableRipple": "disableRipple"; }, {}, ["_allTabs"], never, false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatLegacyTabGroup, [null, null, { optional: true; }, { optional: true; }]>;
 }
 
 export { _MatLegacyTabGroupBase }
 
-// @public
+// @public @deprecated
 export class MatLegacyTabHeader extends _MatLegacyTabHeaderBase {
     constructor(elementRef: ElementRef, changeDetectorRef: ChangeDetectorRef, viewportRuler: ViewportRuler, dir: Directionality, ngZone: NgZone, platform: Platform, animationMode?: string);
     // (undocumented)
@@ -167,7 +167,7 @@ export class MatLegacyTabHeader extends _MatLegacyTabHeaderBase {
     // (undocumented)
     _tabListInner: ElementRef;
     // (undocumented)
-    static ɵcmp: i0.ɵɵComponentDeclaration<MatLegacyTabHeader, "mat-tab-header", never, { "selectedIndex": "selectedIndex"; }, { "selectFocusedIndex": "selectFocusedIndex"; "indexFocused": "indexFocused"; }, ["_items"], ["*"], false>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<MatLegacyTabHeader, "mat-tab-header", never, { "selectedIndex": "selectedIndex"; }, { "selectFocusedIndex": "selectFocusedIndex"; "indexFocused": "indexFocused"; }, ["_items"], ["*"], false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatLegacyTabHeader, [null, null, null, { optional: true; }, null, null, { optional: true; }]>;
 }
@@ -176,36 +176,36 @@ export { _MatLegacyTabHeaderBase }
 
 export { MatLegacyTabHeaderPosition }
 
-// @public
+// @public @deprecated
 export class MatLegacyTabLabel extends MatTabLabel {
     // (undocumented)
-    static ɵdir: i0.ɵɵDirectiveDeclaration<MatLegacyTabLabel, "[mat-tab-label], [matTabLabel]", never, {}, {}, never, never, false>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<MatLegacyTabLabel, "[mat-tab-label], [matTabLabel]", never, {}, {}, never, never, false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatLegacyTabLabel, never>;
 }
 
-// @public (undocumented)
+// @public @deprecated (undocumented)
 export class MatLegacyTabLabelWrapper extends _MatTabLabelWrapperBase {
     // (undocumented)
-    static ɵdir: i0.ɵɵDirectiveDeclaration<MatLegacyTabLabelWrapper, "[matTabLabelWrapper]", never, { "disabled": "disabled"; }, {}, never, never, false>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<MatLegacyTabLabelWrapper, "[matTabLabelWrapper]", never, { "disabled": "disabled"; }, {}, never, never, false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatLegacyTabLabelWrapper, never>;
 }
 
-// @public
+// @public @deprecated
 export class MatLegacyTabLink extends _MatLegacyTabLinkBase implements OnDestroy {
     constructor(tabNavBar: MatLegacyTabNav, elementRef: ElementRef, ngZone: NgZone, platform: Platform, globalRippleOptions: RippleGlobalOptions | null, tabIndex: string, focusMonitor: FocusMonitor, animationMode?: string);
     // (undocumented)
     ngOnDestroy(): void;
     // (undocumented)
-    static ɵdir: i0.ɵɵDirectiveDeclaration<MatLegacyTabLink, "[mat-tab-link], [matTabLink]", ["matTabLink"], { "disabled": "disabled"; "disableRipple": "disableRipple"; "tabIndex": "tabIndex"; }, {}, never, never, false>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<MatLegacyTabLink, "[mat-tab-link], [matTabLink]", ["matTabLink"], { "disabled": "disabled"; "disableRipple": "disableRipple"; "tabIndex": "tabIndex"; }, {}, never, never, false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatLegacyTabLink, [null, null, null, null, { optional: true; }, { attribute: "tabindex"; }, null, { optional: true; }]>;
 }
 
 export { _MatLegacyTabLinkBase }
 
-// @public
+// @public @deprecated
 export class MatLegacyTabNav extends _MatLegacyTabNavBase {
     constructor(elementRef: ElementRef, dir: Directionality, ngZone: NgZone, changeDetectorRef: ChangeDetectorRef, viewportRuler: ViewportRuler, platform: Platform, animationMode?: string);
     // (undocumented)
@@ -223,19 +223,19 @@ export class MatLegacyTabNav extends _MatLegacyTabNavBase {
     // (undocumented)
     _tabListInner: ElementRef;
     // (undocumented)
-    static ɵcmp: i0.ɵɵComponentDeclaration<MatLegacyTabNav, "[mat-tab-nav-bar]", ["matTabNavBar", "matTabNav"], { "color": "color"; }, {}, ["_items"], ["*"], false>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<MatLegacyTabNav, "[mat-tab-nav-bar]", ["matTabNavBar", "matTabNav"], { "color": "color"; }, {}, ["_items"], ["*"], false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatLegacyTabNav, [null, { optional: true; }, null, null, null, null, { optional: true; }]>;
 }
 
 export { _MatLegacyTabNavBase }
 
-// @public
+// @public @deprecated
 export class MatLegacyTabNavPanel {
     _activeTabId?: string;
     id: string;
     // (undocumented)
-    static ɵcmp: i0.ɵɵComponentDeclaration<MatLegacyTabNavPanel, "mat-tab-nav-panel", ["matTabNavPanel"], { "id": "id"; }, {}, never, ["*"], false>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<MatLegacyTabNavPanel, "mat-tab-nav-panel", ["matTabNavPanel"], { "id": "id"; }, {}, never, ["*"], false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatLegacyTabNavPanel, never>;
 }
@@ -244,7 +244,7 @@ export { matLegacyTabsAnimations }
 
 export { MatLegacyTabsConfig }
 
-// @public (undocumented)
+// @public @deprecated (undocumented)
 export class MatLegacyTabsModule {
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatLegacyTabsModule, never>;

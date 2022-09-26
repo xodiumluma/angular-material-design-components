@@ -36,8 +36,10 @@ import {
  * Provider Expression that allows mat-radio-group to register as a ControlValueAccessor. This
  * allows it to support [(ngModel)] and ngControl.
  * @docs-private
+ * @deprecated Use `MAT_RADIO_GROUP_CONTROL_VALUE_ACCESSOR` from `@angular/material/radio` instead. See https://material.angular.io/guide/mdc-migration for information about migrating.
+ * @breaking-change 17.0.0
  */
-export const MAT_RADIO_GROUP_CONTROL_VALUE_ACCESSOR: any = {
+export const MAT_LEGACY_RADIO_GROUP_CONTROL_VALUE_ACCESSOR: any = {
   provide: NG_VALUE_ACCESSOR,
   useExisting: forwardRef(() => MatLegacyRadioGroup),
   multi: true,
@@ -45,12 +47,14 @@ export const MAT_RADIO_GROUP_CONTROL_VALUE_ACCESSOR: any = {
 
 /**
  * A group of radio buttons. May contain one or more `<mat-radio-button>` elements.
+ * @deprecated Use `MatRadioGroup` from `@angular/material/radio` instead. See https://material.angular.io/guide/mdc-migration for information about migrating.
+ * @breaking-change 17.0.0
  */
 @Directive({
   selector: 'mat-radio-group',
   exportAs: 'matRadioGroup',
   providers: [
-    MAT_RADIO_GROUP_CONTROL_VALUE_ACCESSOR,
+    MAT_LEGACY_RADIO_GROUP_CONTROL_VALUE_ACCESSOR,
     {provide: MAT_RADIO_GROUP, useExisting: MatLegacyRadioGroup},
   ],
   host: {
@@ -65,6 +69,8 @@ export class MatLegacyRadioGroup extends _MatRadioGroupBase<MatLegacyRadioButton
 
 /**
  * A Material design radio-button. Typically placed inside of `<mat-radio-group>` elements.
+ * @deprecated Use `MatRadioButton` from `@angular/material/radio` instead. See https://material.angular.io/guide/mdc-migration for information about migrating.
+ * @breaking-change 17.0.0
  */
 @Component({
   selector: 'mat-radio-button',

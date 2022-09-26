@@ -52,11 +52,11 @@ import {
   FormBuilder,
 } from '@angular/forms';
 import {ErrorStateMatcher} from '@angular/material/core';
-import {MatLegacyOption, MatOptionSelectionChange} from '@angular/material/legacy-core';
+import {MatLegacyOption, MatLegacyOptionSelectionChange} from '@angular/material/legacy-core';
 import {
-  FloatLabelType,
+  LegacyFloatLabelType,
   MatLegacyFormFieldModule,
-  MAT_FORM_FIELD_DEFAULT_OPTIONS,
+  MAT_LEGACY_FORM_FIELD_DEFAULT_OPTIONS,
 } from '@angular/material/legacy-form-field';
 import {By} from '@angular/platform-browser';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
@@ -110,9 +110,7 @@ describe('MatSelect', () => {
       ],
     }).compileComponents();
 
-    inject([OverlayContainer], (oc: OverlayContainer) => {
-      overlayContainerElement = oc.getContainerElement();
-    })();
+    overlayContainerElement = TestBed.inject(OverlayContainer).getContainerElement();
   }
 
   describe('core', () => {
@@ -1867,7 +1865,7 @@ describe('MatSelect', () => {
         fixture.detectChanges();
         flush();
 
-        expect(spy).toHaveBeenCalledWith(jasmine.any(MatOptionSelectionChange));
+        expect(spy).toHaveBeenCalledWith(jasmine.any(MatLegacyOptionSelectionChange));
 
         subscription.unsubscribe();
       }));
@@ -1896,7 +1894,7 @@ describe('MatSelect', () => {
         fixture.detectChanges();
         flush();
 
-        expect(spy).toHaveBeenCalledWith(jasmine.any(MatOptionSelectionChange));
+        expect(spy).toHaveBeenCalledWith(jasmine.any(MatLegacyOptionSelectionChange));
 
         subscription!.unsubscribe();
       }));
@@ -1931,9 +1929,9 @@ describe('MatSelect', () => {
       }));
 
       it('should not indicate programmatic value changes as user interactions', () => {
-        const events: MatOptionSelectionChange[] = [];
+        const events: MatLegacyOptionSelectionChange[] = [];
         const subscription = fixture.componentInstance.select.optionSelectionChanges.subscribe(
-          (event: MatOptionSelectionChange) => events.push(event),
+          (event: MatLegacyOptionSelectionChange) => events.push(event),
         );
 
         fixture.componentInstance.control.setValue('eggs-5');
@@ -2693,7 +2691,7 @@ describe('MatSelect', () => {
         declarations: [FloatLabelSelect],
         providers: [
           {
-            provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
+            provide: MAT_LEGACY_FORM_FIELD_DEFAULT_OPTIONS,
             useValue: {floatLabel: 'always'},
           },
         ],
@@ -5462,7 +5460,7 @@ class BasicSelectOnPushPreselected {
     `,
 })
 class FloatLabelSelect {
-  floatLabel: FloatLabelType | null = 'auto';
+  floatLabel: LegacyFloatLabelType | null = 'auto';
   placeholder = 'Food I want to eat right now';
   control = new FormControl('');
   foods: any[] = [
@@ -6002,7 +6000,7 @@ class SelectWithNgIfAndLabel {
   `,
 })
 class MultiSelectWithLotsOfOptions {
-  items = new Array(1000).fill(0).map((_, i) => i);
+  items = new Array(100).fill(0).map((_, i) => i);
   value: number[] = [];
 
   checkAll() {

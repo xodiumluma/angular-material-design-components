@@ -66,7 +66,7 @@ export class MatTooltip extends _MatTooltipBase<TooltipComponent> {
     // (undocumented)
     protected readonly _tooltipComponent: typeof TooltipComponent;
     // (undocumented)
-    static ɵdir: i0.ɵɵDirectiveDeclaration<MatTooltip, "[matTooltip]", ["matTooltip"], {}, {}, never, never, false>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<MatTooltip, "[matTooltip]", ["matTooltip"], {}, {}, never, never, false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatTooltip, [null, null, null, null, null, null, null, null, null, { optional: true; }, { optional: true; }, null]>;
 }
@@ -134,7 +134,7 @@ export abstract class _MatTooltipBase<T extends _TooltipComponentBase> implement
     // (undocumented)
     protected _viewportMargin: number;
     // (undocumented)
-    static ɵdir: i0.ɵɵDirectiveDeclaration<_MatTooltipBase<any>, never, never, { "position": "matTooltipPosition"; "positionAtOrigin": "matTooltipPositionAtOrigin"; "disabled": "matTooltipDisabled"; "showDelay": "matTooltipShowDelay"; "hideDelay": "matTooltipHideDelay"; "touchGestures": "matTooltipTouchGestures"; "message": "matTooltip"; "tooltipClass": "matTooltipClass"; }, {}, never, never, false>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<_MatTooltipBase<any>, never, never, { "position": "matTooltipPosition"; "positionAtOrigin": "matTooltipPositionAtOrigin"; "disabled": "matTooltipDisabled"; "showDelay": "matTooltipShowDelay"; "hideDelay": "matTooltipHideDelay"; "touchGestures": "matTooltipTouchGestures"; "message": "matTooltip"; "tooltipClass": "matTooltipClass"; }, {}, never, never, false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<_MatTooltipBase<any>, never>;
 }
@@ -179,7 +179,7 @@ export class TooltipComponent extends _TooltipComponentBase {
     _showAnimation: string;
     _tooltip: ElementRef<HTMLElement>;
     // (undocumented)
-    static ɵcmp: i0.ɵɵComponentDeclaration<TooltipComponent, "mat-tooltip-component", never, {}, {}, never, never, false>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<TooltipComponent, "mat-tooltip-component", never, {}, {}, never, never, false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<TooltipComponent, [null, null, { optional: true; }]>;
 }
@@ -188,13 +188,13 @@ export class TooltipComponent extends _TooltipComponentBase {
 export abstract class _TooltipComponentBase implements OnDestroy {
     constructor(_changeDetectorRef: ChangeDetectorRef, animationMode?: string);
     afterHidden(): Observable<void>;
+    _cancelPendingHide(): void;
     _handleAnimationEnd({ animationName }: AnimationEvent): void;
     _handleBodyInteraction(): void;
     // (undocumented)
     _handleMouseLeave({ relatedTarget }: MouseEvent): void;
     hide(delay: number): void;
     protected abstract readonly _hideAnimation: string;
-    _hideTimeoutId: number | undefined;
     isVisible(): boolean;
     _markForCheck(): void;
     message: string;
@@ -204,15 +204,13 @@ export abstract class _TooltipComponentBase implements OnDestroy {
     protected _onShow(): void;
     show(delay: number): void;
     protected abstract readonly _showAnimation: string;
-    _showTimeoutId: number | undefined;
     abstract _tooltip: ElementRef<HTMLElement>;
     tooltipClass: string | string[] | Set<string> | {
         [key: string]: any;
     };
     _triggerElement: HTMLElement;
-    _visibility: TooltipVisibility;
     // (undocumented)
-    static ɵdir: i0.ɵɵDirectiveDeclaration<_TooltipComponentBase, never, never, {}, {}, never, never, false>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<_TooltipComponentBase, never, never, {}, {}, never, never, false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<_TooltipComponentBase, [null, { optional: true; }]>;
 }

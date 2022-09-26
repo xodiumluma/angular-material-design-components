@@ -7,12 +7,12 @@
  */
 
 import {NgModule} from '@angular/core';
-import {MatLegacyFormFieldModule} from '@angular/material/legacy-form-field';
-import {MatLegacyInputModule} from '@angular/material/legacy-input';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatInputModule} from '@angular/material/input';
 import {InputE2E} from './input-e2e';
 
 @NgModule({
-  imports: [MatLegacyFormFieldModule, MatLegacyInputModule],
+  imports: [MatFormFieldModule, MatInputModule],
   declarations: [InputE2E],
 })
 export class InputE2eModule {}

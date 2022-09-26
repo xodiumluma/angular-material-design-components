@@ -7,11 +7,11 @@
  */
 
 import {NgModule} from '@angular/core';
-import {MatLegacyDialogModule} from '@angular/material/legacy-dialog';
+import {MatDialogModule} from '@angular/material/dialog';
 import {DialogE2E, TestDialog} from './dialog-e2e';
 
 @NgModule({
-  imports: [MatLegacyDialogModule],
+  imports: [MatDialogModule],
   declarations: [DialogE2E, TestDialog],
 })
 export class DialogE2eModule {}

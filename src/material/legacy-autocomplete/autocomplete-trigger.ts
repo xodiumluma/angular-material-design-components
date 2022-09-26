@@ -16,13 +16,19 @@ import {
 /**
  * Provider that allows the autocomplete to register as a ControlValueAccessor.
  * @docs-private
+ * @deprecated Use `MAT_AUTOCOMPLETE_VALUE_ACCESSOR` from `@angular/material/autocomplete` instead. See https://material.angular.io/guide/mdc-migration for information about migrating.
+ * @breaking-change 17.0.0
  */
-export const MAT_AUTOCOMPLETE_VALUE_ACCESSOR: any = {
+export const MAT_LEGACY_AUTOCOMPLETE_VALUE_ACCESSOR: any = {
   provide: NG_VALUE_ACCESSOR,
   useExisting: forwardRef(() => MatLegacyAutocompleteTrigger),
   multi: true,
 };
 
+/**
+ * @deprecated Use `MatAutocompleteTrigger` from `@angular/material/autocomplete` instead. See https://material.angular.io/guide/mdc-migration for information about migrating.
+ * @breaking-change 17.0.0
+ */
 @Directive({
   selector: `input[matAutocomplete], textarea[matAutocomplete]`,
   host: {
@@ -43,7 +49,7 @@ export const MAT_AUTOCOMPLETE_VALUE_ACCESSOR: any = {
     '(click)': '_handleClick()',
   },
   exportAs: 'matAutocompleteTrigger',
-  providers: [MAT_AUTOCOMPLETE_VALUE_ACCESSOR],
+  providers: [MAT_LEGACY_AUTOCOMPLETE_VALUE_ACCESSOR],
 })
 export class MatLegacyAutocompleteTrigger extends _MatAutocompleteTriggerBase {
   protected _aboveClass = 'mat-autocomplete-panel-above';

@@ -44,13 +44,21 @@ import {ANIMATION_MODULE_TYPE} from '@angular/platform-browser/animations';
 import {Subject} from 'rxjs';
 import {take} from 'rxjs/operators';
 
-/** Represents an event fired on an individual `mat-chip`. */
+/**
+ * Represents an event fired on an individual `mat-chip`.
+ * @deprecated Use `MatChipEvent` from `@angular/material/chips` instead. See https://material.angular.io/guide/mdc-migration for information about migrating.
+ * @breaking-change 17.0.0
+ */
 export interface MatLegacyChipEvent {
   /** The chip the event was fired on. */
   chip: MatLegacyChip;
 }
 
-/** Event object emitted by MatChip when selected or deselected. */
+/**
+ * Event object emitted by MatChip when selected or deselected.
+ * @deprecated Use `MatChipSelectionChange` from `@angular/material/chips` instead. See https://material.angular.io/guide/mdc-migration for information about migrating.
+ * @breaking-change 17.0.0
+ */
 export class MatLegacyChipSelectionChange {
   constructor(
     /** Reference to the chip that emitted the event. */
@@ -66,22 +74,28 @@ export class MatLegacyChipSelectionChange {
  * Injection token that can be used to reference instances of `MatChipRemove`. It serves as
  * alternative token to the actual `MatChipRemove` class which could cause unnecessary
  * retention of the class and its directive metadata.
+ * @deprecated Use `MAT_CHIP_REMOVE` from `@angular/material/chips` instead. See https://material.angular.io/guide/mdc-migration for information about migrating.
+ * @breaking-change 17.0.0
  */
-export const MAT_CHIP_REMOVE = new InjectionToken<MatLegacyChipRemove>('MatChipRemove');
+export const MAT_LEGACY_CHIP_REMOVE = new InjectionToken<MatLegacyChipRemove>('MatChipRemove');
 
 /**
  * Injection token that can be used to reference instances of `MatChipAvatar`. It serves as
  * alternative token to the actual `MatChipAvatar` class which could cause unnecessary
  * retention of the class and its directive metadata.
+ * @deprecated Use `MAT_CHIP_AVATAR` from `@angular/material/chips` instead. See https://material.angular.io/guide/mdc-migration for information about migrating.
+ * @breaking-change 17.0.0
  */
-export const MAT_CHIP_AVATAR = new InjectionToken<MatLegacyChipAvatar>('MatChipAvatar');
+export const MAT_LEGACY_CHIP_AVATAR = new InjectionToken<MatLegacyChipAvatar>('MatChipAvatar');
 
 /**
  * Injection token that can be used to reference instances of `MatChipTrailingIcon`. It serves as
  * alternative token to the actual `MatChipTrailingIcon` class which could cause unnecessary
  * retention of the class and its directive metadata.
+ * @deprecated Use `MAT_CHIP_TRAILING_ICON` from `@angular/material/chips` instead. See https://material.angular.io/guide/mdc-migration for information about migrating.
+ * @breaking-change 17.0.0
  */
-export const MAT_CHIP_TRAILING_ICON = new InjectionToken<MatLegacyChipTrailingIcon>(
+export const MAT_LEGACY_CHIP_TRAILING_ICON = new InjectionToken<MatLegacyChipTrailingIcon>(
   'MatChipTrailingIcon',
 );
 
@@ -97,26 +111,34 @@ const _MatChipMixinBase = mixinTabIndex(mixinColor(mixinDisableRipple(MatChipBas
 /**
  * Dummy directive to add CSS class to chip avatar.
  * @docs-private
+ * @deprecated Use `MatChipAvatar` from `@angular/material/chips` instead. See https://material.angular.io/guide/mdc-migration for information about migrating.
+ * @breaking-change 17.0.0
  */
 @Directive({
   selector: 'mat-chip-avatar, [matChipAvatar]',
   host: {'class': 'mat-chip-avatar'},
-  providers: [{provide: MAT_CHIP_AVATAR, useExisting: MatLegacyChipAvatar}],
+  providers: [{provide: MAT_LEGACY_CHIP_AVATAR, useExisting: MatLegacyChipAvatar}],
 })
 export class MatLegacyChipAvatar {}
 
 /**
  * Dummy directive to add CSS class to chip trailing icon.
  * @docs-private
+ * @deprecated Use `MatChipTrailingIcon` from `@angular/material/chips` instead. See https://material.angular.io/guide/mdc-migration for information about migrating.
+ * @breaking-change 17.0.0
  */
 @Directive({
   selector: 'mat-chip-trailing-icon, [matChipTrailingIcon]',
   host: {'class': 'mat-chip-trailing-icon'},
-  providers: [{provide: MAT_CHIP_TRAILING_ICON, useExisting: MatLegacyChipTrailingIcon}],
+  providers: [{provide: MAT_LEGACY_CHIP_TRAILING_ICON, useExisting: MatLegacyChipTrailingIcon}],
 })
 export class MatLegacyChipTrailingIcon {}
 
-/** Material Design styled chip directive. Used inside the MatChipList component. */
+/**
+ * Material Design styled chip directive. Used inside the MatChipList component.
+ * @deprecated Use `MatChip` from `@angular/material/chips` instead. See https://material.angular.io/guide/mdc-migration for information about migrating.
+ * @breaking-change 17.0.0
+ */
 @Directive({
   selector: `mat-basic-chip, [mat-basic-chip], mat-chip, [mat-chip]`,
   inputs: ['color', 'disableRipple', 'tabIndex'],
@@ -197,13 +219,13 @@ export class MatLegacyChip
   _chipListDisabled: boolean = false;
 
   /** The chip avatar */
-  @ContentChild(MAT_CHIP_AVATAR) avatar: MatLegacyChipAvatar;
+  @ContentChild(MAT_LEGACY_CHIP_AVATAR) avatar: MatLegacyChipAvatar;
 
   /** The chip's trailing icon. */
-  @ContentChild(MAT_CHIP_TRAILING_ICON) trailingIcon: MatLegacyChipTrailingIcon;
+  @ContentChild(MAT_LEGACY_CHIP_TRAILING_ICON) trailingIcon: MatLegacyChipTrailingIcon;
 
   /** The chip's remove toggler. */
-  @ContentChild(MAT_CHIP_REMOVE) removeIcon: MatLegacyChipRemove;
+  @ContentChild(MAT_LEGACY_CHIP_REMOVE) removeIcon: MatLegacyChipRemove;
 
   /** ARIA role that should be applied to the chip. */
   @Input() role: string = 'option';
@@ -470,6 +492,9 @@ export class MatLegacyChip
  *
  * You *may* use a custom icon, but you may need to override the `mat-chip-remove` positioning
  * styles to properly center the icon within the chip.
+ *
+ * @deprecated Use `MatChipRemove` from `@angular/material/chips` instead. See https://material.angular.io/guide/mdc-migration for information about migrating.
+ * @breaking-change 17.0.0
  */
 @Directive({
   selector: '[matChipRemove]',
@@ -477,7 +502,7 @@ export class MatLegacyChip
     'class': 'mat-chip-remove mat-chip-trailing-icon',
     '(click)': '_handleClick($event)',
   },
-  providers: [{provide: MAT_CHIP_REMOVE, useExisting: MatLegacyChipRemove}],
+  providers: [{provide: MAT_LEGACY_CHIP_REMOVE, useExisting: MatLegacyChipRemove}],
 })
 export class MatLegacyChipRemove {
   constructor(protected _parentChip: MatLegacyChip, elementRef: ElementRef<HTMLElement>) {

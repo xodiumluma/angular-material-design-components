@@ -8,6 +8,10 @@
 
 import {BaseHarnessFilters} from '@angular/cdk/testing';
 
-export interface OptgroupHarnessFilters extends BaseHarnessFilters {
+/**
+ * @deprecated Use `OptgroupHarnessFilters` from `@angular/material/core/testing` instead. See https://material.angular.io/guide/mdc-migration for information about migrating.
+ * @breaking-change 17.0.0
+ */
+export interface LegacyOptgroupHarnessFilters extends BaseHarnessFilters {
   labelText?: string | RegExp;
 }
