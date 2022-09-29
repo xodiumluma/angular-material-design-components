@@ -207,7 +207,13 @@ TODO(mmalerba): link to density docs once they exist.
 
 ### Autocomplete
 
-* Long options now wrap by default instead of truncating.
+* Long options now wrap instead of truncating.
+
+* Option heights are no longer capped at `48px`.
+
+* Option list now has an `8px` top and bottom padding.
+
+* Options list now has an animation when opening and closing.
 
 ### Button
 
@@ -423,7 +429,11 @@ TODO(mmalerba): link to density docs once they exist.
     </span>
     ```
 
-* The text in menu items wrap instead of being hidden with an ellipses.
+* The text in menu items wraps instead of being hidden with an ellipses.
+
+* Menu item heights are no longer capped at `48px`.
+
+* Menu elevation starts from level 8, instead of level 4.
 
 ### Option / Optgroup
 
@@ -449,14 +459,33 @@ TODO(mmalerba): link to density docs once they exist.
 
 ### Radio
 
-* Radio-button labels are no longer `width: 100%`. This helps prevent users from accidentally
+* Radio button labels are no longer `width: 100%`. This helps prevent users from accidentally
   selecting a radio when clicking on whitespace that appears inert on the page.
+
+* Labels are smaller and further away from the radio button to align with the Material Design spec.
+
+* Accessibility: The touch target is much larger than the radio button; to match the legacy size,
+  you can provide a `-5` density to the radio button's theme mixin:
+
+```scss
+@use '@angular/material' as mat;
+
+@include mat.radio-theme(
+  map-merge($theme, (density: -5))
+);
+```
 
 ### Select
 
-* MatSelect no longer aligns the selected option in the dropdown menu with the trigger text.
+* `MatSelect` no longer aligns the selected option in the dropdown menu with the trigger text.
 
-* Long options now wrap by default instead of truncating.
+* Long options now wrap instead of truncating.
+
+* Option heights are no longer capped at `48px`.
+
+* Option list now has an `8px` top and bottom padding.
+
+* Option list animation has changed.
 
 * Previously the dropdown menu width could be wider than the parent form-field, but now the dropdown
   is the same width as the form-field
@@ -516,34 +545,42 @@ TODO(mmalerba): link to density docs once they exist.
 
 ### Table
 
-* Every cell has `16px` left and right padding. Previously only a `24px` padding applied to the
-  leftmost and rightmost cells.
+* All cells have a `16px` left and right padding instead of just the leftmost and rightmost cells having a padding of `24px`.
 
-* Header text size and color matches the data rows.
+* Header cells have the same color and text size as the data rows instead of having more grayish and smaller text.
 
-* Text will not wrap by default; to enable text wrapping, apply the `white-space: normal` style to
-  the table cell.
+* Cell text no longer wraps by default. Cell wrapping can be enabled by applying `white-space: normal` to
+  the table cells.
 
 * Row height is `52px` instead of `48px`.
 
-* Cells have box-sizing `border-box` instead of `content-box`. This may affect custom width styles.
+* Cell box-sizing is `border-box` instead of `content-box`. This may affect custom width styles.
+
+* The table's last row does not include a bottom border row because the table is expected to have a border.
 
 * The paginator property of the `MatTableDataSource` has a generic interface that matches most of
   the paginator API. You may need to explicitly type the paginator to access the full API, e.g.
   `new MatTableDataSource<MyData, MatPaginator>();`
 
-* MDC-based flex tables (`<mat-table>`) display borders on their cells instead of the rows.
+* Flex tables (`<mat-table>`) display a border on the cells instead of rows.
 
-* The last row of the table no longer has a bottom border since the table is assumed to be
-  surrounded by a border.
-
-* Flex table row height is set using `height` instead of `min-height`.
+* Flex table (`<mat-table>`) row height is set with `height` instead of `min-height`.
 
 ### Tabs
 
-* Accessibility: `MatTabNav` now throws an error if the `[tabPanel]` input is not provided. The
-  `[tabPanel]` input and associated `mat-tab-nav-panel` component improve accessibility.
-  TODO(crisbeto): This point needs further elaboration.
+* Accessibility: `<mat-tab-nav-bar>` now requires an additional `<mat-tab-nav-panel>` element to
+  be wrapped around the content that it is connected to. A refernece to the tab panel has to be
+  passed in to the `tabPanel` or an error will be thrown. The addition of the tab panel allows
+  for better labelling for assistive technology.
+
+```html
+<!-- Before -->
+<mat-tab-nav-bar>...</mat-tab-nav-bar>
+
+<!-- After -->
+<mat-tab-nav-bar [tabPanel]="tabPanel">...</mat-tab-nav-bar>
+<mat-tab-nav-panel #tabPanel>...</mat-tab-nav-panel>
+```
 
 * The selected tab label now uses a text color from the theme, matching the selection indicator.
 
@@ -552,15 +589,14 @@ TODO(mmalerba): link to density docs once they exist.
 
 ### Tooltip
 
-* Accessibility: the background color is now completely opaque, preventing text bleed-through.
+* Background color is opaque instead of slightly transparent. This improves accessibility.
 
-* The default font-size has changed from `10px` to `12px`.
+* Default font-size is `12px` instead of `10px`.
 
-* The line height has changed from `normal` to `16px`.
+* Line height is `normal` instead of `16px`.
 
-* Text overflow has changed from `ellipsis` to `clip`.
+* Text overflow is `ellipsis` instead of `clip`.
 
-* The tooltip now has a min-width of 40px.
+* There is a new minimum width of `40px`.
 
-* The text alignment for single line tooltips is now `center` and changes to `left` for multiline
-  tooltips.
+* Text alignment for single line tooltips is `center`. Multi-line tooltips use `left` alignment.

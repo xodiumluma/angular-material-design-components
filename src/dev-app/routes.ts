@@ -83,6 +83,11 @@ export const DEV_APP_ROUTES: Routes = [
     loadComponent: () => import('./datepicker/datepicker-demo').then(m => m.DatepickerDemo),
   },
   {
+    path: 'legacy-datepicker',
+    loadComponent: () =>
+      import('./legacy-datepicker/datepicker-demo').then(m => m.LegacyDatepickerDemo),
+  },
+  {
     path: 'dialog',
     loadComponent: () => import('./dialog/dialog-demo').then(m => m.DialogDemo),
   },
@@ -169,8 +174,8 @@ export const DEV_APP_ROUTES: Routes = [
     loadComponent: () => import('./progress-bar/progress-bar-demo').then(m => m.ProgressBarDemo),
   },
   {
-    path: 'mdc-chips',
-    loadComponent: () => import('./mdc-chips/mdc-chips-demo').then(m => m.MdcChipsDemo),
+    path: 'legacy-chips',
+    loadComponent: () => import('./legacy-chips/legacy-chips-demo').then(m => m.LegacyChipsDemo),
   },
   {
     path: 'legacy-dialog',
