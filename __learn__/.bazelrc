@@ -64,7 +64,7 @@ build:remote --host_cpu=k8
 # configure remote build execution servers
 build:remote --remote_cache=remotebuildexecution.googleapis.com
 build:remote --remote_executor=remotebuildexecution.googleapis.com
-build:remote --google_default_credentials=True
+build:remote --google_default_credentials=true
 
 # Configure toolchain and platform for remote build execution
 # Platform is provided by shared dev-infra package and targets k8 remote containers
