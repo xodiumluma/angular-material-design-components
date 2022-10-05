@@ -49,7 +49,6 @@ import {
   ScrollStrategy,
   VerticalConnectionPos,
 } from '@angular/cdk/overlay';
-import {numbers} from '@material/tooltip';
 import {ComponentPortal} from '@angular/cdk/portal';
 import {Observable, Subject} from 'rxjs';
 
@@ -155,6 +154,13 @@ const passiveListenerOptions = normalizePassiveListenerOptions({passive: true});
  * trigger and the long press event being fired.
  */
 const LONGPRESS_DELAY = 500;
+
+// These constants were taken from MDC's `numbers` object. We can't import them from MDC,
+// because they have some top-level references to `window` which break during SSR.
+const MIN_VIEWPORT_TOOLTIP_THRESHOLD = 8;
+const UNBOUNDED_ANCHOR_GAP = 8;
+const MIN_HEIGHT = 24;
+const MAX_WIDTH = 200;
 
 @Directive()
 export abstract class _MatTooltipBase<T extends _TooltipComponentBase>
@@ -409,7 +415,7 @@ export abstract class _MatTooltipBase<T extends _TooltipComponentBase>
   /** Shows the tooltip after the delay in ms, defaults to tooltip-delay-show or 0ms if no input */
   show(delay: number = this.showDelay, origin?: {x: number; y: number}): void {
     if (this.disabled || !this.message || this._isTooltipVisible()) {
-      this._tooltipInstance?._cancelPendingHide();
+      this._tooltipInstance?._cancelPendingAnimations();
       return;
     }
 
@@ -437,6 +443,7 @@ export abstract class _MatTooltipBase<T extends _TooltipComponentBase>
       if (instance.isVisible()) {
         instance.hide(delay);
       } else {
+        instance._cancelPendingAnimations();
         this._detach();
       }
     }
@@ -879,11 +886,11 @@ export class MatTooltip extends _MatTooltipBase<TooltipComponent> {
       defaultOptions,
       _document,
     );
-    this._viewportMargin = numbers.MIN_VIEWPORT_TOOLTIP_THRESHOLD;
+    this._viewportMargin = MIN_VIEWPORT_TOOLTIP_THRESHOLD;
   }
 
   protected override _addOffset(position: ConnectedPosition): ConnectedPosition {
-    const offset = numbers.UNBOUNDED_ANCHOR_GAP;
+    const offset = UNBOUNDED_ANCHOR_GAP;
     const isLtr = !this._dir || this._dir.value == 'ltr';
 
     if (position.originY === 'top') {
@@ -987,8 +994,7 @@ export abstract class _TooltipComponentBase implements OnDestroy {
   }
 
   ngOnDestroy() {
-    clearTimeout(this._showTimeoutId);
-    clearTimeout(this._hideTimeoutId);
+    this._cancelPendingAnimations();
     this._onHide.complete();
     this._triggerElement = null!;
   }
@@ -1015,7 +1021,11 @@ export abstract class _TooltipComponentBase implements OnDestroy {
 
   _handleMouseLeave({relatedTarget}: MouseEvent) {
     if (!relatedTarget || !this._triggerElement.contains(relatedTarget as Node)) {
-      this.hide(this._mouseLeaveHideDelay);
+      if (this.isVisible()) {
+        this.hide(this._mouseLeaveHideDelay);
+      } else {
+        this._finalizeAnimation(false);
+      }
     }
   }
 
@@ -1033,10 +1043,11 @@ export abstract class _TooltipComponentBase implements OnDestroy {
     }
   }
 
-  /** Cancels any pending hiding sequences. */
-  _cancelPendingHide() {
+  /** Cancels any pending animation sequences. */
+  _cancelPendingAnimations() {
+    clearTimeout(this._showTimeoutId);
     clearTimeout(this._hideTimeoutId);
-    this._hideTimeoutId = undefined;
+    this._showTimeoutId = this._hideTimeoutId = undefined;
   }
 
   /** Handles the cleanup after an animation has finished. */
@@ -1133,6 +1144,6 @@ export class TooltipComponent extends _TooltipComponentBase {
   /** Whether the tooltip text has overflown to the next line */
   private _isTooltipMultiline() {
     const rect = this._elementRef.nativeElement.getBoundingClientRect();
-    return rect.height > numbers.MIN_HEIGHT && rect.width >= numbers.MAX_WIDTH;
+    return rect.height > MIN_HEIGHT && rect.width >= MAX_WIDTH;
   }
 }

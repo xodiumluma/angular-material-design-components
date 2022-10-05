@@ -29,7 +29,6 @@ describe('checkbox styles', () => {
         @use '@angular/material' as mat;
         $theme: ();
         @include mat.checkbox-theme($theme);
-        @include mat.checkbox-typography($theme);
       `,
       );
     });
@@ -45,7 +44,6 @@ describe('checkbox styles', () => {
         @use '@angular/material' as arbitrary;
         $theme: ();
         @include arbitrary.checkbox-theme($theme);
-        @include arbitrary.checkbox-typography($theme);
       `,
       );
     });
@@ -64,9 +62,7 @@ describe('checkbox styles', () => {
         $light-theme: ();
         $dark-theme: ();
         @include mat.checkbox-theme($light-theme);
-        @include mat.checkbox-typography($light-theme);
         @include mat.checkbox-theme($dark-theme);
-        @include mat.checkbox-typography($dark-theme);
       `,
       );
     });
@@ -88,9 +84,38 @@ describe('checkbox styles', () => {
 
 
         @include mat.checkbox-theme($theme);
+
+
+      `,
+      );
+    });
+
+    it('should update color mixin', async () => {
+      await runMigrationTest(
+        `
+        @use '@angular/material' as mat;
+        $theme: ();
+        @include mat.legacy-checkbox-color($theme);
+      `,
+        `
+        @use '@angular/material' as mat;
+        $theme: ();
+        @include mat.checkbox-color($theme);
+      `,
+      );
+    });
+
+    it('should update typography mixin', async () => {
+      await runMigrationTest(
+        `
+        @use '@angular/material' as mat;
+        $theme: ();
+        @include mat.legacy-checkbox-typography($theme);
+      `,
+        `
+        @use '@angular/material' as mat;
+        $theme: ();
         @include mat.checkbox-typography($theme);
-
-
       `,
       );
     });
@@ -120,8 +145,7 @@ describe('checkbox styles', () => {
         }
       `,
         `
-        /* TODO: The following rule targets internal classes of checkbox that may no longer apply for the MDC version. */
-
+        /* TODO(mdc-migration): The following rule targets internal classes of checkbox that may no longer apply for the MDC version. */
         .mat-checkbox-label {
           font-size: 16px;
         }
@@ -138,8 +162,7 @@ describe('checkbox styles', () => {
         }
       `,
         `
-        /* TODO: The following rule targets internal classes of checkbox that may no longer apply for the MDC version. */
-
+        /* TODO(mdc-migration): The following rule targets internal classes of checkbox that may no longer apply for the MDC version. */
         .some-class
         .mat-checkbox-label {
           font-size: 16px;
@@ -156,8 +179,7 @@ describe('checkbox styles', () => {
         }
       `,
         `
-        /* TODO: The following rule targets internal classes of checkbox that may no longer apply for the MDC version. */
-
+        /* TODO(mdc-migration): The following rule targets internal classes of checkbox that may no longer apply for the MDC version. */
         .mat-mdc-checkbox.some-class, .mat-checkbox-label {
           background-color: transparent;
         }

@@ -29,7 +29,6 @@ describe('slide-toggle styles', () => {
         @use '@angular/material' as mat;
         $theme: ();
         @include mat.slide-toggle-theme($theme);
-        @include mat.slide-toggle-typography($theme);
       `,
       );
     });
@@ -45,7 +44,6 @@ describe('slide-toggle styles', () => {
         @use '@angular/material' as arbitrary;
         $theme: ();
         @include arbitrary.slide-toggle-theme($theme);
-        @include arbitrary.slide-toggle-typography($theme);
       `,
       );
     });
@@ -64,9 +62,7 @@ describe('slide-toggle styles', () => {
         $light-theme: ();
         $dark-theme: ();
         @include mat.slide-toggle-theme($light-theme);
-        @include mat.slide-toggle-typography($light-theme);
         @include mat.slide-toggle-theme($dark-theme);
-        @include mat.slide-toggle-typography($dark-theme);
       `,
       );
     });
@@ -88,9 +84,38 @@ describe('slide-toggle styles', () => {
 
 
         @include mat.slide-toggle-theme($theme);
+
+
+      `,
+      );
+    });
+
+    it('should update color mixin', async () => {
+      await runMigrationTest(
+        `
+        @use '@angular/material' as mat;
+        $theme: ();
+        @include mat.legacy-slide-toggle-color($theme);
+      `,
+        `
+        @use '@angular/material' as mat;
+        $theme: ();
+        @include mat.slide-toggle-color($theme);
+      `,
+      );
+    });
+
+    it('should update typography mixin', async () => {
+      await runMigrationTest(
+        `
+        @use '@angular/material' as mat;
+        $theme: ();
+        @include mat.legacy-slide-toggle-typography($theme);
+      `,
+        `
+        @use '@angular/material' as mat;
+        $theme: ();
         @include mat.slide-toggle-typography($theme);
-
-
       `,
       );
     });
@@ -120,8 +145,7 @@ describe('slide-toggle styles', () => {
         }
       `,
         `
-        /* TODO: The following rule targets internal classes of slide-toggle that may no longer apply for the MDC version. */
-
+        /* TODO(mdc-migration): The following rule targets internal classes of slide-toggle that may no longer apply for the MDC version. */
         .mat-slide-toggle-thumb {
           height: 16px;
         }
@@ -138,8 +162,7 @@ describe('slide-toggle styles', () => {
         }
       `,
         `
-        /* TODO: The following rule targets internal classes of slide-toggle that may no longer apply for the MDC version. */
-
+        /* TODO(mdc-migration): The following rule targets internal classes of slide-toggle that may no longer apply for the MDC version. */
         .some-class
         .mat-slide-toggle-thumb {
           height: 16px;
@@ -156,8 +179,7 @@ describe('slide-toggle styles', () => {
         }
       `,
         `
-        /* TODO: The following rule targets internal classes of slide-toggle that may no longer apply for the MDC version. */
-
+        /* TODO(mdc-migration): The following rule targets internal classes of slide-toggle that may no longer apply for the MDC version. */
         .mat-mdc-slide-toggle.some-class, .mat-slide-toggle-thumb {
           background-color: transparent;
         }

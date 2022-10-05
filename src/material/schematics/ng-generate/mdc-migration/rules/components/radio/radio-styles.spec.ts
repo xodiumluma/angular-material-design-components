@@ -29,7 +29,6 @@ describe('radio styles', () => {
         @use '@angular/material' as mat;
         $theme: ();
         @include mat.radio-theme($theme);
-        @include mat.radio-typography($theme);
       `,
       );
     });
@@ -45,7 +44,6 @@ describe('radio styles', () => {
         @use '@angular/material' as arbitrary;
         $theme: ();
         @include arbitrary.radio-theme($theme);
-        @include arbitrary.radio-typography($theme);
       `,
       );
     });
@@ -64,9 +62,7 @@ describe('radio styles', () => {
         $light-theme: ();
         $dark-theme: ();
         @include mat.radio-theme($light-theme);
-        @include mat.radio-typography($light-theme);
         @include mat.radio-theme($dark-theme);
-        @include mat.radio-typography($dark-theme);
       `,
       );
     });
@@ -88,9 +84,38 @@ describe('radio styles', () => {
 
 
         @include mat.radio-theme($theme);
+
+
+      `,
+      );
+    });
+
+    it('should update color mixin', async () => {
+      await runMigrationTest(
+        `
+        @use '@angular/material' as mat;
+        $theme: ();
+        @include mat.legacy-radio-color($theme);
+      `,
+        `
+        @use '@angular/material' as mat;
+        $theme: ();
+        @include mat.radio-color($theme);
+      `,
+      );
+    });
+
+    it('should update typography mixin', async () => {
+      await runMigrationTest(
+        `
+        @use '@angular/material' as mat;
+        $theme: ();
+        @include mat.legacy-radio-typography($theme);
+      `,
+        `
+        @use '@angular/material' as mat;
+        $theme: ();
         @include mat.radio-typography($theme);
-
-
       `,
       );
     });
@@ -171,8 +196,7 @@ describe('radio styles', () => {
         }
       `,
         `
-        /* TODO: The following rule targets internal classes of radio that may no longer apply for the MDC version. */
-
+        /* TODO(mdc-migration): The following rule targets internal classes of radio that may no longer apply for the MDC version. */
         .mat-radio-label-content {
           font-size: 24px;
         }
@@ -189,8 +213,7 @@ describe('radio styles', () => {
         }
       `,
         `
-        /* TODO: The following rule targets internal classes of radio that may no longer apply for the MDC version. */
-
+        /* TODO(mdc-migration): The following rule targets internal classes of radio that may no longer apply for the MDC version. */
         .some-class
         .mat-radio-container {
           padding: 16px;
@@ -207,8 +230,7 @@ describe('radio styles', () => {
         }
       `,
         `
-        /* TODO: The following rule targets internal classes of radio that may no longer apply for the MDC version. */
-
+        /* TODO(mdc-migration): The following rule targets internal classes of radio that may no longer apply for the MDC version. */
         .mat-mdc-radio-group.some-class, .mat-radio-container {
           padding: 16px;
         }

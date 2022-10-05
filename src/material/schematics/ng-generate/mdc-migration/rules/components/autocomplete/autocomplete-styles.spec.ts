@@ -29,7 +29,6 @@ describe('autocomplete styles', () => {
         @use '@angular/material' as mat;
         $theme: ();
         @include mat.autocomplete-theme($theme);
-        @include mat.autocomplete-typography($theme);
       `,
       );
     });
@@ -45,7 +44,6 @@ describe('autocomplete styles', () => {
         @use '@angular/material' as arbitrary;
         $theme: ();
         @include arbitrary.autocomplete-theme($theme);
-        @include arbitrary.autocomplete-typography($theme);
       `,
       );
     });
@@ -64,9 +62,7 @@ describe('autocomplete styles', () => {
         $light-theme: ();
         $dark-theme: ();
         @include mat.autocomplete-theme($light-theme);
-        @include mat.autocomplete-typography($light-theme);
         @include mat.autocomplete-theme($dark-theme);
-        @include mat.autocomplete-typography($dark-theme);
       `,
       );
     });
@@ -88,9 +84,38 @@ describe('autocomplete styles', () => {
 
 
         @include mat.autocomplete-theme($theme);
+
+
+      `,
+      );
+    });
+
+    it('should update color mixin', async () => {
+      await runMigrationTest(
+        `
+        @use '@angular/material' as mat;
+        $theme: ();
+        @include mat.legacy-autocomplete-color($theme);
+      `,
+        `
+        @use '@angular/material' as mat;
+        $theme: ();
+        @include mat.autocomplete-color($theme);
+      `,
+      );
+    });
+
+    it('should update typography mixin', async () => {
+      await runMigrationTest(
+        `
+        @use '@angular/material' as mat;
+        $theme: ();
+        @include mat.legacy-autocomplete-typography($theme);
+      `,
+        `
+        @use '@angular/material' as mat;
+        $theme: ();
         @include mat.autocomplete-typography($theme);
-
-
       `,
       );
     });
@@ -150,8 +175,7 @@ describe('autocomplete styles', () => {
         }
       `,
         `
-        /* TODO: The following rule targets internal classes of autocomplete that may no longer apply for the MDC version. */
-
+        /* TODO(mdc-migration): The following rule targets internal classes of autocomplete that may no longer apply for the MDC version. */
         .mat-autocomplete-panel {
           background-color: red;
         }
@@ -168,8 +192,7 @@ describe('autocomplete styles', () => {
         }
       `,
         `
-        /* TODO: The following rule targets internal classes of autocomplete that may no longer apply for the MDC version. */
-
+        /* TODO(mdc-migration): The following rule targets internal classes of autocomplete that may no longer apply for the MDC version. */
         .some-class
         .mat-autocomplete-panel {
           background-color: red;
@@ -186,8 +209,7 @@ describe('autocomplete styles', () => {
         }
       `,
         `
-        /* TODO: The following rule targets internal classes of autocomplete that may no longer apply for the MDC version. */
-
+        /* TODO(mdc-migration): The following rule targets internal classes of autocomplete that may no longer apply for the MDC version. */
         .mat-mdc-autocomplete.some-class, .mat-autocomplete-panel {
           padding: 16px;
         }
