@@ -1,6 +1,11 @@
 import {createTestApp, patchDevkitTreeToExposeTypeScript} from '@angular/cdk/schematics/testing';
 import {SchematicTestRunner, UnitTestTree} from '@angular-devkit/schematics/testing';
-import {createNewTestRunner, migrateComponents, THEME_FILE} from '../test-setup-helper';
+import {
+  APP_MODULE_FILE,
+  createNewTestRunner,
+  migrateComponents,
+  THEME_FILE,
+} from '../test-setup-helper';
 
 describe('card styles', () => {
   let runner: SchematicTestRunner;
@@ -29,7 +34,6 @@ describe('card styles', () => {
         @use '@angular/material' as mat;
         $theme: ();
         @include mat.card-theme($theme);
-        @include mat.card-typography($theme);
       `,
       );
     });
@@ -45,7 +49,6 @@ describe('card styles', () => {
         @use '@angular/material' as arbitrary;
         $theme: ();
         @include arbitrary.card-theme($theme);
-        @include arbitrary.card-typography($theme);
       `,
       );
     });
@@ -64,9 +67,7 @@ describe('card styles', () => {
         $light-theme: ();
         $dark-theme: ();
         @include mat.card-theme($light-theme);
-        @include mat.card-typography($light-theme);
         @include mat.card-theme($dark-theme);
-        @include mat.card-typography($dark-theme);
       `,
       );
     });
@@ -88,9 +89,38 @@ describe('card styles', () => {
 
 
         @include mat.card-theme($theme);
+
+
+      `,
+      );
+    });
+
+    it('should update color mixin', async () => {
+      await runMigrationTest(
+        `
+        @use '@angular/material' as mat;
+        $theme: ();
+        @include mat.legacy-card-color($theme);
+      `,
+        `
+        @use '@angular/material' as mat;
+        $theme: ();
+        @include mat.card-color($theme);
+      `,
+      );
+    });
+
+    it('should update typography mixin', async () => {
+      await runMigrationTest(
+        `
+        @use '@angular/material' as mat;
+        $theme: ();
+        @include mat.legacy-card-typography($theme);
+      `,
+        `
+        @use '@angular/material' as mat;
+        $theme: ();
         @include mat.card-typography($theme);
-
-
       `,
       );
     });
@@ -171,8 +201,7 @@ describe('card styles', () => {
         }
       `,
         `
-        /* TODO: The following rule targets internal classes of card that may no longer apply for the MDC version. */
-
+        /* TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version. */
         .mat-card-flat {
           margin: 4px;
         }
@@ -189,8 +218,7 @@ describe('card styles', () => {
         }
       `,
         `
-        /* TODO: The following rule targets internal classes of card that may no longer apply for the MDC version. */
-
+        /* TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version. */
         .some-class
         .mat-card-flat {
           margin: 4px;
@@ -207,13 +235,38 @@ describe('card styles', () => {
         }
       `,
         `
-        /* TODO: The following rule targets internal classes of card that may no longer apply for the MDC version. */
-
+        /* TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version. */
         .mat-mdc-card.some-class, .mat-card-flat {
           margin: 4px;
         }
       `,
       );
+    });
+
+    it('should migrate inline styles', async () => {
+      const oldContent = `
+        import {Component} from '@angular/core';
+
+        @Component({
+          template: '',
+          styles: ['.mat-card { color: red; }'],
+        })
+        export class MyComp {}
+      `;
+
+      const newContent = `
+        import {Component} from '@angular/core';
+
+        @Component({
+          template: '',
+          styles: ['.mat-mdc-card { color: red; }'],
+        })
+        export class MyComp {}
+      `;
+
+      cliAppTree.overwrite(APP_MODULE_FILE, oldContent);
+      const tree = await migrateComponents(['card'], runner, cliAppTree);
+      expect(tree.readContent(APP_MODULE_FILE)).toBe(newContent);
     });
   });
 });

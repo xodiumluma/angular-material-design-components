@@ -58,24 +58,26 @@ export abstract class StyleMigrator {
   }
 
   /**
-   * Replaces a legacy mixin for this component with the new mixin(s).
+   * Gets the mixin change object that has the new mixin(s) replacements if
+   * found for the at rule node.
    *
    * @param namespace the namespace being used for angular/material.
    * @param atRule an at-include at-rule of a legacy mixin for this component.
+   * @returns the mixin change object or null if not found
    */
-  replaceMixin(namespace: string, atRule: postcss.AtRule): void {
+  getMixinChange(namespace: string, atRule: postcss.AtRule): MixinChange | null {
     const change = this.mixinChanges.find(c => {
       return atRule.params.includes(`${namespace}.${c.old}`);
     });
 
     if (!change) {
-      return;
+      return null;
     }
 
     // Check if mixin replacements already exist in the stylesheet
     const replacements = [...change.new];
     if (change.checkForDuplicates) {
-      const mixinArgumentMatches = atRule.params.match(MIXIN_ARGUMENTS_REGEX);
+      const mixinArgumentMatches = atRule.params?.match(MIXIN_ARGUMENTS_REGEX);
       atRule.root().walkAtRules(rule => {
         for (const index in replacements) {
           // Include arguments if applicable since there can be multiple themes.
@@ -94,43 +96,10 @@ export abstract class StyleMigrator {
 
     // Don't do anything if all the new changes already exist in the stylesheet
     if (replacements.length < 1) {
-      return;
+      return null;
     }
 
-    // Cloning & inserting the first node before changing the
-    // indentation preserves the indentation of the first node (e.g. 3 newlines).
-    atRule.cloneBefore({
-      params: atRule.params.replace(change.old, replacements[0]),
-    });
-
-    // We change the indentation before inserting all of the other nodes
-    // because the additional @includes should only be separated by a single newline.
-    const indentation = atRule.raws.before?.split('\n').pop();
-    atRule.raws.before = '\n' + indentation;
-
-    // Note: It may be more efficient to create an array of clones and then insert
-    // them all at once. If we are having performance issues, we should revisit this.
-    for (let i = 1; i < replacements.length; i++) {
-      atRule.cloneBefore({
-        params: atRule.params.replace(change.old, replacements[i]),
-      });
-    }
-    atRule.remove();
-  }
-
-  /**
-   * Replaces the all-component-themes mixin with the MDC equivalent.
-   *
-   * @param allComponentThemesNode a all-components-theme mixin node
-   */
-  replaceAllComponentThemeMixin(allComponentThemesNode: postcss.AtRule) {
-    allComponentThemesNode.cloneBefore({
-      params: allComponentThemesNode.params.replace(
-        'all-legacy-component-themes',
-        'all-component-themes',
-      ),
-    });
-    allComponentThemesNode.remove();
+    return {old: change.old, new: replacements};
   }
 
   /**
@@ -143,7 +112,7 @@ export abstract class StyleMigrator {
     // Since a legacy class can also have the deprecated prefix, we also
     // check that a match isn't actually a longer deprecated class.
     return this.classChanges.some(
-      change => rule.selector.match(change.old + END_OF_SELECTOR_REGEX) !== null,
+      change => rule.selector?.match(change.old + END_OF_SELECTOR_REGEX) !== null,
     );
   }
 
@@ -155,7 +124,7 @@ export abstract class StyleMigrator {
   replaceLegacySelector(rule: postcss.Rule): void {
     for (let i = 0; i < this.classChanges.length; i++) {
       const change = this.classChanges[i];
-      if (rule.selector.match(change.old + END_OF_SELECTOR_REGEX)) {
+      if (rule.selector?.match(change.old + END_OF_SELECTOR_REGEX)) {
         rule.selector = rule.selector.replace(change.old, change.new);
       }
     }
@@ -172,27 +141,5 @@ export abstract class StyleMigrator {
     return this.deprecatedPrefixes.some(deprecatedPrefix =>
       rule.selector.includes(deprecatedPrefix),
     );
-  }
-
-  /**
-   * Adds comment before declaration that says the following rule may not apply
-   * in the MDC version for that component
-   *
-   * @param rule a postcss rule.
-   */
-  addDeprecatedSelectorComment(rule: postcss.Rule): void {
-    let comment = postcss.comment({
-      text:
-        'TODO: The following rule targets internal classes of ' +
-        this.component +
-        ' that may no longer apply for the MDC version.',
-    });
-    // We need to manually adjust the indentation and add new lines between the
-    // comment and declaration
-    const indentation = rule.raws.before?.split('\n').pop();
-    comment.raws.before = '\n' + indentation;
-    // Since node is parsed and not a copy, will always have a parent node
-    rule.parent!.insertBefore(rule, comment);
-    rule.raws.before = '\n\n' + indentation;
   }
 }

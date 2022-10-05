@@ -29,11 +29,8 @@ describe('button styles', () => {
         @use '@angular/material' as mat;
         $theme: ();
         @include mat.button-theme($theme);
-        @include mat.button-typography($theme);
         @include mat.fab-theme($theme);
-        @include mat.fab-typography($theme);
         @include mat.icon-button-theme($theme);
-        @include mat.icon-button-typography($theme);
       `,
       );
     });
@@ -53,9 +50,7 @@ describe('button styles', () => {
         @include mat.button-theme($theme);
         @include mat.button-typography($theme);
         @include mat.fab-theme($theme);
-        @include mat.fab-typography($theme);
         @include mat.icon-button-theme($theme);
-        @include mat.icon-button-typography($theme);
       `,
       );
     });
@@ -71,11 +66,8 @@ describe('button styles', () => {
         @use '@angular/material' as arbitrary;
         $theme: ();
         @include arbitrary.button-theme($theme);
-        @include arbitrary.button-typography($theme);
         @include arbitrary.fab-theme($theme);
-        @include arbitrary.fab-typography($theme);
         @include arbitrary.icon-button-theme($theme);
-        @include arbitrary.icon-button-typography($theme);
       `,
       );
     });
@@ -94,17 +86,11 @@ describe('button styles', () => {
         $light-theme: ();
         $dark-theme: ();
         @include mat.button-theme($light-theme);
-        @include mat.button-typography($light-theme);
         @include mat.fab-theme($light-theme);
-        @include mat.fab-typography($light-theme);
         @include mat.icon-button-theme($light-theme);
-        @include mat.icon-button-typography($light-theme);
         @include mat.button-theme($dark-theme);
-        @include mat.button-typography($dark-theme);
         @include mat.fab-theme($dark-theme);
-        @include mat.fab-typography($dark-theme);
         @include mat.icon-button-theme($dark-theme);
-        @include mat.icon-button-typography($dark-theme);
       `,
       );
     });
@@ -126,13 +112,44 @@ describe('button styles', () => {
 
 
         @include mat.button-theme($theme);
-        @include mat.button-typography($theme);
         @include mat.fab-theme($theme);
-        @include mat.fab-typography($theme);
         @include mat.icon-button-theme($theme);
+
+
+      `,
+      );
+    });
+
+    it('should update color mixin', async () => {
+      await runMigrationTest(
+        `
+        @use '@angular/material' as mat;
+        $theme: ();
+        @include mat.legacy-button-color($theme);
+      `,
+        `
+        @use '@angular/material' as mat;
+        $theme: ();
+        @include mat.button-color($theme);
+        @include mat.fab-color($theme);
+        @include mat.icon-button-color($theme);
+      `,
+      );
+    });
+
+    it('should update typography mixin', async () => {
+      await runMigrationTest(
+        `
+        @use '@angular/material' as mat;
+        $theme: ();
+        @include mat.legacy-button-typography($theme);
+      `,
+        `
+        @use '@angular/material' as mat;
+        $theme: ();
+        @include mat.button-typography($theme);
+        @include mat.fab-typography($theme);
         @include mat.icon-button-typography($theme);
-
-
       `,
       );
     });
@@ -213,8 +230,7 @@ describe('button styles', () => {
         }
       `,
         `
-        /* TODO: The following rule targets internal classes of button that may no longer apply for the MDC version. */
-
+        /* TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version. */
         .mat-button-focus-overlay {
           background-color: transparent;
         }
@@ -246,8 +262,7 @@ describe('button styles', () => {
         }
       `,
         `
-        /* TODO: The following rule targets internal classes of button that may no longer apply for the MDC version. */
-
+        /* TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version. */
         .some-class
         .mat-button-focus-overlay {
           background-color: transparent;
@@ -264,8 +279,7 @@ describe('button styles', () => {
         }
       `,
         `
-        /* TODO: The following rule targets internal classes of button that may no longer apply for the MDC version. */
-
+        /* TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version. */
         .mat-mdc-fab.some-class, .mat-button-focus-overlay {
           background-color: transparent;
         }

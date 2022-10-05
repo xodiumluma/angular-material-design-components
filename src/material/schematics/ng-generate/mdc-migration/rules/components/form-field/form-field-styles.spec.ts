@@ -29,7 +29,6 @@ describe('form-field styles', () => {
         @use '@angular/material' as mat;
         $theme: ();
         @include mat.form-field-theme($theme);
-        @include mat.form-field-typography($theme);
       `,
       );
     });
@@ -45,7 +44,6 @@ describe('form-field styles', () => {
         @use '@angular/material' as arbitrary;
         $theme: ();
         @include arbitrary.form-field-theme($theme);
-        @include arbitrary.form-field-typography($theme);
       `,
       );
     });
@@ -64,9 +62,7 @@ describe('form-field styles', () => {
         $light-theme: ();
         $dark-theme: ();
         @include mat.form-field-theme($light-theme);
-        @include mat.form-field-typography($light-theme);
         @include mat.form-field-theme($dark-theme);
-        @include mat.form-field-typography($dark-theme);
       `,
       );
     });
@@ -88,9 +84,38 @@ describe('form-field styles', () => {
 
 
         @include mat.form-field-theme($theme);
+
+
+      `,
+      );
+    });
+
+    it('should update color mixin', async () => {
+      await runMigrationTest(
+        `
+        @use '@angular/material' as mat;
+        $theme: ();
+        @include mat.legacy-form-field-color($theme);
+      `,
+        `
+        @use '@angular/material' as mat;
+        $theme: ();
+        @include mat.form-field-color($theme);
+      `,
+      );
+    });
+
+    it('should update typography mixin', async () => {
+      await runMigrationTest(
+        `
+        @use '@angular/material' as mat;
+        $theme: ();
+        @include mat.legacy-form-field-typography($theme);
+      `,
+        `
+        @use '@angular/material' as mat;
+        $theme: ();
         @include mat.form-field-typography($theme);
-
-
       `,
       );
     });
@@ -171,8 +196,7 @@ describe('form-field styles', () => {
         }
       `,
         `
-        /* TODO: The following rule targets internal classes of form-field that may no longer apply for the MDC version. */
-
+        /* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version. */
         .mat-form-field-wrapper {
           padding: 16px;
         }
@@ -189,8 +213,7 @@ describe('form-field styles', () => {
         }
       `,
         `
-        /* TODO: The following rule targets internal classes of form-field that may no longer apply for the MDC version. */
-
+        /* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version. */
         .some-class
         .mat-form-field-wrapper {
           padding: 16px;
@@ -207,8 +230,7 @@ describe('form-field styles', () => {
         }
       `,
         `
-        /* TODO: The following rule targets internal classes of form-field that may no longer apply for the MDC version. */
-
+        /* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version. */
         .mat-mdc-form-field.some-class, .mat-form-field-wrapper {
           padding: 16px;
         }

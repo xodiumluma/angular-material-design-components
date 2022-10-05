@@ -35,9 +35,7 @@ describe('multiple component styles', () => {
         @use '@angular/material' as mat;
         $theme: ();
         @include mat.checkbox-theme($theme);
-        @include mat.checkbox-typography($theme);
         @include mat.radio-theme($theme);
-        @include mat.radio-typography($theme);
       `,
       );
     });
@@ -55,36 +53,62 @@ describe('multiple component styles', () => {
         @use '@angular/material' as mat;
         $theme: ();
         @include mat.button-theme($theme);
-        @include mat.button-typography($theme);
         @include mat.fab-theme($theme);
-        @include mat.fab-typography($theme);
         @include mat.icon-button-theme($theme);
-        @include mat.icon-button-typography($theme);
         @include mat.snack-bar-theme($theme);
-        @include mat.snack-bar-typography($theme);
       `,
       );
     });
 
-    it('should add correct theme if all-component-themes mixin included', async () => {
+    it('should migrate all component mixins for a full migration', async () => {
+      await runMigrationTest(
+        ['all'],
+        `
+        @use '@angular/material' as mat;
+        $theme: ();
+        @include mat.all-legacy-component-themes($sample-project-themes);
+        @include mat.all-legacy-component-colors($sample-colors);
+        @include mat.all-legacy-component-typographies($sample-typographies);
+      `,
+        `
+        @use '@angular/material' as mat;
+        $theme: ();
+        @include mat.all-component-themes($sample-project-themes);
+        @include mat.all-component-colors($sample-colors);
+        @include mat.all-component-typographies($sample-typographies);
+      `,
+      );
+    });
+
+    it('should migrate all component mixins for a partial migration', async () => {
       await runMigrationTest(
         ['checkbox', 'radio'],
         `
         @use '@angular/material' as mat;
         $theme: ();
-        @include mat.all-legacy-component-themes($theme);
+        @include mat.all-legacy-component-themes($sample-project-themes);
+        @include mat.all-legacy-component-colors($sample-colors);
+        @include mat.all-legacy-component-typographies($sample-typographies);
       `,
         `
         @use '@angular/material' as mat;
         $theme: ();
-        @include mat.all-component-themes($theme);
+        /* TODO(mdc-migration): Remove all-legacy-component-themes once all legacy components are migrated */
+        @include mat.all-legacy-component-themes($sample-project-themes);
+        @include mat.all-component-themes($sample-project-themes);
+        /* TODO(mdc-migration): Remove all-legacy-component-colors once all legacy components are migrated */
+        @include mat.all-legacy-component-colors($sample-colors);
+        @include mat.all-component-colors($sample-colors);
+        /* TODO(mdc-migration): Remove all-legacy-component-typographies once all legacy components are migrated */
+        @include mat.all-legacy-component-typographies($sample-typographies);
+        @include mat.all-component-typographies($sample-typographies);
       `,
       );
     });
 
-    it('should add correct theme with multi-line theme if all-component-themes mixin included', async () => {
+    it('should migrate multi-line all-legacy-component-themes mixin', async () => {
       await runMigrationTest(
-        ['checkbox', 'radio'],
+        ['all'],
         `
         @use '@angular/material' as mat;
         $theme: ();
@@ -106,9 +130,9 @@ describe('multiple component styles', () => {
       );
     });
 
-    it('should add multiple themes for multiple all-component-themes mixins', async () => {
+    it('should multiple all-legacy-component-themes mixin for multiple themes', async () => {
       await runMigrationTest(
-        ['checkbox', 'radio'],
+        ['all'],
         `
         @use '@angular/material' as mat;
         $light-theme: ();
@@ -122,6 +146,32 @@ describe('multiple component styles', () => {
         $dark-theme: ();
         @include mat.all-component-themes($light-theme);
         @include mat.all-component-themes($dark-theme);
+      `,
+      );
+    });
+
+    it('should add migrate all component mixins', async () => {
+      await runMigrationTest(
+        ['checkbox', 'radio'],
+        `
+        @use '@angular/material' as mat;
+        $theme: ();
+        @include mat.all-legacy-component-themes($sample-project-themes);
+        @include mat.all-legacy-component-colors($sample-colors);
+        @include mat.all-legacy-component-typographies($sample-typographies);
+      `,
+        `
+        @use '@angular/material' as mat;
+        $theme: ();
+        /* TODO(mdc-migration): Remove all-legacy-component-themes once all legacy components are migrated */
+        @include mat.all-legacy-component-themes($sample-project-themes);
+        @include mat.all-component-themes($sample-project-themes);
+        /* TODO(mdc-migration): Remove all-legacy-component-colors once all legacy components are migrated */
+        @include mat.all-legacy-component-colors($sample-colors);
+        @include mat.all-component-colors($sample-colors);
+        /* TODO(mdc-migration): Remove all-legacy-component-typographies once all legacy components are migrated */
+        @include mat.all-legacy-component-typographies($sample-typographies);
+        @include mat.all-component-typographies($sample-typographies);
       `,
       );
     });

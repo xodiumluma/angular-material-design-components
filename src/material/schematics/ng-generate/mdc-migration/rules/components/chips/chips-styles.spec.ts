@@ -29,7 +29,6 @@ describe('chips styles', () => {
         @use '@angular/material' as mat;
         $theme: ();
         @include mat.chips-theme($theme);
-        @include mat.chips-typography($theme);
       `,
       );
     });
@@ -45,7 +44,6 @@ describe('chips styles', () => {
         @use '@angular/material' as arbitrary;
         $theme: ();
         @include arbitrary.chips-theme($theme);
-        @include arbitrary.chips-typography($theme);
       `,
       );
     });
@@ -64,9 +62,7 @@ describe('chips styles', () => {
         $light-theme: ();
         $dark-theme: ();
         @include mat.chips-theme($light-theme);
-        @include mat.chips-typography($light-theme);
         @include mat.chips-theme($dark-theme);
-        @include mat.chips-typography($dark-theme);
       `,
       );
     });
@@ -88,9 +84,38 @@ describe('chips styles', () => {
 
 
         @include mat.chips-theme($theme);
+
+
+      `,
+      );
+    });
+
+    it('should update color mixin', async () => {
+      await runMigrationTest(
+        `
+        @use '@angular/material' as mat;
+        $theme: ();
+        @include mat.legacy-chips-color($theme);
+      `,
+        `
+        @use '@angular/material' as mat;
+        $theme: ();
+        @include mat.chips-color($theme);
+      `,
+      );
+    });
+
+    it('should update typography mixin', async () => {
+      await runMigrationTest(
+        `
+        @use '@angular/material' as mat;
+        $theme: ();
+        @include mat.legacy-chips-typography($theme);
+      `,
+        `
+        @use '@angular/material' as mat;
+        $theme: ();
         @include mat.chips-typography($theme);
-
-
       `,
       );
     });
@@ -171,8 +196,7 @@ describe('chips styles', () => {
         }
       `,
         `
-        /* TODO: The following rule targets internal classes of chips that may no longer apply for the MDC version. */
-
+        /* TODO(mdc-migration): The following rule targets internal classes of chips that may no longer apply for the MDC version. */
         .mat-chip-avatar {
           border-radius: 4px;
         }
@@ -204,8 +228,7 @@ describe('chips styles', () => {
         }
       `,
         `
-        /* TODO: The following rule targets internal classes of chips that may no longer apply for the MDC version. */
-
+        /* TODO(mdc-migration): The following rule targets internal classes of chips that may no longer apply for the MDC version. */
         .some-class
         .mat-chip-avatar {
           border-radius: 4px;
@@ -222,8 +245,7 @@ describe('chips styles', () => {
         }
       `,
         `
-        /* TODO: The following rule targets internal classes of chips that may no longer apply for the MDC version. */
-
+        /* TODO(mdc-migration): The following rule targets internal classes of chips that may no longer apply for the MDC version. */
         .mat-mdc-chip.some-class, .mat-chip-avatar {
           border-radius: 4px;
         }

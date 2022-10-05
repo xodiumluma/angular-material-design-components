@@ -29,7 +29,6 @@ describe('progress-bar styles', () => {
         @use '@angular/material' as mat;
         $theme: ();
         @include mat.progress-bar-theme($theme);
-        @include mat.progress-bar-typography($theme);
       `,
       );
     });
@@ -45,7 +44,6 @@ describe('progress-bar styles', () => {
         @use '@angular/material' as arbitrary;
         $theme: ();
         @include arbitrary.progress-bar-theme($theme);
-        @include arbitrary.progress-bar-typography($theme);
       `,
       );
     });
@@ -64,9 +62,7 @@ describe('progress-bar styles', () => {
         $light-theme: ();
         $dark-theme: ();
         @include mat.progress-bar-theme($light-theme);
-        @include mat.progress-bar-typography($light-theme);
         @include mat.progress-bar-theme($dark-theme);
-        @include mat.progress-bar-typography($dark-theme);
       `,
       );
     });
@@ -88,9 +84,38 @@ describe('progress-bar styles', () => {
 
 
         @include mat.progress-bar-theme($theme);
+
+
+      `,
+      );
+    });
+
+    it('should update color mixin', async () => {
+      await runMigrationTest(
+        `
+        @use '@angular/material' as mat;
+        $theme: ();
+        @include mat.legacy-progress-bar-color($theme);
+      `,
+        `
+        @use '@angular/material' as mat;
+        $theme: ();
+        @include mat.progress-bar-color($theme);
+      `,
+      );
+    });
+
+    it('should update typography mixin', async () => {
+      await runMigrationTest(
+        `
+        @use '@angular/material' as mat;
+        $theme: ();
+        @include mat.legacy-progress-bar-typography($theme);
+      `,
+        `
+        @use '@angular/material' as mat;
+        $theme: ();
         @include mat.progress-bar-typography($theme);
-
-
       `,
       );
     });
@@ -120,8 +145,7 @@ describe('progress-bar styles', () => {
         }
       `,
         `
-        /* TODO: The following rule targets internal classes of progress-bar that may no longer apply for the MDC version. */
-
+        /* TODO(mdc-migration): The following rule targets internal classes of progress-bar that may no longer apply for the MDC version. */
         .mat-progress-bar-buffer {
           background-color: red;
         }
@@ -138,8 +162,7 @@ describe('progress-bar styles', () => {
         }
       `,
         `
-        /* TODO: The following rule targets internal classes of progress-bar that may no longer apply for the MDC version. */
-
+        /* TODO(mdc-migration): The following rule targets internal classes of progress-bar that may no longer apply for the MDC version. */
         .some-class
         .mat-progress-bar-buffer {
           background-color: red;
@@ -156,8 +179,7 @@ describe('progress-bar styles', () => {
         }
       `,
         `
-        /* TODO: The following rule targets internal classes of progress-bar that may no longer apply for the MDC version. */
-
+        /* TODO(mdc-migration): The following rule targets internal classes of progress-bar that may no longer apply for the MDC version. */
         .mat-mdc-progress-bar.some-class, .mat-progress-bar-buffer {
           width: 50%;
         }
