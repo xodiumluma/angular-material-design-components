@@ -54,6 +54,54 @@
       {
         "filePattern": "-theme\\.scss$"
       }
-    ]
+    ],
+    "material/no-concrete-rules": [
+      true,
+      {
+        "filePattern": "^_.*\\.scss$"
+      }
+    ],
+    "material/no-top-level-ampersand-in-mixin": [
+      true,
+      {
+        "filePattern": "-theme\\.scss$"
+      }
+    ],
+    "color-hex-case": "lower",
+    "color-no-invalid-hex": true,
+    "function-calc-no-unspaced-operator": true,
+    "function-comma-space-after": "always-single-line",
+    "function-comma-space-before": "never",
+    "function-name-case": "lower",
+    "function-url-quotes": "always",
+    "function-url-scheme-disallowed-list": ["data"],
+    "function-whitespace-after": "always",
+
+    "number-leading-zero": "always",
+    "number-no-trailing-zeros": true,
+    "length-zero-no-unit": true,
+
+    "string-no-newline": true,
+    "string-quotes": "single",
+
+    "unit-case": "lower",
+    "unit-no-unknown": true,
+    "unit-allowed-list": ["px", "%", "deg", "s", "ms", "em", "vh", "vw", "vmin"],
+
+    "value-list-comma-space-after": "always-single-line",
+    "value-list-comma-space-before": "never",
+
+    "shorthand-property-no-redundant-values": true,
+    
+    "property-case": "lower",
+    "no-duplicate-at-import-rules": true,
+
+    "declaration-block-no-duplicate-properties": [
+      true,
+      {
+        "ignore": ["consecutive-duplicates-with-different-values"]
+      }
+    ],
+    "declaration-block-trailing-semicolon": "always",
   }
 }
