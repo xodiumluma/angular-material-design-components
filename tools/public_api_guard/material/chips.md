@@ -28,7 +28,6 @@ import * as i0 from '@angular/core';
 import * as i11 from '@angular/material/core';
 import * as i12 from '@angular/common';
 import { InjectionToken } from '@angular/core';
-import { MatChipAvatar as MatChipAvatar_2 } from '@angular/material/chips';
 import { MatFormField } from '@angular/material/form-field';
 import { MatFormFieldControl } from '@angular/material/form-field';
 import { MatRipple } from '@angular/material/core';
@@ -116,37 +115,6 @@ export class MatChip extends _MatChipMixinBase implements AfterViewInit, CanColo
     static ɵcmp: i0.ɵɵComponentDeclaration<MatChip, "mat-basic-chip, mat-chip", ["matChip"], { "color": "color"; "disabled": "disabled"; "disableRipple": "disableRipple"; "tabIndex": "tabIndex"; "role": "role"; "id": "id"; "ariaLabel": "aria-label"; "value": "value"; "removable": "removable"; "highlighted": "highlighted"; }, { "removed": "removed"; "destroyed": "destroyed"; }, ["leadingIcon", "trailingIcon", "removeIcon"], ["mat-chip-avatar, [matChipAvatar]", "*", "mat-chip-trailing-icon,[matChipRemove],[matChipTrailingIcon]"], false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatChip, [null, null, null, null, null, { optional: true; }, { optional: true; }, { attribute: "tabindex"; }]>;
-}
-
-// @public
-class MatChipAction extends _MatChipActionMixinBase implements HasTabIndex {
-    constructor(_elementRef: ElementRef<HTMLElement>, _parentChip: {
-        _handlePrimaryActionInteraction(): void;
-        remove(): void;
-        disabled: boolean;
-    });
-    get disabled(): boolean;
-    set disabled(value: BooleanInput);
-    // (undocumented)
-    _elementRef: ElementRef<HTMLElement>;
-    // (undocumented)
-    focus(): void;
-    // (undocumented)
-    _handleClick(event: MouseEvent): void;
-    // (undocumented)
-    _handleKeydown(event: KeyboardEvent): void;
-    isInteractive: boolean;
-    _isPrimary: boolean;
-    // (undocumented)
-    protected _parentChip: {
-        _handlePrimaryActionInteraction(): void;
-        remove(): void;
-        disabled: boolean;
-    };
-    // (undocumented)
-    static ɵdir: i0.ɵɵDirectiveDeclaration<MatChipAction, "[matChipAction]", never, { "disabled": "disabled"; "tabIndex": "tabIndex"; "isInteractive": "isInteractive"; }, {}, never, never, false, never>;
-    // (undocumented)
-    static ɵfac: i0.ɵɵFactoryDeclaration<MatChipAction, never>;
 }
 
 // @public
@@ -341,6 +309,7 @@ export class MatChipListbox extends MatChipSet implements AfterContentInit, OnDe
     get selected(): MatChipOption[] | MatChipOption;
     setDisabledState(isDisabled: boolean): void;
     _setSelectionByValue(value: any, isUserInput?: boolean): void;
+    protected _skipPredicate(action: MatChipAction): boolean;
     get value(): any;
     set value(value: any);
     // (undocumented)
@@ -370,8 +339,6 @@ export class MatChipOption extends MatChip implements OnInit {
     deselect(): void;
     // (undocumented)
     _handlePrimaryActionInteraction(): void;
-    // (undocumented)
-    _hasLeadingGraphic(): MatChipAvatar_2;
     // (undocumented)
     ngOnInit(): void;
     select(): void;
@@ -480,6 +447,7 @@ export class MatChipSet extends _MatChipSetMixinBase implements AfterViewInit, H
     protected _originatesFromChip(event: Event): boolean;
     get role(): string | null;
     set role(value: string | null);
+    protected _skipPredicate(action: MatChipAction): boolean;
     protected _syncChipsState(): void;
     // (undocumented)
     static ɵcmp: i0.ɵɵComponentDeclaration<MatChipSet, "mat-chip-set", never, { "disabled": "disabled"; "role": "role"; }, {}, ["_chips"], ["*"], false, never>;

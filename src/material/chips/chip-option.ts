@@ -32,8 +32,10 @@ export class MatChipSelectionChange {
 }
 
 /**
- * An extension of the MatChip component that supports chip selection.
- * Used with MatChipListbox.
+ * An extension of the MatChip component that supports chip selection. Used with MatChipListbox.
+ *
+ * Unlike other chips, the user can focus on disabled chip options inside a MatChipListbox. The
+ * user cannot click disabled chips.
  */
 @Component({
   selector: 'mat-basic-chip-option, mat-chip-option',
@@ -41,12 +43,12 @@ export class MatChipSelectionChange {
   styleUrls: ['chip.css'],
   inputs: ['color', 'disabled', 'disableRipple', 'tabIndex'],
   host: {
-    'class': 'mat-mdc-chip mat-mdc-chip-option mdc-evolution-chip mdc-evolution-chip--filter',
+    'class':
+      'mat-mdc-chip mat-mdc-chip-option mdc-evolution-chip mdc-evolution-chip--filter mdc-evolution-chip--selectable mdc-evolution-chip--with-primary-graphic',
     '[class.mat-mdc-chip-selected]': 'selected',
     '[class.mat-mdc-chip-multiple]': '_chipListMultiple',
     '[class.mat-mdc-chip-disabled]': 'disabled',
     '[class.mat-mdc-chip-with-avatar]': 'leadingIcon',
-    '[class.mdc-evolution-chip--selectable]': 'selectable',
     '[class.mdc-evolution-chip--disabled]': 'disabled',
     '[class.mdc-evolution-chip--selected]': 'selected',
     // This class enables the transition on the checkmark. Usually MDC adds it when selection
@@ -55,7 +57,6 @@ export class MatChipSelectionChange {
     // because they also have an exit animation that we don't care about.
     '[class.mdc-evolution-chip--selecting]': '!_animationsDisabled',
     '[class.mdc-evolution-chip--with-trailing-action]': '_hasTrailingIcon()',
-    '[class.mdc-evolution-chip--with-primary-graphic]': '_hasLeadingGraphic()',
     '[class.mdc-evolution-chip--with-primary-icon]': 'leadingIcon',
     '[class.mdc-evolution-chip--with-avatar]': 'leadingIcon',
     '[class.mat-mdc-chip-highlighted]': 'highlighted',
@@ -106,13 +107,21 @@ export class MatChipOption extends MatChip implements OnInit {
   }
   private _selected = false;
 
-  /** The ARIA selected applied to the chip. */
+  /**
+   * The ARIA selected applied to the chip. Conforms to WAI ARIA best practices for listbox
+   * interaction patterns.
+   *
+   * From [WAI ARIA Listbox authoring practices guide](
+   * https://www.w3.org/WAI/ARIA/apg/patterns/listbox/):
+   *  "If any options are selected, each selected option has either aria-selected or aria-checked
+   *  set to true. All options that are selectable but not selected have either aria-selected or
+   *  aria-checked set to false."
+   *
+   * Set `aria-selected="false"` on not-selected listbox options that are selectable to fix
+   * VoiceOver reading every option as "selected" (#25736).
+   */
   get ariaSelected(): string | null {
-    // Remove the `aria-selected` when the chip is deselected in single-selection mode, because
-    // it adds noise to NVDA users where "not selected" will be read out for each chip.
-    return this.selectable && (this._chipListMultiple || this.selected)
-      ? this.selected.toString()
-      : null;
+    return this.selectable ? this.selected.toString() : null;
   }
 
   /** The unstyled chip selector for this component. */
@@ -151,11 +160,6 @@ export class MatChipOption extends MatChip implements OnInit {
     if (this.selectable && !this.disabled) {
       this.toggleSelected(true);
     }
-  }
-
-  _hasLeadingGraphic() {
-    // The checkmark graphic is built in for multi-select chip lists.
-    return this.leadingIcon || (this._chipListMultiple && this.selectable);
   }
 
   _setSelectedState(isSelected: boolean, isUserInput: boolean, emitEvent: boolean) {

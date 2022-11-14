@@ -100,7 +100,7 @@ After upgrading to v15, you can run the migration tool to switch from the legacy
 implementations to the new MDC-based ones.
 
 ```shell
-ng generate # TODO(wagnermaciel): Insert command here.
+ng generate @angular/material:mdc-migration
 ```
 
 This command updates your TypeScript, styles, and templates to the new implementations, updating as
@@ -109,12 +109,13 @@ much as it can automatically.
 #### Running a Partial Migration
 
 Depending on the size and complexity of your application, you may want to migrate a single component
-(or small group of components) at a time, rather than all at once.
-TODO(wagnermaciel): Add details on this: script params, which components need to move together
+or small group of components at a time, rather than all components at once.
 
 You may also want to migrate your app one module at a time instead of all together. You can use both
 the old implementation and new implementation in the same application, as long as they aren't used
-in the same `NgModule`. TODO(wagnermaciel): Add detail on this: script params.
+in the same `NgModule`.
+
+The script will prompt you for the directory and components you want to migrate.
 
 ### 3. Check for TODOs left by the migration tool.
 
@@ -123,12 +124,11 @@ attempt to add comments for a human to follow up. These TODO comments follow a c
 they can be easily identified.
 
 ```ts
-// TODO(wagnermaciel): Do we have a common format for all TODOs the script adds?
+// TODO(mdc-migration): ...
 ```
 
-To search for all comments left by the migration tool, search for `TODO(...):` in your IDE.
-
-TODO(amysorto): Can we have the schematic generate a CSV of TODOs that can be imported into Jira
+To search for all comments left by the migration tool, search for `TODO(mdc-migration):` in your
+IDE.
 
 ### 4. Verify Your Application
 
@@ -150,32 +150,16 @@ DOM and CSS of the components, you may need to tweak some of your application's 
 * Component size, color, spacing, shadows, and animations all change slightly across the board.
   These changes generally improve spec-compliance and accessibility.
 
-* CSS classes applied to components use the `mat-mdc` prefix, whereas before it was simply a `mat`
+* The DOM structure for all components has changed to improve accessibility and better follow the
+  Material Design spec.
+
+* CSS classes applied to components use the `mat-mdc-` prefix, whereas before it was simply a `mat-`
   prefix. Elements that roughly correspond to element in the old implementation have been given the
   same class name (aside from the prefix). For example, the button’s host class is `mat-mdc-button`
   instead of `mat-button`. However, not all elements in the previous implementation have an
   equivalent element in the new implementation.
 
-### Core Styles & Theming
-
-* `mat.core()` no longer includes component typography styles. If your application was relying on
-  this, you may need to add typography styles explicitly now. This can be done all at once:
-
-  ```scss
-  @import '@angular/material' as mat;
-
-  @include mat.all-component-typographies();
-  ```
-
-  or individually for components your application uses:
-
-  ```scss
-  @import '@angular/material' as mat;
-
-  @include mat.button-typography();
-  @include mat.card-typography();
-  // ...
-  ```
+### Theming
 
 * Default typography levels defined by `mat.define-typography-config` have been updated to reflect
   changes to the Material Design spec.
@@ -195,6 +179,7 @@ DOM and CSS of the components, you may need to tweak some of your application's 
   ```
 
   If you prefer a different default density level, you can set it in your theme config:
+  <!-- TODO(wagnermaciel): link to density docs for more info once they exist. -->
 
   ```scss
   $theme: mat.define-light-theme((
@@ -202,8 +187,6 @@ DOM and CSS of the components, you may need to tweak some of your application's 
     density: -1
   ));
   ```
-
-TODO(mmalerba): link to density docs once they exist.
 
 ### Autocomplete
 
@@ -217,35 +200,23 @@ TODO(mmalerba): link to density docs once they exist.
 
 ### Button
 
-* Accessibility: Icon buttons are now 48px instead of 40px.
+* Icon button height and width are `48px` instead of `40px`.
 
-* Accessibility: Buttons have a slightly different hover/focus/active colors, improving contrast
-  ratios.
+* State colors (hover, focus, active) are slightly different to improve text contrast ratios.
 
-* Flat buttons have a different padding than raised buttons (this is apparent if you manually apply
-  a background color to flat buttons).
+* Letter-spacing is `1.25px` instead of `normal`.
 
-* Unthemed icon buttons may not show correctly on components such as snack-bars, since the container
-  does not match the expected application theme background.
+* FAB supports text with the `extended` input attribute.
 
-* Overriding button colors may require additional selectors. Application authors should always
-  prefer changing component colors via the supported theme API.
+* Theming mixins are split into three separate mixins:
+  - Normal button (default, raised, stroked, flat): `mat.mdc-button-theme`
+  - Icon button: `mat.mdc-icon-button-theme`
+  - FAB: `mat.mdc-fab-theme`
 
-* Outline buttons use a colored border instead of grey.
+* Icons in the button content are placed before the button text. Add the `iconPositionEnd` attribute to place them after the button text.
 
-* Icons in the button content will automatically be placed before the button text, unless the icon
-  has the `iconPositionEnd` attribute.
-
-* FABs have extra attributes: `appearance` and `lowered`.
-
-* FABs default to an outline appearance instead of fill.
-
-* The button's theming mixins have been split into separate mixins for buttons
-  (`mat.mdc-button-theme`), icon buttons (`mat.mdc-icon-button-theme`), and FABs
-  (`mat.mdc-fab-theme`).
-
-* Icons next to button text now match font-size. Buttons with only icons and no text will not align
-  properly (this does not apply to the icon-button).
+* Icons in the button content inherit the text `font-size`. Buttons with only icons and no text do
+  not align properly (this does not apply to the icon-button).
 
 ### Card
 
@@ -254,7 +225,18 @@ TODO(mmalerba): link to density docs once they exist.
 
 * `<mat-card-content>` no longer sets any typography styles, users are free to add whatever
   typography styles make sense for their application, either to `<mat-card-content>` itself or any
-  child elements as appropriate.
+  child elements as appropriate. For example:
+  
+  ```scss
+  @use '@angular/material' as mat;
+  @include mat.typography-hierarchy();
+  ```
+  
+  ```html
+  <mat-card>
+    <mat-card-content class="mat-body-1">...</mat-card-content>
+  </mat-card>
+  ```
 
 ### Checkbox
 
@@ -262,19 +244,25 @@ TODO(mmalerba): link to density docs once they exist.
   Native checkboxes have bizarre behavior when calling `preventDefault` on their `click` event, so
   users should not call `preventDefault` on `click`.
 
-* Accessibility: Checkbox touch targets are larger, now 40px instead of 16px, which is more
-  accessible.
+* Checkbox touch targets are larger, now 40px instead of 16px, which is more accessible. Be sure to
+  allow enough space in your layout so that the touch target does not overlap other components. If
+  you are not concerned with accessibility you can match the previous size by using density -5 for
+  the checkbox.
+  
+  ```scss
+  @use '@angular/material' as mat;
+  @include mat.checkbox-density(-5px);
+  ```
 
 * Checkbox color may be changed to white or black due to a change in heuristics based on the
   application’s theme. Previously, the check’s color would be set to the theme’s background color.
   With MDC, it is determined by whether white or black has the most contrast against the primary
   color.
 
-* Accessibility: Focus state is slightly darker, improving contrast ratio
+* Focus state is slightly darker, improving contrast ratio.
 
-* Many checkboxes on the page may cause the animation to seem slow
-
-* Text styles will not be inherited; you will need to specifically target the checkbox’s `label`.
+* Text styles are not inherited; you will need to specifically target the checkbox’s `label` to
+  override typography properties.
 
 * After toggling a checkbox with the mouse, the ripple will remain visible instead of animating out.
 
@@ -297,14 +285,16 @@ TODO(mmalerba): link to density docs once they exist.
     accessibility pattern with the chips visuals.
 
 * The migration tool always changes the legacy `<mat-chip-list>` to `<mat-chip-listbox>` to minimize
-  differences before and after. You should separately consider changing to `<mat-chip-grid>` on a
-  case-by-case basis.
+  differences before and after. You should separately consider changing to `<mat-chip-grid>` or
+  `<mat-chip-set>` on a case-by-case basis. See [Chips Interaction Patterns](
+ /components/chips/overview#interaction-patterns) for more guidence on
+  choosing the appropriate component for your use case.
 
 ### Dialog
 
 * The `.mat-dialog-container` does not contain a 24px padding anymore. Instead, the inner dialog
   directives are responsible for adding the right padding. This will be apparent if your dialog does
-  not use any of the directives like `mat-dialog-content`.
+  not use any of the directives like `<mat-dialog-content>`.
 
 * `mat-dialog-content` uses the font-settings specified by the Material Design spec, which includes
   a rather roomy line-height. If you have an information-dense dialog that doesn't look good with
@@ -344,6 +334,9 @@ TODO(mmalerba): link to density docs once they exist.
   behaved like a placeholder. If you need this behavior, use the `placeholder` property on `<input>`
   instead.
 
+* Custom form field controls may need their styles adjusted to account for the fact that the
+  surrounding form field DOM and styles have changed.
+
 ### Input
 
 * MatInput must be inside `<mat-form-field>`. Previously it was (unintentionally) possible to use an
@@ -353,11 +346,11 @@ TODO(mmalerba): link to density docs once they exist.
   `<input matInput type="date">`, if you want this indicator to appear for your inputs, use the
   following styles:
 
-    ```scss
-    .mat-mdc-input-element::-webkit-calendar-picker-indicator {
-      display: block;
-    }
-    ```
+  ```scss
+  .mat-mdc-input-element::-webkit-calendar-picker-indicator {
+    display: block;
+  }
+  ```
 
 ### List
 
@@ -381,9 +374,9 @@ TODO(mmalerba): link to density docs once they exist.
   </mat-list-item>
   ```
 
-* The amount of lines is automatically inferred. e.g. in the snippet above the list item will
-  acquire space for two lines. With the new API you can now set an explicit number of lines on the
-  `<mat-list-item>` to activate wrapping.
+* The list automatically infers the number of lines of text content. For example, in the snippet
+  above, the list item renders space for two lines. With the new API, you can set an explicit number
+  of lines on the `<mat-list-item>` to manually control wrapping.
 
   ```html
   <mat-list-item lines="3">
@@ -420,7 +413,7 @@ TODO(mmalerba): link to density docs once they exist.
     `<mat-icon>` use `ngProjectAs="mat-icon"` to project it into the icon slot.
 
   * If you need your icon to appear at the end of the item (not officially supported by the spec)
-    you can wrap both the text and your icon in a span, e.g.
+    you can wrap both the text and your icon in a span, for example:
 
     ```html
     <span>
@@ -439,6 +432,8 @@ TODO(mmalerba): link to density docs once they exist.
 
 * Long options now wrap instead of truncating with an ellipsis.
 
+* Option heights are no longer capped at `48px`.
+
 ### Paginator
 
 * The form-field inside of `mat-paginator` only supports the `appearance` options offered by the new
@@ -446,9 +441,9 @@ TODO(mmalerba): link to density docs once they exist.
 
 ### Progress Bar
 
-* Hiding the bar with `visibility: hidden` will not hide all internal elements because they apply
-  a `visibility: visible` style. Instead, style it with `opacity: 0` or `display: none`, or remove
-  it completely with `ngIf`.
+* Visibility on internal elements is now set to `visible`. Setting `visibility: hidden` will no
+  longer hide all internal elements. Instead, style it with `opacity: 0`, `display: none`, or
+  remove it completely with `ngIf`.
 
 * Height is always set to 4px and does not get shorter or taller using `height` styles.
 
@@ -464,16 +459,14 @@ TODO(mmalerba): link to density docs once they exist.
 
 * Labels are smaller and further away from the radio button to align with the Material Design spec.
 
-* Accessibility: The touch target is much larger than the radio button; to match the legacy size,
-  you can provide a `-5` density to the radio button's theme mixin:
+* The touch target is now much larger and more accessible. Be sure to allow enough space in your
+  layout so that the touch target does not overlap other components. If you are not concerned with
+  accessibility you can match the previous size by using density -5 for the radio.
 
-```scss
-@use '@angular/material' as mat;
-
-@include mat.radio-theme(
-  map-merge($theme, (density: -5))
-);
-```
+  ```scss
+  @use '@angular/material' as mat;
+  @include mat.radio-density(-5px);
+  ```
 
 ### Select
 
@@ -492,25 +485,109 @@ TODO(mmalerba): link to density docs once they exist.
 
 ### Slide Toggle
 
-* Accessibility: MDC-based version uses `<button role="switch">` to represent the toggle rather than
-  `<input type="checkbox">`
+* To improve accessibility, the MDC-based version uses `<button role="switch">` to represent the
+  toggle rather than `<input type="checkbox">`. Slide toggle will no longer respond to native form
+  validation. Consider alternative approaches to form validation.
 
-* Accessibility: The touch target is much larger than the slide toggle; to match the legacy size,
-  you can provide a `-5` density to the slide toggle’s theme mixin:
+* The touch target is much larger and more accessible. Be sure to allow enough space in your
+  layout so that the touch target does not overlap other components. If you are not concerned with
+  accessibility you can match the previous size by using density -5 for the slide-toggle.
 
   ```scss
   @use '@angular/material' as mat;
-
-  @include mat.slide-toggle-theme(
-    map-merge($theme, (density: -5))
-  );
+  @include mat.slide-toggle-density(-5px);
   ```
 
 * The label is closer to the enabled toggle
 
 ### Slider
 
-* Accessibility: sliders now work with mobile device screen readers.
+* Sliders now work with mobile device screen readers.
+
+* The slider template API has changed from a single `<mat-slider>` element to a `<mat-slider>`
+  element which contains one or two `<input>` elements (depending on whether the slider should)
+  be a standard or range slider. E.g.
+  ```html
+    <!-- Single slider -->
+    <mat-slider>
+      <input matSliderThumb>
+    </mat-slider>
+
+    <!-- Range slider -->
+    <mat-slider>
+      <input matSliderStartThumb>
+      <input matSliderEndThumb>
+    </mat-slider>
+  ```
+
+* The new `discrete` property on the `<mat-slider>` now controls whether the slider has tick marks
+  and a value indicator tooltip. It replaces `thumbLabel`.
+
+  ```html
+  <!-- Before -->
+  <mat-slider thumbLabel></mat-slider>
+
+  <!-- After -->
+  <mat-slider discrete>
+    <input matSliderThumb>
+  </mat-slider>
+  ```
+  
+* The `tickInterval` property has been removed. To switch to the new API, use `showTickMarks` to
+  create a slider with tick marks, and the interval for your tick marks will match your slider's
+  `step`. The `tickInterval` property is under consideration to be added back in future releases.
+
+  ```html
+  <!-- Before -->
+  <mat-slider tickInterval="5" step="5"></mat-slider>
+
+  <!-- After -->
+  <mat-slider step="5" showTickMarks>
+    <input matSliderThumb>
+  </mat-slider>
+  ```
+
+* The `displayValue` property has been removed. The suggested alternative for controlling the
+  value indicator text is to provide a function via `displayWith`.
+
+  ```html
+  <!-- Before -->
+  <mat-slider [displayValue]="myDisplayValue"></mat-slider>
+
+  <!-- After -->
+  <mat-slider [displayWith]="myDisplayWithFn">
+    <input matSliderThumb>
+  </mat-slider>
+  ```
+
+* The `valueText` property is now removed in favor of directly using the native input's
+  aria-valuetext or providing a `displayWith` function.
+
+  ```html
+  <!-- Before -->
+  <mat-slider [valueText]="myValueText"></mat-slider>
+
+  <!-- After (Option 1) -->
+  <mat-slider>
+    <input [attr.aria-valuetext]="myValueText" matSliderThumb>
+  </mat-slider>
+
+  <!-- After (Option 2) -->
+  <mat-slider [displayWith]="myDisplayWithFn">
+    <input matSliderThumb>
+  </mat-slider>
+  ```
+
+* The slider API has also changed such that there are two new components: `MatSliderThumb` and
+  `MatSliderRangeThumb`. They provide the following properties:
+    - `@Input() value: number`
+    - `@Output() valueChange: EventEmitter<number>`
+    - `@Output() dragEnd: EventEmitter<MatSliderDragEvent>`
+    - `@Output() dragStart: EventEmitter<MatSliderDragEvent>`
+    - `percentage: number`
+  And the following methods:
+    - `blur`
+    - `focus`
 
 * To accommodate range sliders, the implementation has changed from the `<mat-slider>` element being
   the form control to the `<mat-slider>` element containing 1-2 `<input>` elements (the slider
@@ -518,20 +595,17 @@ TODO(mmalerba): link to density docs once they exist.
   labels (`aria-label`) now live on the `<input>` elements instead.
 
 * Vertical sliders and inverted sliders are no longer supported, as they are no longer part of the
-  Material Design spec. TODO(jelbourn): should we add a note that vertical sliders are likely to
-  return in a future version?
-
-* Range sliders are now supported. TODO(wagnermaciel): add more about this.
+  Material Design spec. As a result, the `invert` and `vertical` properties have been removed.
 
 ### Snack Bar
 
 * For simple, text-based snack-bars, there are no significant changes.
 
 * For simple snack-bars with an action button, they use the MDC-based mat-button, so your
-  application will need to include the Sass theming mixin for the MDC-based button
+  application will need to include the Sass theming mixin for the MDC-based button.
 
-* For snack-bars that use custom structured content (i.e. calls to `MatSnackBar.openFromComponent`
-  and `MatSnackBar.openFromTemplate`), you should use the following new directives to annotate your
+* For snack-bars that use custom structured content (if you call `MatSnackBar.openFromComponent` or
+  `MatSnackBar.openFromTemplate`), you should use the following new directives to annotate your
   content:
   * `matSnackBarLabel` to mark the text displayed to users
   * `matSnackBarActions` to mark the element containing the action buttons
@@ -545,22 +619,25 @@ TODO(mmalerba): link to density docs once they exist.
 
 ### Table
 
-* All cells have a `16px` left and right padding instead of just the leftmost and rightmost cells having a padding of `24px`.
+* All cells have a `16px` left and right padding instead of just the leftmost and rightmost cells
+  having a padding of `24px`.
 
-* Header cells have the same color and text size as the data rows instead of having more grayish and smaller text.
+* Header cells have the same color and text size as the data rows instead of having more grayish and
+  smaller text.
 
-* Cell text no longer wraps by default. Cell wrapping can be enabled by applying `white-space: normal` to
-  the table cells.
+* Cell text no longer wraps by default. Cell wrapping can be enabled by applying
+  `white-space: normal` to the table cells.
 
 * Row height is `52px` instead of `48px`.
 
 * Cell box-sizing is `border-box` instead of `content-box`. This may affect custom width styles.
 
-* The table's last row does not include a bottom border row because the table is expected to have a border.
+* The table's last row does not include a bottom border row because the table is expected to have a
+  border.
 
-* The paginator property of the `MatTableDataSource` has a generic interface that matches most of
-  the paginator API. You may need to explicitly type the paginator to access the full API, e.g.
-  `new MatTableDataSource<MyData, MatPaginator>();`
+* The paginator property of the `MatTableDataSource` has a generic interface that matches most, but
+  not all of the paginator API. You may need to explicitly type the paginator to access the full
+  API, for example: `new MatTableDataSource<MyData, MatPaginator>();`
 
 * Flex tables (`<mat-table>`) display a border on the cells instead of rows.
 
@@ -568,24 +645,23 @@ TODO(mmalerba): link to density docs once they exist.
 
 ### Tabs
 
-* Accessibility: `<mat-tab-nav-bar>` now requires an additional `<mat-tab-nav-panel>` element to
-  be wrapped around the content that it is connected to. A refernece to the tab panel has to be
-  passed in to the `tabPanel` or an error will be thrown. The addition of the tab panel allows
-  for better labelling for assistive technology.
+* Header label text color matches the theme color when the tab header is selected.
 
-```html
-<!-- Before -->
-<mat-tab-nav-bar>...</mat-tab-nav-bar>
+* Header labels stretch to fill the container's width. This can be turned off by
+  setting the `<mat-tab-group>` input `mat-stretch-tabs` to `false`.
 
-<!-- After -->
-<mat-tab-nav-bar [tabPanel]="tabPanel">...</mat-tab-nav-bar>
-<mat-tab-nav-panel #tabPanel>...</mat-tab-nav-panel>
-```
+* The `<mat-tab-nav-bar>` requires a reference to a `<mat-tab-nav-panel>` using the `tabPanel`
+  input. The `<mat-tab-nav-panel>` must wrap the content connected to the nav-bar. This allows the
+  component to provide correct labeling for assistive technology.
 
-* The selected tab label now uses a text color from the theme, matching the selection indicator.
+  ```html
+  <!-- Before -->
+  <mat-tab-nav-bar>...</mat-tab-nav-bar>
 
-* Tab header labels default to stretching the width of the container. This can be turned off by
-  providing `mat-stretch-tabs="false"`.
+  <!-- After -->
+  <mat-tab-nav-bar [tabPanel]="tabPanel">...</mat-tab-nav-bar>
+  <mat-tab-nav-panel #tabPanel>...</mat-tab-nav-panel>
+  ```
 
 ### Tooltip
 

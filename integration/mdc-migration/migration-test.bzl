@@ -21,7 +21,7 @@ IGNORED_FILES = [
     "yarn.lock",
 ]
 
-def migration_test(name, srcs, approve):
+def migration_test(name, srcs, approve, verify = []):
     node_integration_test(
         name = name,
         srcs = srcs,
@@ -31,16 +31,14 @@ def migration_test(name, srcs, approve):
             # See: https://github.com/yarnpkg/yarn/issues/2165.
             # TODO(devversion): determine if a solution/workaround could live in the test runner.
             "yarn install --cache-folder .yarn_cache_folder/",
-            "yarn ng generate @angular/material:mdc-migration --components all --tsconfig tsconfig.app.json",
-            # TODO(amysorto): add back once MDC components are in @angular/material
-            # "yarn test",
+            "yarn ng generate @angular/material:mdc-migration --components all",
             " ".join([
                 "$(rootpath :verify_golden)",
                 "%s" % approve,
                 "../golden",
                 "integration/mdc-migration/golden",
             ] + IGNORED_FILES),
-        ],
+        ] + verify,
         data = [
             ":golden_project",
             ":test_project",

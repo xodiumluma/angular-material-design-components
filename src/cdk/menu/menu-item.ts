@@ -11,7 +11,6 @@ import {
   ElementRef,
   EventEmitter,
   inject,
-  InjectFlags,
   Input,
   NgZone,
   OnDestroy,
@@ -37,6 +36,7 @@ import {MENU_AIM, Toggler} from './menu-aim';
 @Directive({
   selector: '[cdkMenuItem]',
   exportAs: 'cdkMenuItem',
+  standalone: true,
   host: {
     'role': 'menuitem',
     'class': 'cdk-menu-item',
@@ -50,7 +50,7 @@ import {MENU_AIM, Toggler} from './menu-aim';
 })
 export class CdkMenuItem implements FocusableOption, FocusableElement, Toggler, OnDestroy {
   /** The directionality (text direction) of the current page. */
-  protected readonly _dir = inject(Directionality, InjectFlags.Optional);
+  protected readonly _dir = inject(Directionality, {optional: true});
 
   /** The menu's native DOM host element. */
   readonly _elementRef: ElementRef<HTMLElement> = inject(ElementRef);
@@ -59,16 +59,16 @@ export class CdkMenuItem implements FocusableOption, FocusableElement, Toggler, 
   protected _ngZone = inject(NgZone);
 
   /** The menu aim service used by this menu. */
-  private readonly _menuAim = inject(MENU_AIM, InjectFlags.Optional);
+  private readonly _menuAim = inject(MENU_AIM, {optional: true});
 
   /** The stack of menus this menu belongs to. */
   private readonly _menuStack = inject(MENU_STACK);
 
   /** The parent menu in which this menuitem resides. */
-  private readonly _parentMenu = inject(CDK_MENU, InjectFlags.Optional);
+  private readonly _parentMenu = inject(CDK_MENU, {optional: true});
 
   /** Reference to the CdkMenuItemTrigger directive if one is added to the same element */
-  private readonly _menuTrigger = inject(CdkMenuTrigger, InjectFlags.Optional | InjectFlags.Self);
+  private readonly _menuTrigger = inject(CdkMenuTrigger, {optional: true, self: true});
 
   /**  Whether the CdkMenuItem is disabled - defaults to false */
   @Input('cdkMenuItemDisabled')
@@ -93,7 +93,9 @@ export class CdkMenuItem implements FocusableOption, FocusableElement, Toggler, 
   @Output('cdkMenuItemTriggered') readonly triggered: EventEmitter<void> = new EventEmitter();
 
   /** Whether the menu item opens a menu. */
-  readonly hasMenu = !!this._menuTrigger;
+  get hasMenu() {
+    return this._menuTrigger?.menuTemplateRef != null;
+  }
 
   /**
    * The tabindex for this menu item managed internally and used for implementing roving a

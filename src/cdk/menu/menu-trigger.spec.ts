@@ -47,12 +47,36 @@ describe('MenuTrigger', () => {
       expect(menuItemElement.getAttribute('aria-disabled')).toBe('true');
     });
 
-    it('should set aria-haspopup to menu', () => {
+    it('should set aria-haspopup based on whether a menu is assigned', () => {
       expect(menuItemElement.getAttribute('aria-haspopup')).toEqual('menu');
+
+      fixture.componentInstance.trigger.menuTemplateRef = null;
+      fixture.detectChanges();
+
+      expect(menuItemElement.hasAttribute('aria-haspopup')).toBe(false);
     });
 
-    it('should  have a menu', () => {
+    it('should have a menu based on whether a menu is assigned', () => {
       expect(menuItem.hasMenu).toBeTrue();
+
+      fixture.componentInstance.trigger.menuTemplateRef = null;
+      fixture.detectChanges();
+
+      expect(menuItem.hasMenu).toBeFalse();
+    });
+
+    it('should set aria-controls based on whether a menu is assigned', () => {
+      expect(menuItemElement.hasAttribute('aria-controls')).toBeFalse();
+    });
+
+    it('should set aria-expanded based on whether a menu is assigned', () => {
+      expect(menuItemElement.hasAttribute('aria-expanded')).toBeTrue();
+      expect(menuItemElement.getAttribute('aria-expanded')).toBe('false');
+
+      fixture.componentInstance.trigger.menuTemplateRef = null;
+      fixture.detectChanges();
+
+      expect(menuItemElement.hasAttribute('aria-expanded')).toBeFalse();
     });
   });
 
@@ -454,6 +478,65 @@ describe('MenuTrigger', () => {
       expect(nativeMenus.length).toBe(1);
     });
   });
+
+  it('should be able to pass data to the menu via the template context', () => {
+    TestBed.configureTestingModule({
+      imports: [CdkMenuModule],
+      declarations: [TriggerWithData],
+    }).compileComponents();
+
+    const fixture = TestBed.createComponent(TriggerWithData);
+    fixture.componentInstance.menuData = {message: 'Hello!'};
+    fixture.detectChanges();
+    fixture.nativeElement.querySelector('button').click();
+    fixture.detectChanges();
+
+    expect(document.querySelector('.test-menu')?.textContent).toBe('Hello!');
+  });
+
+  describe('null triggerFor', () => {
+    let fixture: ComponentFixture<TriggerWithNullValue>;
+
+    let nativeTrigger: HTMLElement;
+
+    beforeEach(waitForAsync(() => {
+      TestBed.configureTestingModule({
+        imports: [CdkMenuModule],
+        declarations: [TriggerWithNullValue],
+      }).compileComponents();
+    }));
+
+    beforeEach(() => {
+      fixture = TestBed.createComponent(TriggerWithNullValue);
+      nativeTrigger = fixture.componentInstance.nativeTrigger.nativeElement;
+    });
+
+    it('should not set aria-haspopup', () => {
+      expect(nativeTrigger.hasAttribute('aria-haspopup')).toBeFalse();
+    });
+
+    it('should not set aria-controls', () => {
+      expect(nativeTrigger.hasAttribute('aria-controls')).toBeFalse();
+    });
+
+    it('should not toggle the menu on trigger', () => {
+      expect(fixture.componentInstance.trigger.isOpen()).toBeFalse();
+
+      nativeTrigger.click();
+      fixture.detectChanges();
+
+      expect(fixture.componentInstance.trigger.isOpen()).toBeFalse();
+    });
+
+    it('should not toggle the menu on keyboard events', () => {
+      expect(fixture.componentInstance.trigger.isOpen()).toBeFalse();
+
+      dispatchKeyboardEvent(nativeTrigger, 'keydown', SPACE);
+      fixture.detectChanges();
+
+      expect(fixture.componentInstance.trigger.isOpen()).toBeFalse();
+    });
+  });
 });
 
 @Component({
@@ -462,7 +545,10 @@ describe('MenuTrigger', () => {
     <ng-template #noop><div cdkMenu></div></ng-template>
   `,
 })
-class TriggerForEmptyMenu {}
+class TriggerForEmptyMenu {
+  @ViewChild(CdkMenuTrigger) trigger: CdkMenuTrigger;
+  @ViewChild(CdkMenuTrigger, {read: ElementRef}) nativeTrigger: ElementRef;
+}
 
 @Component({
   template: `
@@ -571,4 +657,32 @@ class StandaloneTriggerWithInlineMenu {
   @ViewChild('submenu_item', {read: ElementRef}) submenuItem?: ElementRef<HTMLElement>;
   @ViewChild('inline_item', {read: ElementRef}) nativeInlineItem: ElementRef<HTMLElement>;
   @ViewChildren(CdkMenu, {read: ElementRef}) nativeMenus: QueryList<ElementRef>;
+}
+
+@Component({
+  template: `
+    <button
+      [cdkMenuTriggerFor]="menu"
+      [cdkMenuTriggerData]="menuData">Click me!</button>
+
+    <ng-template #menu let-message="message">
+      <div cdkMenu class="test-menu">{{message}}</div>
+    </ng-template>
+  `,
+})
+class TriggerWithData {
+  menuData: unknown;
+}
+
+@Component({
+  template: `
+    <button [cdkMenuTriggerFor]="null">First</button>
+  `,
+})
+class TriggerWithNullValue {
+  @ViewChild(CdkMenuTrigger, {static: true})
+  trigger: CdkMenuTrigger;
+
+  @ViewChild(CdkMenuTrigger, {static: true, read: ElementRef})
+  nativeTrigger: ElementRef<HTMLElement>;
 }

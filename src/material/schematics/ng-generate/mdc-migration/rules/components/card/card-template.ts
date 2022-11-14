@@ -8,7 +8,7 @@
 
 import * as compiler from '@angular/compiler';
 import {TemplateMigrator} from '../../template-migrator';
-import {addAttribute, visitElements} from '../../tree-traversal';
+import {updateAttribute, visitElements} from '../../tree-traversal';
 import {Update} from '../../../../../migration-utilities';
 
 export class CardTemplateMigrator extends TemplateMigrator {
@@ -22,7 +22,7 @@ export class CardTemplateMigrator extends TemplateMigrator {
 
       updates.push({
         offset: node.startSourceSpan.start.offset,
-        updateFn: html => addAttribute(html, node, 'appearance', 'outlined'),
+        updateFn: html => updateAttribute(html, node, 'appearance', () => 'outlined'),
       });
     });
 

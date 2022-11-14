@@ -29,6 +29,9 @@ $candy-app-theme: mat.define-light-theme((
 @include experimental.column-resize-theme($candy-app-theme);
 @include experimental.popover-edit-theme($candy-app-theme);
 
+@include mat.legacy-typography-hierarchy($candy-app-theme, '.mat-legacy-typography');
+@include mat.typography-hierarchy($candy-app-theme);
+
 .demo-strong-focus {
   // Note: we can theme the indicators directly through `strong-focus-indicators` as well.
   // Use the theme so we have some coverage over the entire API surface.
@@ -75,7 +78,7 @@ $candy-app-theme: mat.define-light-theme((
 $density-scales: (-1, -2, minimum, maximum);
 @each $density in $density-scales {
   .demo-density-#{$density} {
-    @include mat.private-all-component-densities($density);
+    @include mat.all-component-densities($density);
     @include mat.private-all-legacy-component-densities($density);
   }
 }

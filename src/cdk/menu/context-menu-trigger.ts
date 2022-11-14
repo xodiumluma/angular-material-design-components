@@ -6,7 +6,7 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {Directive, inject, Injectable, InjectFlags, Input, OnDestroy} from '@angular/core';
+import {Directive, inject, Injectable, Input, OnDestroy} from '@angular/core';
 import {Directionality} from '@angular/cdk/bidi';
 import {
   FlexibleConnectedPositionStrategy,
@@ -57,11 +57,16 @@ export type ContextMenuCoordinates = {x: number; y: number};
 @Directive({
   selector: '[cdkContextMenuTriggerFor]',
   exportAs: 'cdkContextMenuTriggerFor',
+  standalone: true,
   host: {
     '[attr.data-cdk-menu-stack-id]': 'null',
     '(contextmenu)': '_openOnContextMenu($event)',
   },
-  inputs: ['menuTemplateRef: cdkContextMenuTriggerFor', 'menuPosition: cdkContextMenuPosition'],
+  inputs: [
+    'menuTemplateRef: cdkContextMenuTriggerFor',
+    'menuPosition: cdkContextMenuPosition',
+    'menuData: cdkContextMenuTriggerData',
+  ],
   outputs: ['opened: cdkContextMenuOpened', 'closed: cdkContextMenuClosed'],
   providers: [
     {provide: MENU_TRIGGER, useExisting: CdkContextMenuTrigger},
@@ -73,7 +78,7 @@ export class CdkContextMenuTrigger extends CdkMenuTriggerBase implements OnDestr
   private readonly _overlay = inject(Overlay);
 
   /** The directionality of the page. */
-  private readonly _directionality = inject(Directionality, InjectFlags.Optional);
+  private readonly _directionality = inject(Directionality, {optional: true});
 
   /** The app's context menu tracking registry */
   private readonly _contextMenuTracker = inject(ContextMenuTracker);

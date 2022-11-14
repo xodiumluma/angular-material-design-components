@@ -26,7 +26,7 @@ export interface MixinChange {
   old: string;
 
   /** The name(s) of the new scss mixin(s). */
-  new: string[];
+  new: string[] | null;
 
   /** Optional check to see if new scss mixin(s) already exist in the styles */
   checkForDuplicates?: boolean;
@@ -45,6 +45,26 @@ export abstract class StyleMigrator {
 
   /** The prefix of classes that are specific to the old components */
   abstract deprecatedPrefixes: string[];
+
+  /**
+   * Data structure used to track which migrators have been applied to an AST node
+   * already so they don't have to be re-run when PostCSS detects changes in the AST.
+   */
+  private _processedNodes = new WeakMap<postcss.Node, Set<string>>();
+
+  /**
+   * Wraps a value in a placeholder string to prevent it
+   * from being matched multiple times in a migration.
+   */
+  static wrapValue(value: string): string {
+    const escapeString = '__NG_MDC_MIGRATION_PLACEHOLDER__';
+    return `${escapeString}${value}${escapeString}`;
+  }
+
+  /** Unwraps all the values that we wrapped by `wrapValue`. */
+  static unwrapAllValues(content: string): string {
+    return content.replace(/__NG_MDC_MIGRATION_PLACEHOLDER__/g, '');
+  }
 
   /**
    * Returns whether the given at-include at-rule is a use of a legacy mixin for this component.
@@ -66,6 +86,12 @@ export abstract class StyleMigrator {
    * @returns the mixin change object or null if not found
    */
   getMixinChange(namespace: string, atRule: postcss.AtRule): MixinChange | null {
+    const processedKey = `mixinChange-${namespace}`;
+
+    if (this._nodeIsProcessed(atRule, processedKey)) {
+      return null;
+    }
+
     const change = this.mixinChanges.find(c => {
       return atRule.params.includes(`${namespace}.${c.old}`);
     });
@@ -75,7 +101,7 @@ export abstract class StyleMigrator {
     }
 
     // Check if mixin replacements already exist in the stylesheet
-    const replacements = [...change.new];
+    const replacements = [...(change.new ?? [])];
     if (change.checkForDuplicates) {
       const mixinArgumentMatches = atRule.params?.match(MIXIN_ARGUMENTS_REGEX);
       atRule.root().walkAtRules(rule => {
@@ -94,12 +120,8 @@ export abstract class StyleMigrator {
       });
     }
 
-    // Don't do anything if all the new changes already exist in the stylesheet
-    if (replacements.length < 1) {
-      return null;
-    }
-
-    return {old: change.old, new: replacements};
+    this._trackProcessedNode(atRule, processedKey);
+    return {old: change.old, new: replacements.length ? replacements : null};
   }
 
   /**
@@ -122,11 +144,14 @@ export abstract class StyleMigrator {
    * @param rule a postcss rule.
    */
   replaceLegacySelector(rule: postcss.Rule): void {
-    for (let i = 0; i < this.classChanges.length; i++) {
-      const change = this.classChanges[i];
-      if (rule.selector?.match(change.old + END_OF_SELECTOR_REGEX)) {
-        rule.selector = rule.selector.replace(change.old, change.new);
+    if (!this._nodeIsProcessed(rule, 'replaceLegacySelector')) {
+      for (let i = 0; i < this.classChanges.length; i++) {
+        const change = this.classChanges[i];
+        if (rule.selector?.match(change.old + END_OF_SELECTOR_REGEX)) {
+          rule.selector = rule.selector.replace(change.old, change.new);
+        }
       }
+      this._trackProcessedNode(rule, 'replaceLegacySelector');
     }
   }
 
@@ -141,5 +166,17 @@ export abstract class StyleMigrator {
     return this.deprecatedPrefixes.some(deprecatedPrefix =>
       rule.selector.includes(deprecatedPrefix),
     );
+  }
+
+  /** Tracks that a node has been processed by a specific action. */
+  private _trackProcessedNode(node: postcss.Node, action: string) {
+    const appliedActions = this._processedNodes.get(node) || new Set();
+    appliedActions.add(action);
+    this._processedNodes.set(node, appliedActions);
+  }
+
+  /** Checks whether a node has been processed by an action in this migrator. */
+  private _nodeIsProcessed(node: postcss.Node, action: string) {
+    return !!this._processedNodes.get(node)?.has(action);
   }
 }
