@@ -15,7 +15,6 @@ import {
   Inject,
   OnInit,
   Injector,
-  InjectFlags,
   DoCheck,
 } from '@angular/core';
 import {
@@ -89,7 +88,7 @@ abstract class MatDateRangeInputPartBase<D>
   protected abstract override _assignValueToModel(value: D | null): void;
   protected abstract override _getValueFromModel(modelValue: DateRange<D>): D | null;
 
-  protected readonly _dir = inject(Directionality, InjectFlags.Optional);
+  protected readonly _dir = inject(Directionality, {optional: true});
 
   constructor(
     @Inject(MAT_DATE_RANGE_INPUT_PARENT) public _rangeInput: MatDateRangeInputParent<D>,
@@ -112,7 +111,7 @@ abstract class MatDateRangeInputPartBase<D>
     // validator. We work around it here by injecting the `NgControl` in `ngOnInit`, after
     // everything has been resolved.
     // tslint:disable-next-line:no-bitwise
-    const ngControl = this._injector.get(NgControl, null, InjectFlags.Self | InjectFlags.Optional);
+    const ngControl = this._injector.get(NgControl, null, {optional: true, self: true});
 
     if (ngControl) {
       this.ngControl = ngControl;

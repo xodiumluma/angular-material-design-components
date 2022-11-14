@@ -1,3 +1,188 @@
+<a name="15.0.0-rc.2"></a>
+# 15.0.0-rc.2 "steam-soul" (2022-11-09)
+### cdk
+| Commit | Type | Description |
+| -- | -- | -- |
+| [f3bce0bf0c](https://github.com/angular/components/commit/f3bce0bf0ce6f06b17bcf2faa8dc8e1fdae98660) | fix | **scrolling:** error when querying for CdkVirtualScrollViewport as CdkScrollable ([#25937](https://github.com/angular/components/pull/25937)) |
+### material
+| Commit | Type | Description |
+| -- | -- | -- |
+| [0f52389340](https://github.com/angular/components/commit/0f52389340b6f711bf59616ff5d1da3a72748036) | fix | **chips:** show checkmark for selected non-selectable chips ([#25942](https://github.com/angular/components/pull/25942)) |
+| [8643c9ccb5](https://github.com/angular/components/commit/8643c9ccb56bc6c2a4306ffb8ecb5db25adac1d5) | fix | **chips:** use checkmark graphic for single-selection ([#25890](https://github.com/angular/components/pull/25890)) |
+| [69efb41949](https://github.com/angular/components/commit/69efb41949d83341ed6fb5657149661be6b9009c) | fix | **core:** switch typography hierarchy to new terminology |
+| [a612df148e](https://github.com/angular/components/commit/a612df148ed5076701350557b35c4d93fe5c5a3d) | fix | **schematics:** add binding parsing logic ([#25910](https://github.com/angular/components/pull/25910)) |
+| [a64186a45b](https://github.com/angular/components/commit/a64186a45b6f530ad121b1ac93d88b368a45339b) | fix | **schematics:** add handling for invert and vertical ([#25922](https://github.com/angular/components/pull/25922)) |
+| [a34a28458b](https://github.com/angular/components/commit/a34a28458bc55bf7257d0d6a3c0dff4e9df4595d) | fix | **schematics:** avoid re-entrant processing in MDC style migration |
+| [169bc2e4d6](https://github.com/angular/components/commit/169bc2e4d6de03b0a11b3f019a32d1472cebdc5c) | fix | **schematics:** incorrect partial migration after typography hierarchy inclusion |
+| [056911822c](https://github.com/angular/components/commit/056911822c41eecec0064fe2cf88fc6016c922e6) | fix | **schematics:** migrate legacy typography hierarchy usages in CSS |
+| [9cdb4dbf4d](https://github.com/angular/components/commit/9cdb4dbf4d27bb798f68a55ac47d5dec2c6ae1cf) | fix | **schematics:** migrate typography hierarchy classes in templates |
+| [32827ac58a](https://github.com/angular/components/commit/32827ac58a7ff741ae914948798717717b068102) | fix | **schematics:** migrate typography-hierarchy mixin to legacy |
+| [ec116ab024](https://github.com/angular/components/commit/ec116ab024c970a7dfe86681a5c9decb871ba64f) | fix | **schematics:** move value bindings to slider thumb ([#25916](https://github.com/angular/components/pull/25916)) |
+| [274a114f58](https://github.com/angular/components/commit/274a114f586f28b0bd3a085735f65d3450772c1f) | fix | **stepper:** content not visibile on first navigation when nested in tabs ([#25930](https://github.com/angular/components/pull/25930)) |
+| [66632c9c99](https://github.com/angular/components/commit/66632c9c994b752563f95999dced00ccd604d4af) | fix | **tabs:** avoid reference error ([#25928](https://github.com/angular/components/pull/25928)) |
+## Special Thanks
+Douglas Parker, Jeremy Elbourn, Kristiyan Kostadinov, Paul Gschwendtner, Wagner Maciel and Zach Arend
+
+<!-- CHANGELOG SPLIT MARKER -->
+
+<a name="14.2.7"></a>
+# 14.2.7 "smoke-spirit" (2022-11-09)
+### cdk
+| Commit | Type | Description |
+| -- | -- | -- |
+| [f63918a3b8](https://github.com/angular/components/commit/f63918a3b86f88af842cea1153a95d5a8a9d549c) | fix | **scrolling:** error when querying for CdkVirtualScrollViewport as CdkScrollable ([#25937](https://github.com/angular/components/pull/25937)) |
+### material
+| Commit | Type | Description |
+| -- | -- | -- |
+| [53588b51d2](https://github.com/angular/components/commit/53588b51d2caa9ba13d72f3fa282f0aec7f9f338) | fix | **stepper:** add HCM disabled styles for stepper and tabs ([#25393](https://github.com/angular/components/pull/25393)) ([#25932](https://github.com/angular/components/pull/25932)) |
+| [a1473b93fc](https://github.com/angular/components/commit/a1473b93fcc1e737fea03063d092e6d535844f21) | fix | **stepper:** content not visibile on first navigation when nested in tabs ([#25930](https://github.com/angular/components/pull/25930)) |
+## Special Thanks
+Douglas Parker, Kristiyan Kostadinov and Wagner Maciel
+
+<!-- CHANGELOG SPLIT MARKER -->
+
+<a name="15.0.0-rc.1"></a>
+# 15.0.0-rc.1 "feldspar-fence" (2022-11-02)
+### cdk
+| Commit | Type | Description |
+| -- | -- | -- |
+| [992cafc39](https://github.com/angular/components/commit/992cafc3955722e0b8ed59adcef2cd5fb0badf50) | fix | **listbox:** incorrectly validating preselected value ([#25893](https://github.com/angular/components/pull/25893)) |
+| [4b757e6eb](https://github.com/angular/components/commit/4b757e6eba15a2cf96eb28e9c71e2d086e11292a) | fix | **overlay:** provide Overlay in root ([#25909](https://github.com/angular/components/pull/25909)) |
+### material
+| Commit | Type | Description |
+| -- | -- | -- |
+| [8baae7342](https://github.com/angular/components/commit/8baae7342ef63558aa00f202c12a78f76fa7e817) | fix | **list:** fix tabindex="-1" not being maintained when disabled ([#25860](https://github.com/angular/components/pull/25860)) |
+| [cd2f13c27](https://github.com/angular/components/commit/cd2f13c27e7d70ab1306565d2f205d3a4497fbd8) | fix | **schematics:** initialize slider template migrator ([#25898](https://github.com/angular/components/pull/25898)) |
+| [6cee17e7c](https://github.com/angular/components/commit/6cee17e7cef2a2261e68191a3bfb4cba44abb86a) | fix | **schematics:** migrate named arguments in define-typography-config ([#25907](https://github.com/angular/components/pull/25907)) |
+## Special Thanks
+Kristiyan Kostadinov, Wagner Maciel and Zach Arend
+
+<!-- CHANGELOG SPLIT MARKER -->
+
+<a name="14.2.6"></a>
+# 14.2.6 "quilt-seagull" (2022-10-26)
+### material
+| Commit | Type | Description |
+| -- | -- | -- |
+| [89771dcc4](https://github.com/angular/components/commit/89771dcc438e8ceed21d8c75284b4defacbf93b6) | fix | **tabs:** scroll position lost when tab header is hidden ([#25855](https://github.com/angular/components/pull/25855)) |
+## Special Thanks
+Kristiyan Kostadinov
+
+<!-- CHANGELOG SPLIT MARKER -->
+
+<a name="15.0.0-rc.0"></a>
+# 15.0.0-rc.0 "plastic-platypus" (2022-10-26)
+### cdk
+| Commit | Type | Description |
+| -- | -- | -- |
+| [9e4d57cd2](https://github.com/angular/components/commit/9e4d57cd21b6408a36fba2fcfa2245adcdeb8289) | fix | **listbox:** prevent form submission on click ([#25858](https://github.com/angular/components/pull/25858)) |
+| [48d666b11](https://github.com/angular/components/commit/48d666b111563539cb827393f40f034362082d5f) | fix | **listbox:** remove incorrect usage of validator ([#25856](https://github.com/angular/components/pull/25856)) |
+### material
+| Commit | Type | Description |
+| -- | -- | -- |
+| [4926cc57e](https://github.com/angular/components/commit/4926cc57eeb74f26c658d97ff0e7078f32535bca) | fix | **chips:** allow focusing disabled listbox options ([#25771](https://github.com/angular/components/pull/25771)) |
+| [59b5d5ef4](https://github.com/angular/components/commit/59b5d5ef44f749a959a9fec1fa2c941a0c5074a5) | fix | **datepicker:** changed after checked error during overlapping open/close sequence ([#25843](https://github.com/angular/components/pull/25843)) |
+| [0971e3948](https://github.com/angular/components/commit/0971e39485e416a33b5f8e6f3797cc7f003cc600) | fix | **datepicker:** unable to click datepicker toggle when form field is disabled ([#25863](https://github.com/angular/components/pull/25863)) |
+| [3b7c93930](https://github.com/angular/components/commit/3b7c939308c3b49db66e649746782891630dbd0f) | fix | **menu:** custom origin in focusFirstItem not respected on open ([#25812](https://github.com/angular/components/pull/25812)) |
+| [1655a6902](https://github.com/angular/components/commit/1655a69021593ed92140eb23a0cdfb19d6c2e90c) | fix | **radio:** radio not preselected with static value and an ngIf ([#25852](https://github.com/angular/components/pull/25852)) |
+| [b85bb6eed](https://github.com/angular/components/commit/b85bb6eed3e25f16cae20b0979a7868dec6b1869) | fix | **schematics:** remove `node_modules` prefix from prebuilt theme |
+| [de301a876](https://github.com/angular/components/commit/de301a8768978defea0e502ed8379d511ed99c86) | fix | **schematics:** respect specified directory in mdc migration ([#25810](https://github.com/angular/components/pull/25810)) |
+| [9a5f931aa](https://github.com/angular/components/commit/9a5f931aa189accddef0736dbe09249f9acfcb15) | fix | **schematics:** switch away from legacy components ([#25839](https://github.com/angular/components/pull/25839)) |
+| [03f19cb6d](https://github.com/angular/components/commit/03f19cb6dfc9932e8212303d8e7eac4cc9ef2416) | fix | **select:** don't assign typeahead value after blur ([#25811](https://github.com/angular/components/pull/25811)) |
+| [3c01ef310](https://github.com/angular/components/commit/3c01ef3101ce4a59766306fbe204bc3de6e78f0c) | fix | **slide-toggle:** animations not disabled with NoopAnimationsModule ([#25821](https://github.com/angular/components/pull/25821)) |
+| [169a03b30](https://github.com/angular/components/commit/169a03b30e9785c13ff9e5c40a847d022acf78b7) | fix | **tabs:** scroll position lost when tab header is hidden ([#25855](https://github.com/angular/components/pull/25855)) |
+| [4fbe16816](https://github.com/angular/components/commit/4fbe168167fe1bb86b44b0a5a7faff7072e437ce) | fix | **tabs:** wrong disabled class on tab pagination button ([#25832](https://github.com/angular/components/pull/25832)) |
+### multiple
+| Commit | Type | Description |
+| -- | -- | -- |
+| [fa599b703](https://github.com/angular/components/commit/fa599b70334ea3feccf324a11fb7fc7462fb1e06) | fix | ensure all public theming mixins are exposed at top-level ([#25805](https://github.com/angular/components/pull/25805)) |
+## Special Thanks
+Alan Agius, Alvaro Junqueira, Andrew Seguin, Kristiyan Kostadinov, Miles Malerba, Wagner Maciel and Zach Arend
+
+<!-- CHANGELOG SPLIT MARKER -->
+
+<a name="15.0.0-next.5"></a>
+# 15.0.0-next.5 "snow-swan" (2022-10-12)
+## Deprecations
+### material
+-  * startDateLabel is deprecated because it is not used
+   * endDateLabel is deprecated because it is not used
+### material
+| Commit | Type | Description |
+| -- | -- | -- |
+| [87e17aac0b](https://github.com/angular/components/commit/87e17aac0b24f26558cb7346449005e44e83e648) | feat | **button:** add variant to button harness ([#25770](https://github.com/angular/components/pull/25770)) |
+| [8a1cf8cdd3](https://github.com/angular/components/commit/8a1cf8cdd3f96c0687355df38d07042abcaa23dc) | fix | **checkbox:** disabled state not distinguishable in high contrast mode ([#25788](https://github.com/angular/components/pull/25788)) |
+| [147a354ec7](https://github.com/angular/components/commit/147a354ec77a68326e88ae0e9d145c2a4716359d) | fix | **chips:** don't remove aria-selected from deselected options ([#25748](https://github.com/angular/components/pull/25748)) |
+| [a310fefb90](https://github.com/angular/components/commit/a310fefb907cf88f38f46e0614289a4b057e8af0) | fix | **core:** default font family not picked up in define-typography-config ([#25789](https://github.com/angular/components/pull/25789)) |
+| [d53e53bf98](https://github.com/angular/components/commit/d53e53bf98e2fdac1841f4099213f9ccba3fb50a) | fix | **icon:** forward fontIcon attribute to element ([#25779](https://github.com/angular/components/pull/25779)) |
+| [6ed06a7dd3](https://github.com/angular/components/commit/6ed06a7dd3783693d1e4b33386ce2d16a0831c8e) | fix | **list:** fix selection-list staying in tab order when disabled ([#25735](https://github.com/angular/components/pull/25735)) |
+| [a0ec4becac](https://github.com/angular/components/commit/a0ec4becacf840fe553099699121d2bde0d6e585) | fix | **schematics:** fix various issues with mdc-migration ([#25772](https://github.com/angular/components/pull/25772)) |
+| [0b423d4c63](https://github.com/angular/components/commit/0b423d4c63a0aa798c9a0aa7e06523baeedcf2d0) | fix | **schematics:** gracefully skip broken css files ([#25767](https://github.com/angular/components/pull/25767)) |
+| [65086c19a0](https://github.com/angular/components/commit/65086c19a02a2e6710e96b453b8dbc9c183024c3) | fix | **schematics:** rename references in MDC generate schematic ([#25773](https://github.com/angular/components/pull/25773)) |
+| [19c45c5efb](https://github.com/angular/components/commit/19c45c5efb5e090a59c353abefe5e5380960babf) | fix | **slide-toggle:** align colors with spec ([#25792](https://github.com/angular/components/pull/25792)) |
+| [2b2cd6e3e8](https://github.com/angular/components/commit/2b2cd6e3e839d4454c98366212fae735372b0cc1) | refactor | **datepicker:** deprecate unused i18n strings ([#25791](https://github.com/angular/components/pull/25791)) |
+### cdk
+| Commit | Type | Description |
+| -- | -- | -- |
+| [a2cf3f6cc8](https://github.com/angular/components/commit/a2cf3f6cc88ec3c4ad5596090a3b4c8de8b8f5d4) | feat | **menu:** add support for passing in data to the menu template ([#25778](https://github.com/angular/components/pull/25778)) |
+| [72547a41d4](https://github.com/angular/components/commit/72547a41d4230cea0c6a5448e85bd60cfc26bd35) | fix | **drag-drop:** native event not passed as parameter to drop container ([#25763](https://github.com/angular/components/pull/25763)) |
+## Special Thanks
+Joe K, Joey Perrott, Kristiyan Kostadinov, Miles Malerba, Wagner Maciel and Zach Arend
+
+<!-- CHANGELOG SPLIT MARKER -->
+
+<a name="14.2.5"></a>
+# 14.2.5 "hail-heron" (2022-10-12)
+### cdk
+| Commit | Type | Description |
+| -- | -- | -- |
+| [b116f57d16](https://github.com/angular/components/commit/b116f57d1626b2cd793a0ce5ba00fc50cdcf98b5) | fix | **drag-drop:** native event not passed as parameter to drop container ([#25763](https://github.com/angular/components/pull/25763)) |
+### material
+| Commit | Type | Description |
+| -- | -- | -- |
+| [79eab3838d](https://github.com/angular/components/commit/79eab3838decdf7fe6b67e8dafa45a34ab429aeb) | fix | **icon:** forward fontIcon attribute to element ([#25779](https://github.com/angular/components/pull/25779)) |
+## Special Thanks
+Joe K, Joey Perrott and Kristiyan Kostadinov
+
+<!-- CHANGELOG SPLIT MARKER -->
+
+<a name="15.0.0-next.4"></a>
+# 15.0.0-next.4 "quartz-quill" (2022-10-05)
+### material
+| Commit | Type | Description |
+| -- | -- | -- |
+| [9f0071dc4](https://github.com/angular/components/commit/9f0071dc4c4848ea440907e016a12a5cba48a1a9) | fix | **button:** cdk-focus classes not being applied ([#25619](https://github.com/angular/components/pull/25619)) |
+| [17e217acd](https://github.com/angular/components/commit/17e217acd82afb99d70cbb36be31184db09d13d2) | fix | **chips:** aria-selected not reflecting selection state ([#25742](https://github.com/angular/components/pull/25742)) |
+| [9dbc4fd70](https://github.com/angular/components/commit/9dbc4fd703d0504ffc19378dfb474026cd6c0ab5) | fix | **core:** add typography hierarchy to prebuilt ([#25746](https://github.com/angular/components/pull/25746)) |
+| [e73ba59d7](https://github.com/angular/components/commit/e73ba59d7bdc09042ff58835871bedbf3f1f20b4) | fix | **core:** remove core style parameters ([#25738](https://github.com/angular/components/pull/25738)) |
+| [a106eba5a](https://github.com/angular/components/commit/a106eba5a654f06f12d2b7e77c693a7d69f59882) | fix | **list:** communicate current active page with aria-current ([#25681](https://github.com/angular/components/pull/25681)) |
+| [2686bfef3](https://github.com/angular/components/commit/2686bfef39bdc298ae3b0c55023b541489d86060) | fix | **list:** visually indicate active links in HCM ([#25679](https://github.com/angular/components/pull/25679)) |
+| [4a512cf29](https://github.com/angular/components/commit/4a512cf29a3e8b20c6067857b236148ca75a016c) | fix | **schematics:** add custom replacements for imports |
+| [f23140419](https://github.com/angular/components/commit/f231404191032a45e7e9095d5ee62eac6e6940b8) | fix | **schematics:** add support for replacing mixins that begin with all-legacy-component |
+| [cfc923029](https://github.com/angular/components/commit/cfc92302958fa87459b2ababe0e60b09a07b6f12) | fix | **schematics:** correctly migrate theme, color & typography |
+| [fd11f2b4d](https://github.com/angular/components/commit/fd11f2b4d54b1076eab7ab20b34c234fbd8880cd) | fix | **schematics:** ensure test files are included in migration ([#25757](https://github.com/angular/components/pull/25757)) |
+| [19d0b3613](https://github.com/angular/components/commit/19d0b3613a124cf063e7486d54d2bd15c1ebee6d) | fix | **schematics:** files with inline resources overwritten by ng-generate ([#25744](https://github.com/angular/components/pull/25744)) |
+| [018a6f796](https://github.com/angular/components/commit/018a6f7965894bb06a7a92f3d9c7c7b69c2369d5) | fix | **schematics:** fix calling .match on null |
+| [1289310d4](https://github.com/angular/components/commit/1289310d46fe2e6a5e51cb97450e721cc8795ee9) | fix | **schematics:** improve sass comment adding logic |
+| [9d5f0f3cf](https://github.com/angular/components/commit/9d5f0f3cfff95dc40f11b6a7ed1cc701b20f84cc) | fix | **schematics:** replace pre-existing attribute values ([#25754](https://github.com/angular/components/pull/25754)) |
+| [6526277d4](https://github.com/angular/components/commit/6526277d4af739d7705989478d979042c20aad58) | fix | **tooltip:** animation not cancelled when mouseleave goes through tooltip ([#25740](https://github.com/angular/components/pull/25740)) |
+| [9769a5ada](https://github.com/angular/components/commit/9769a5adabe4652f532efe2f67161c44c1acdfa9) | fix | **tooltip:** resolve server-side rendering error ([#25728](https://github.com/angular/components/pull/25728)) |
+## Special Thanks
+Amy Sorto, Andrew Seguin, Joey Perrott, Kevin Lee / 이지환, Kristiyan Kostadinov, Miles Malerba, Titos Chaniotakis, Wagner Maciel and Zach Arend
+
+<!-- CHANGELOG SPLIT MARKER -->
+
+<a name="14.2.4"></a>
+# 14.2.4 "calcium-coconut" (2022-10-05)
+### material
+| Commit | Type | Description |
+| -- | -- | -- |
+| [9909f2a33](https://github.com/angular/components/commit/9909f2a33844c8dfe0a481f3aa0895b8dbb3be9a) | fix | **tooltip:** animation not cancelled when mouseleave goes through tooltip ([#25740](https://github.com/angular/components/pull/25740)) |
+## Special Thanks
+Joey Perrott, Kristiyan Kostadinov and Titos Chaniotakis
+
+<!-- CHANGELOG SPLIT MARKER -->
+
 <a name="15.0.0-next.3"></a>
 # 15.0.0-next.3 "blubber-blabber" (2022-09-29)
 ### cdk

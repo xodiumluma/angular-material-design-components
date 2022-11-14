@@ -804,6 +804,50 @@ describe('MDC-based MatSelectionList without forms', () => {
         .withContext('Expected ripples of list option to be enabled')
         .toBe(false);
     });
+
+    // when the entire list is disabled, its listitems should always have tabindex="-1"
+    it('should remove all listitems from the tab order when disabled state is enabled', () => {
+      fixture.componentInstance.disabled = false;
+      fixture.detectChanges();
+      let testListItem = listOption[2].injector.get<MatListOption>(MatListOption);
+      testListItem.focus();
+      fixture.detectChanges();
+
+      expect(
+        listOption.filter(option => option.nativeElement.getAttribute('tabindex') === '0').length,
+      )
+        .withContext('Expected at least one list option to be in the tab order')
+        .toBeGreaterThanOrEqual(1);
+
+      fixture.componentInstance.disabled = true;
+      fixture.detectChanges();
+
+      expect(
+        listOption.filter(option => option.nativeElement.getAttribute('tabindex') !== '-1').length,
+      )
+        .withContext('Expected all list options to be excluded from the tab order')
+        .toBe(0);
+    });
+
+    it('should not allow focusin event to change the tabindex', () => {
+      fixture.componentInstance.disabled = true;
+      fixture.detectChanges();
+
+      expect(
+        listOption.filter(option => option.nativeElement.getAttribute('tabindex') !== '-1').length,
+      )
+        .withContext('Expected all list options to be excluded from the tab order')
+        .toBe(0);
+
+      listOption[1].triggerEventHandler('focusin', {target: listOption[1].nativeElement});
+      fixture.detectChanges();
+
+      expect(
+        listOption.filter(option => option.nativeElement.getAttribute('tabindex') !== '-1').length,
+      )
+        .withContext('Expected all list options to be excluded from the tab order')
+        .toBe(0);
+    });
   });
 
   describe('with checkbox position after', () => {
@@ -1373,11 +1417,19 @@ describe('MDC-based MatSelectionList with forms', () => {
     });
 
     it('should be able to disable options from the control', () => {
+      selectionList.focus();
       expect(selectionList.disabled)
         .withContext('Expected the selection list to be enabled.')
         .toBe(false);
       expect(listOptions.every(option => !option.disabled))
         .withContext('Expected every list option to be enabled.')
+        .toBe(true);
+      expect(
+        listOptions.some(
+          option => option._elementRef.nativeElement.getAttribute('tabindex') === '0',
+        ),
+      )
+        .withContext('Expected one list item to be in the tab order')
         .toBe(true);
 
       fixture.componentInstance.formControl.disable();
@@ -1388,6 +1440,13 @@ describe('MDC-based MatSelectionList with forms', () => {
         .toBe(true);
       expect(listOptions.every(option => option.disabled))
         .withContext('Expected every list option to be disabled.')
+        .toBe(true);
+      expect(
+        listOptions.every(
+          option => option._elementRef.nativeElement.getAttribute('tabindex') === '-1',
+        ),
+      )
+        .withContext('Expected every list option to be removed from the tab order')
         .toBe(true);
     });
 

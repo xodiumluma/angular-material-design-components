@@ -6,7 +6,13 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import * as compiler from '@angular/compiler';
+import {
+  ParsedTemplate,
+  TmplAstElement,
+  TmplAstNode,
+  TmplAstTemplate,
+  parseTemplate as parseTemplateUsingCompiler,
+} from '@angular/compiler';
 
 /**
  * Traverses the given tree of nodes and runs the given callbacks for each Element node encountered.
@@ -20,16 +26,24 @@ import * as compiler from '@angular/compiler';
  * @param postorderCallback A function that gets run for each Element node in a postorder traversal.
  */
 export function visitElements(
-  nodes: compiler.TmplAstNode[],
-  preorderCallback: (node: compiler.TmplAstElement) => void = () => {},
-  postorderCallback: (node: compiler.TmplAstElement) => void = () => {},
+  nodes: TmplAstNode[],
+  preorderCallback: (node: TmplAstElement) => void = () => {},
+  postorderCallback: (node: TmplAstElement) => void = () => {},
 ): void {
-  nodes.reverse();
-  for (let i = 0; i < nodes.length; i++) {
+  for (let i = nodes.length - 1; i > -1; i--) {
     const node = nodes[i];
-    if (node instanceof compiler.TmplAstElement) {
+    const isElement = node instanceof TmplAstElement;
+
+    if (isElement) {
       preorderCallback(node);
+    }
+
+    // Descend both into elements and templates in order to cover cases like `*ngIf` and `*ngFor`.
+    if (isElement || node instanceof TmplAstTemplate) {
       visitElements(node.children, preorderCallback, postorderCallback);
+    }
+
+    if (isElement) {
       postorderCallback(node);
     }
   }
@@ -41,12 +55,12 @@ export function visitElements(
  *
  * For more details, see https://github.com/angular/angular/blob/4332897baa2226ef246ee054fdd5254e3c129109/packages/compiler-cli/src/ngtsc/annotations/component/src/resources.ts#L230.
  *
- * @param html text of the template to parse
- * @param filePath URL to use for source mapping of the parsed template
+ * @param template text of the template to parse
+ * @param templateUrl URL to use for source mapping of the parsed template
  * @returns the updated template html.
  */
-export function parseTemplate(template: string, templateUrl: string = ''): compiler.ParsedTemplate {
-  return compiler.parseTemplate(template, templateUrl, {
+export function parseTemplate(template: string, templateUrl: string = ''): ParsedTemplate {
+  return parseTemplateUsingCompiler(template, templateUrl, {
     preserveWhitespaces: true,
     preserveLineEndings: true,
     leadingTriviaChars: [],
@@ -61,7 +75,7 @@ export function parseTemplate(template: string, templateUrl: string = ''): compi
  * @param tag A new tag name.
  * @returns an updated html document.
  */
-export function replaceStartTag(html: string, node: compiler.TmplAstElement, tag: string): string {
+export function replaceStartTag(html: string, node: TmplAstElement, tag: string): string {
   return replaceAt(html, node.startSourceSpan.start.offset + 1, node.name, tag);
 }
 
@@ -73,7 +87,7 @@ export function replaceStartTag(html: string, node: compiler.TmplAstElement, tag
  * @param tag A new tag name.
  * @returns an updated html document.
  */
-export function replaceEndTag(html: string, node: compiler.TmplAstElement, tag: string): string {
+export function replaceEndTag(html: string, node: TmplAstElement, tag: string): string {
   if (!node.endSourceSpan) {
     return html;
   }
@@ -86,28 +100,74 @@ export function replaceEndTag(html: string, node: compiler.TmplAstElement, tag: 
  * @param html The template html to be updated.
  * @param node The node to be updated.
  * @param name The name of the attribute.
- * @param value The value of the attribute.
+ * @param update The function that determines how to update the value.
  * @returns The updated template html.
  */
-export function addAttribute(
+export function updateAttribute(
   html: string,
-  node: compiler.TmplAstElement,
+  node: TmplAstElement,
   name: string,
-  value: string,
+  update: (old: string | null) => string | null,
 ): string {
+  const existingAttr = node.attributes.find(currentAttr => currentAttr.name === name);
+
+  // If the attribute has a value already, replace it.
+  if (existingAttr && existingAttr.keySpan) {
+    const updatedValue = update(existingAttr.valueSpan?.toString() || '');
+    if (updatedValue == null) {
+      // Delete attribute
+      return (
+        html.slice(0, existingAttr.sourceSpan.start.offset).trimEnd() +
+        html.slice(existingAttr.sourceSpan.end.offset)
+      );
+    } else if (updatedValue == '') {
+      // Delete value from attribute
+      return (
+        html.slice(0, existingAttr.keySpan.end.offset) +
+        html.slice(existingAttr.sourceSpan.end.offset)
+      );
+    } else {
+      // Set attribute value
+      if (existingAttr.valueSpan) {
+        // Replace attribute value
+        return (
+          html.slice(0, existingAttr.valueSpan.start.offset) +
+          updatedValue +
+          html.slice(existingAttr.valueSpan.end.offset)
+        );
+      } else {
+        // Add value to attribute
+        return (
+          html.slice(0, existingAttr.keySpan.end.offset) +
+          `="${updatedValue}"` +
+          html.slice(existingAttr.keySpan.end.offset)
+        );
+      }
+    }
+  }
+
+  const newValue = update(null);
+
+  // No change needed if attribute should be deleted and is already not present.
+  if (newValue == null) {
+    return html;
+  }
+
+  // Otherwise insert a new attribute.
   const index = node.startSourceSpan.start.offset + node.name.length + 1;
   const prefix = html.slice(0, index);
   const suffix = html.slice(index);
+  const attrText = newValue ? `${name}="${newValue}"` : `${name}`;
 
   if (node.startSourceSpan.start.line === node.startSourceSpan.end.line) {
-    return prefix + ` ${name}="${value}"` + suffix;
+    return `${prefix} ${attrText}${suffix}`;
   }
 
   const attr = node.attributes[0];
   const ctx = attr.sourceSpan.start.getContext(attr.sourceSpan.start.col + 1, 1)!;
   const indentation = ctx.before;
 
-  return prefix + indentation + `${name}="${value}"` + suffix;
+  return prefix + indentation + attrText + suffix;
 }
 
 /**

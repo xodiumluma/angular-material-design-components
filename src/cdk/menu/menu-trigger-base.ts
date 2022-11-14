@@ -58,7 +58,10 @@ export abstract class CdkMenuTriggerBase implements OnDestroy {
   readonly closed: EventEmitter<void> = new EventEmitter();
 
   /** Template reference variable to the menu this trigger opens */
-  menuTemplateRef: TemplateRef<unknown>;
+  menuTemplateRef: TemplateRef<unknown> | null;
+
+  /** Context data to be passed along to the menu template */
+  menuData: unknown;
 
   /** A reference to the overlay which manages the triggered menu */
   protected overlayRef: OverlayRef | null = null;
@@ -105,7 +108,7 @@ export abstract class CdkMenuTriggerBase implements OnDestroy {
       this._menuPortal = new TemplatePortal(
         this.menuTemplateRef,
         this.viewContainerRef,
-        undefined,
+        this.menuData,
         this._getChildMenuInjector(),
       );
     }
