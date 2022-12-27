@@ -26,6 +26,8 @@ $mat-tab-animation-duration: 500ms !default;
 }
 
 @mixin tab {
+  -webkit-tap-highlight-color: transparent;
+
   &.mdc-tab {
     // This is usually included by MDC's tab bar, however we don't
     // use it because we implement our own pagination.
@@ -49,6 +51,12 @@ $mat-tab-animation-duration: 500ms !default;
     bottom: 0;
     opacity: 0;
     pointer-events: none;
+  }
+
+  // We support projecting icons into the tab. These styles ensure that they're centered.
+  .mdc-tab__text-label {
+    display: inline-flex;
+    align-items: center;
   }
 
   // Required for `fitInkBarToContent` to work. This used to be included with MDC's `without-ripple`
@@ -193,4 +201,38 @@ $mat-tab-animation-duration: 500ms !default;
   flex-grow: 1;
   overflow: hidden;
   z-index: 1;
+}
+
+@mixin paginated-tab-header-with-background($header-selector) {
+  &.mat-tabs-with-background {
+    // Note that these selectors target direct descendants so
+    // that the styles don't apply to any nested tab groups.
+    > #{$header-selector}, > .mat-mdc-tab-header-pagination {
+      // Set background color for the tab group
+      background-color: var(--mat-mdc-tab-header-with-background-background-color, transparent);
+    }
+
+    > #{$header-selector} {
+      // Set labels to contrast against background
+      .mat-mdc-tab .mdc-tab__text-label, .mat-mdc-tab-link .mdc-tab__text-label {
+        color: var(--mat-mdc-tab-header-with-background-foreground-color, inherit);
+      }
+
+      .mdc-tab-indicator__content--underline,
+      .mat-mdc-tab-header-pagination-chevron,
+      .mat-mdc-focus-indicator::before {
+        border-color: var(--mat-mdc-tab-header-with-background-foreground-color, inherit);
+      }
+    }
+
+    > #{$header-selector}, > .mat-mdc-tab-header-pagination {
+      .mat-ripple-element, .mdc-tab__ripple::before {
+        background-color: var(--mat-mdc-tab-header-with-background-foreground-color, inherit);
+      }
+
+      .mat-mdc-tab-header-pagination-chevron {
+        border-color: var(--mat-mdc-tab-header-with-background-foreground-color, inherit);
+      }
+    }
+  }
 }

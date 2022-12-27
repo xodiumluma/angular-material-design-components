@@ -59,6 +59,8 @@
 }
 
 .mat-mdc-standard-chip {
+  -webkit-tap-highlight-color: transparent;
+
   @include mdc-helpers.disable-mdc-fallback-declarations {
     @include mdc-chip-theme.theme-styles((
       // Static tokens
@@ -253,6 +255,11 @@
     $offset: calc(#{$border-width} + 2px);
     margin: calc(#{$offset} * -1);
   }
+
+  // Give the text label a higher z-index than the focus overlay to ensure that the focus overlay
+  // does not affect the color of the text. Material spec requires state layer to not interfere with
+  // text color.
+  z-index: 1;
 }
 
 .mat-mdc-chip-remove {
