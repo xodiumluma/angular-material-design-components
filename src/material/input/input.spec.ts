@@ -784,6 +784,21 @@ describe('MatMdcInput without forms', () => {
     expect(iconSuffixEl.nativeElement.innerText.trim()).toEqual('favorite');
   }));
 
+  it('should allow ng-container as prefix and suffix', () => {
+    const fixture = createComponent(InputWithNgContainerPrefixAndSuffix);
+    fixture.detectChanges();
+
+    const textPrefixEl = fixture.debugElement.query(By.css('.mat-mdc-form-field-text-prefix'))!;
+    const textSuffixEl = fixture.debugElement.query(By.css('.mat-mdc-form-field-text-suffix'))!;
+    const iconPrefixEl = fixture.debugElement.query(By.css('.mat-mdc-form-field-icon-prefix'))!;
+    const iconSuffixEl = fixture.debugElement.query(By.css('.mat-mdc-form-field-icon-suffix'))!;
+
+    expect(textPrefixEl.nativeElement.innerText.trim()).toEqual('text-prefix');
+    expect(textSuffixEl.nativeElement.innerText.trim()).toEqual('text-suffix');
+    expect(iconPrefixEl.nativeElement.innerText.trim()).toEqual('icon-prefix');
+    expect(iconSuffixEl.nativeElement.innerText.trim()).toEqual('icon-suffix');
+  });
+
   it('should update empty class when value changes programmatically and OnPush', fakeAsync(() => {
     let fixture = createComponent(MatInputOnPush);
     fixture.detectChanges();
@@ -1188,7 +1203,7 @@ describe('MatMdcInput with forms', () => {
 
   describe('custom error behavior', () => {
     it('should display an error message when a custom error matcher returns true', fakeAsync(() => {
-      let fixture = createComponent(MatInputWithCustomErrorStateMatcher);
+      let fixture = createComponent(InputInFormGroup);
       fixture.detectChanges();
 
       let component = fixture.componentInstance;
@@ -1355,6 +1370,18 @@ describe('MatMdcInput with forms', () => {
     fixture.detectChanges();
 
     expect(notch.style.width).toBeTruthy();
+  }));
+
+  it('should mark the form field as disabled when a group is disabled with emitEvent: false', fakeAsync(() => {
+    const fixture = createComponent(InputInFormGroup);
+    fixture.detectChanges();
+
+    const mdcTextField = fixture.nativeElement.querySelector('.mdc-text-field');
+    expect(mdcTextField.classList).not.toContain('mdc-text-field--disabled');
+
+    fixture.componentInstance.formGroup.disable({emitEvent: false});
+    fixture.detectChanges();
+    expect(mdcTextField.classList).toContain('mdc-text-field--disabled');
   }));
 });
 
@@ -1793,7 +1820,7 @@ class MatInputWithFormErrorMessages {
     </form>
   `,
 })
-class MatInputWithCustomErrorStateMatcher {
+class InputInFormGroup {
   formGroup = new FormGroup({
     name: new FormControl('', [Validators.required, Validators.pattern(/valid value/)]),
   });
@@ -2052,3 +2079,16 @@ class MatInputWithRequiredFormControl {
   `,
 })
 class MatInputSimple {}
+
+@Component({
+  template: `
+    <mat-form-field>
+      <ng-container matIconPrefix>icon-prefix</ng-container>
+      <ng-container matTextPrefix>text-prefix</ng-container>
+      <input matInput>
+      <ng-container matTextSuffix>text-suffix</ng-container>
+      <ng-container matIconSuffix>icon-suffix</ng-container>
+    </mat-form-field>
+  `,
+})
+class InputWithNgContainerPrefixAndSuffix {}

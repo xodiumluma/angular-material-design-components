@@ -158,16 +158,24 @@ export function updateAttribute(
   const prefix = html.slice(0, index);
   const suffix = html.slice(index);
   const attrText = newValue ? `${name}="${newValue}"` : `${name}`;
-
-  if (node.startSourceSpan.start.line === node.startSourceSpan.end.line) {
-    return `${prefix} ${attrText}${suffix}`;
-  }
-
-  const attr = node.attributes[0];
-  const ctx = attr.sourceSpan.start.getContext(attr.sourceSpan.start.col + 1, 1)!;
-  const indentation = ctx.before;
-
+  const indentation = parseIndentation(html, node);
   return prefix + indentation + attrText + suffix;
+}
+
+function parseIndentation(html: string, node: TmplAstElement): string {
+  let whitespace = '';
+  let startOffset = node.startSourceSpan.start.offset + node.name.length + 1;
+
+  // Starting after the start source span's tagname,
+  // read and store each char until we reach a non-whitespace char.
+
+  for (let i = startOffset; i < node.startSourceSpan.end.offset - 1; i++) {
+    if (!/\s/.test(html.charAt(i))) {
+      break;
+    }
+    whitespace += html.charAt(i);
+  }
+  return whitespace || ' ';
 }
 
 /**

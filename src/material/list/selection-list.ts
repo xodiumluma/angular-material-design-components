@@ -46,12 +46,6 @@ export class MatSelectionListChange {
   constructor(
     /** Reference to the selection list that emitted the event. */
     public source: MatSelectionList,
-    /**
-     * Reference to the option that has been changed.
-     * @deprecated Use `options` instead, because some events may change more than one option.
-     * @breaking-change 12.0.0
-     */
-    public option: MatListOption,
     /** Reference to the options that have been changed. */
     public options: MatListOption[],
   ) {}
@@ -129,6 +123,17 @@ export class MatSelectionList
   }
   private _multiple = true;
 
+  /** Whether radio indicator for all list items is hidden. */
+  @Input()
+  get hideSingleSelectionIndicator(): boolean {
+    return this._hideSingleSelectionIndicator;
+  }
+  set hideSingleSelectionIndicator(value: BooleanInput) {
+    this._hideSingleSelectionIndicator = coerceBooleanProperty(value);
+  }
+  private _hideSingleSelectionIndicator: boolean =
+    this._defaultOptions?.hideSingleSelectionIndicator ?? false;
+
   /** The currently selected options. */
   selectedOptions = new SelectionModel<MatListOption>(this._multiple);
 
@@ -166,10 +171,12 @@ export class MatSelectionList
   ngOnChanges(changes: SimpleChanges) {
     const disabledChanges = changes['disabled'];
     const disableRippleChanges = changes['disableRipple'];
+    const hideSingleSelectionIndicatorChanges = changes['hideSingleSelectionIndicator'];
 
     if (
       (disableRippleChanges && !disableRippleChanges.firstChange) ||
-      (disabledChanges && !disabledChanges.firstChange)
+      (disabledChanges && !disabledChanges.firstChange) ||
+      (hideSingleSelectionIndicatorChanges && !hideSingleSelectionIndicatorChanges.firstChange)
     ) {
       this._markOptionsForCheck();
     }
@@ -213,7 +220,7 @@ export class MatSelectionList
 
   /** Emits a change event if the selected state of an option changed. */
   _emitChangeEvent(options: MatListOption[]) {
-    this.selectionChange.emit(new MatSelectionListChange(this, options[0], options));
+    this.selectionChange.emit(new MatSelectionListChange(this, options));
   }
 
   /** Implemented as part of ControlValueAccessor. */

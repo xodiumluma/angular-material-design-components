@@ -18,6 +18,10 @@
       opacity: mdc-ripple.states-opacity($active-base-color, hover);
     }
 
+    &:focus::before {
+      opacity: mdc-ripple.states-opacity($active-base-color, focus);
+    }
+
     &.mdc-list-item--selected {
       &::before {
         background: $selected-color;
@@ -31,10 +35,6 @@
         opacity: mdc-ripple.states-opacity($selected-color, hover) +
                  mdc-ripple.states-opacity($selected-color, selected);
       }
-    }
-
-    &:focus::before {
-      opacity: mdc-ripple.states-opacity($active-base-color, focus);
     }
   }
 }

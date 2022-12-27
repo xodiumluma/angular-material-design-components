@@ -27,9 +27,11 @@ import {By} from '@angular/platform-browser';
 import {
   MatListModule,
   MatListOption,
-  MatListOptionCheckboxPosition,
+  MatListOptionTogglePosition,
   MatSelectionList,
   MatSelectionListChange,
+  MatListConfig,
+  MAT_LIST_CONFIG,
 } from './index';
 
 describe('MDC-based MatSelectionList without forms', () => {
@@ -663,7 +665,7 @@ describe('MDC-based MatSelectionList without forms', () => {
     });
   });
 
-  describe('with list option selected', () => {
+  describe('multiple-selection with list option selected', () => {
     let fixture: ComponentFixture<SelectionListWithSelectedOption>;
     let listOptionElements: DebugElement[];
     let selectionList: DebugElement;
@@ -701,6 +703,79 @@ describe('MDC-based MatSelectionList without forms', () => {
       // ensure that other options are not reachable through tab.
       expect(listOptionElements.map(el => el.nativeElement.tabIndex)).toEqual([-1, 0, -1, -1]);
     }));
+  });
+
+  describe('single-selection with list option selected', () => {
+    let fixture: ComponentFixture<SingleSelectionListWithSelectedOption>;
+    let listOptionElements: DebugElement[];
+
+    beforeEach(waitForAsync(() => {
+      TestBed.configureTestingModule({
+        imports: [MatListModule],
+        declarations: [SingleSelectionListWithSelectedOption],
+      });
+
+      TestBed.compileComponents();
+    }));
+
+    beforeEach(waitForAsync(() => {
+      fixture = TestBed.createComponent(SingleSelectionListWithSelectedOption);
+      listOptionElements = fixture.debugElement.queryAll(By.directive(MatListOption))!;
+      fixture.detectChanges();
+    }));
+
+    it('displays radio indicators by default', () => {
+      expect(
+        listOptionElements[0].nativeElement.querySelector('input[type="radio"]'),
+      ).not.toBeNull();
+      expect(
+        listOptionElements[1].nativeElement.querySelector('input[type="radio"]'),
+      ).not.toBeNull();
+
+      expect(listOptionElements[0].nativeElement.classList).not.toContain(
+        'mdc-list-item--selected',
+      );
+      expect(listOptionElements[1].nativeElement.classList).not.toContain(
+        'mdc-list-item--selected',
+      );
+    });
+  });
+
+  describe('with token to hide radio indicators', () => {
+    let fixture: ComponentFixture<SingleSelectionListWithSelectedOption>;
+    let listOptionElements: DebugElement[];
+
+    beforeEach(waitForAsync(() => {
+      const matListConfig: MatListConfig = {hideSingleSelectionIndicator: true};
+
+      TestBed.configureTestingModule({
+        imports: [MatListModule],
+        declarations: [SingleSelectionListWithSelectedOption],
+        providers: [{provide: MAT_LIST_CONFIG, useValue: matListConfig}],
+      });
+
+      TestBed.compileComponents();
+    }));
+
+    beforeEach(waitForAsync(() => {
+      fixture = TestBed.createComponent(SingleSelectionListWithSelectedOption);
+      listOptionElements = fixture.debugElement.queryAll(By.directive(MatListOption))!;
+      fixture.detectChanges();
+    }));
+
+    it('does not display radio indicators', () => {
+      expect(listOptionElements[0].nativeElement.querySelector('input[type="radio"]')).toBeNull();
+      expect(listOptionElements[1].nativeElement.querySelector('input[type="radio"]')).toBeNull();
+
+      expect(listOptionElements[0].nativeElement.classList).not.toContain(
+        'mdc-list-item--selected',
+      );
+
+      expect(listOptionElements[1].nativeElement.getAttribute('aria-selected'))
+        .withContext('Expected second option to be selected')
+        .toBe('true');
+      expect(listOptionElements[1].nativeElement.classList).toContain('mdc-list-item--selected');
+    });
   });
 
   describe('with option disabled', () => {
@@ -892,7 +967,7 @@ describe('MDC-based MatSelectionList without forms', () => {
 
     function expectCheckboxAtPosition(
       listItemElement: HTMLElement,
-      position: MatListOptionCheckboxPosition,
+      position: MatListOptionTogglePosition,
     ) {
       const containerSelector =
         position === 'before' ? '.mdc-list-item__start' : 'mdc-list-item__end';
@@ -974,12 +1049,12 @@ describe('MDC-based MatSelectionList without forms', () => {
       expectCheckboxAtPosition(listOption, 'after');
       expectIconAt(listOption, 'before');
 
-      fixture.componentInstance.checkboxPosition = 'before';
+      fixture.componentInstance.togglePosition = 'before';
       fixture.detectChanges();
       expectCheckboxAtPosition(listOption, 'before');
       expectIconAt(listOption, 'after');
 
-      fixture.componentInstance.checkboxPosition = 'after';
+      fixture.componentInstance.togglePosition = 'after';
       fixture.detectChanges();
       expectCheckboxAtPosition(listOption, 'after');
       expectIconAt(listOption, 'before');
@@ -995,12 +1070,12 @@ describe('MDC-based MatSelectionList without forms', () => {
       expectCheckboxAtPosition(listOption, 'after');
       expectAvatarAt(listOption, 'before');
 
-      fixture.componentInstance.checkboxPosition = 'before';
+      fixture.componentInstance.togglePosition = 'before';
       fixture.detectChanges();
       expectCheckboxAtPosition(listOption, 'before');
       expectAvatarAt(listOption, 'after');
 
-      fixture.componentInstance.checkboxPosition = 'after';
+      fixture.componentInstance.togglePosition = 'after';
       fixture.detectChanges();
       expectCheckboxAtPosition(listOption, 'after');
       expectAvatarAt(listOption, 'before');
@@ -1041,16 +1116,14 @@ describe('MDC-based MatSelectionList without forms', () => {
       fixture.detectChanges();
 
       expect(selectList.selected).toEqual([testListItem1]);
-      expect(listOptions[1].nativeElement.classList.contains('mdc-list-item--selected')).toBe(true);
+      expect(listOptions[1].nativeElement.getAttribute('aria-selected')).toBe('true');
 
       dispatchMouseEvent(testListItem2._hostElement, 'click');
       fixture.detectChanges();
 
       expect(selectList.selected).toEqual([testListItem2]);
-      expect(listOptions[1].nativeElement.classList.contains('mdc-list-item--selected')).toBe(
-        false,
-      );
-      expect(listOptions[2].nativeElement.classList.contains('mdc-list-item--selected')).toBe(true);
+      expect(listOptions[1].nativeElement.getAttribute('aria-selected')).toBe('false');
+      expect(listOptions[2].nativeElement.getAttribute('aria-selected')).toBe('true');
     });
 
     it('should not show check boxes', () => {
@@ -1638,21 +1711,21 @@ describe('MDC-based MatSelectionList with forms', () => {
     [disableRipple]="listRippleDisabled"
     [color]="selectionListColor"
     [multiple]="multiple">
-    <mat-list-option checkboxPosition="before" disabled="true" value="inbox"
+    <mat-list-option togglePosition="before" disabled="true" value="inbox"
                      [color]="firstOptionColor">
       Inbox (disabled selection-option)
     </mat-list-option>
-    <mat-list-option id="testSelect" checkboxPosition="before" class="test-native-focus"
+    <mat-list-option id="testSelect" togglePosition="before" class="test-native-focus"
                     value="starred">
       Starred
     </mat-list-option>
-    <mat-list-option checkboxPosition="before" value="sent-mail">
+    <mat-list-option togglePosition="before" value="sent-mail">
       Sent Mail
     </mat-list-option>
-    <mat-list-option checkboxPosition="before" value="archive">
+    <mat-list-option togglePosition="before" value="archive">
       Archive
     </mat-list-option>
-    <mat-list-option checkboxPosition="before" value="drafts" *ngIf="showLastOption">
+    <mat-list-option togglePosition="before" value="drafts" *ngIf="showLastOption">
       Drafts
     </mat-list-option>
   </mat-selection-list>`,
@@ -1670,16 +1743,16 @@ class SelectionListWithListOptions {
 @Component({
   template: `
   <mat-selection-list id="selection-list-2">
-    <mat-list-option checkboxPosition="after">
+    <mat-list-option togglePosition="after">
       Inbox (disabled selection-option)
     </mat-list-option>
-    <mat-list-option id="testSelect" checkboxPosition="after">
+    <mat-list-option id="testSelect" togglePosition="after">
       Starred
     </mat-list-option>
-    <mat-list-option checkboxPosition="after">
+    <mat-list-option togglePosition="after">
       Sent Mail
     </mat-list-option>
-    <mat-list-option checkboxPosition="after">
+    <mat-list-option togglePosition="after">
       Drafts
     </mat-list-option>
   </mat-selection-list>`,
@@ -1689,16 +1762,16 @@ class SelectionListWithCheckboxPositionAfter {}
 @Component({
   template: `
   <mat-selection-list id="selection-list-3" [disabled]="disabled">
-    <mat-list-option checkboxPosition="after">
+    <mat-list-option togglePosition="after">
       Inbox (disabled selection-option)
     </mat-list-option>
-    <mat-list-option id="testSelect" checkboxPosition="after">
+    <mat-list-option id="testSelect" togglePosition="after">
       Starred
     </mat-list-option>
-    <mat-list-option checkboxPosition="after">
+    <mat-list-option togglePosition="after">
       Sent Mail
     </mat-list-option>
-    <mat-list-option checkboxPosition="after">
+    <mat-list-option togglePosition="after">
       Drafts
     </mat-list-option>
   </mat-selection-list>`,
@@ -1731,6 +1804,15 @@ class SelectionListWithSelectedOption {}
 
 @Component({
   template: `
+  <mat-selection-list [multiple]="false">
+    <mat-list-option>Not selected - Item #1</mat-list-option>
+    <mat-list-option [selected]="true">Pre-selected - Item #2</mat-list-option>
+  </mat-selection-list>`,
+})
+class SingleSelectionListWithSelectedOption {}
+
+@Component({
+  template: `
   <mat-selection-list>
     <mat-list-option [selected]="true" [value]="itemValue">Item</mat-list-option>
   </mat-selection-list>`,
@@ -1742,7 +1824,7 @@ class SelectionListWithSelectedOptionAndValue {
 @Component({
   template: `
   <mat-selection-list id="selection-list-4">
-    <mat-list-option checkboxPosition="after" class="test-focus" id="123">
+    <mat-list-option togglePosition="after" class="test-focus" id="123">
       Inbox
     </mat-list-option>
   </mat-selection-list>`,
@@ -1838,7 +1920,7 @@ class SelectionListWithCustomComparator {
 @Component({
   template: `
     <mat-selection-list>
-      <mat-list-option [checkboxPosition]="checkboxPosition">
+      <mat-list-option [togglePosition]="togglePosition">
         <div matListItemAvatar>I</div>
         Inbox
       </mat-list-option>
@@ -1846,13 +1928,13 @@ class SelectionListWithCustomComparator {
   `,
 })
 class SelectionListWithAvatar {
-  checkboxPosition: MatListOptionCheckboxPosition | undefined;
+  togglePosition: MatListOptionTogglePosition | undefined;
 }
 
 @Component({
   template: `
     <mat-selection-list>
-      <mat-list-option [checkboxPosition]="checkboxPosition">
+      <mat-list-option [togglePosition]="togglePosition">
         <div matListItemIcon>I</div>
         Inbox
       </mat-list-option>
@@ -1860,7 +1942,7 @@ class SelectionListWithAvatar {
   `,
 })
 class SelectionListWithIcon {
-  checkboxPosition: MatListOptionCheckboxPosition | undefined;
+  togglePosition: MatListOptionTogglePosition | undefined;
 }
 
 @Component({
