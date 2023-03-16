@@ -15,7 +15,7 @@ integration/ng-add-standalone/node_modules
 integration/yarn-pnp-compat/.angular
 integration/yarn-pnp-compat/.yarn/cache
 integration/yarn-pnp-compat/.yarn/unplugged
-intagration/yarn-pnp-compat/.yarn/install-state.gz
+integration/yarn-pnp-compat/.yarn/install-state.gz
 integration/yarn-pnp-compat/node_modules
 
 integration/mdc-migration/.angular
