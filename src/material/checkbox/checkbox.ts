@@ -311,14 +311,6 @@ export abstract class _MatCheckboxBase<E>
     this.disabled = isDisabled;
   }
 
-  _getAriaChecked(): 'true' | 'false' | 'mixed' {
-    if (this.checked) {
-      return 'true';
-    }
-
-    return this.indeterminate ? 'mixed' : 'false';
-  }
-
   private _transitionCheckState(newState: TransitionCheckState) {
     let oldState = this._currentCheckState;
     let element = this._getAnimationTargetElement();
@@ -545,6 +537,16 @@ export class MatCheckbox
 
   _onInputClick() {
     super._handleInputClick();
+  }
+
+  _onTouchTargetClick() {
+    super._handleInputClick();
+
+    if (!this.disabled) {
+      // Normally the input should be focused already, but if the click
+      // comes from the touch target, then we might have to focus it ourselves.
+      this._inputElement.nativeElement.focus();
+    }
   }
 
   /**

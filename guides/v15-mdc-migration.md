@@ -87,7 +87,7 @@ Angular Material includes a schematic to help migrate applications to use the ne
 components. To get started, upgrade your application to Angular Material 15.
 
 ```shell
-ng update @angular/material^15
+ng update @angular/material@15
 ```
 
 As part of this update, a schematic will run to automatically move your application to use the
@@ -158,6 +158,9 @@ DOM and CSS of the components, you may need to tweak some of your application's 
   same class name (aside from the prefix). For example, the button’s host class is `mat-mdc-button`
   instead of `mat-button`. However, not all elements in the previous implementation have an
   equivalent element in the new implementation.
+
+* The styles associated with the `mat-typography` class are no longer generated automatically. You
+  have to include them using the `mat.typography-hierarchy` mixin.
 
 ### Theming
 
@@ -268,6 +271,8 @@ DOM and CSS of the components, you may need to tweak some of your application's 
 
 ### Chips
 
+* Chips used to be directives, but they're now components. This means that they can't be applied to
+  other components anymore.
 * The chips component has been split into multiple variants corresponding with more appropriate
   interaction patterns for accessibility. The original `mat-chip-list` used `role="listbox"`, but
   this interaction pattern is not suited for all use-cases. The new chips have:
@@ -347,7 +352,7 @@ DOM and CSS of the components, you may need to tweak some of your application's 
   following styles:
 
   ```scss
-  .mat-mdc-input-element::-webkit-calendar-picker-indicator {
+  input.mat-mdc-input-element::-webkit-calendar-picker-indicator {
     display: block;
   }
   ```

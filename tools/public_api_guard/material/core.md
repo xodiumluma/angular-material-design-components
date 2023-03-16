@@ -272,18 +272,20 @@ export class MatOption<T = any> extends _MatOptionBase<T> {
 export class _MatOptionBase<T = any> implements FocusableOption, AfterViewChecked, OnDestroy {
     constructor(_element: ElementRef<HTMLElement>, _changeDetectorRef: ChangeDetectorRef, _parent: MatOptionParentComponent, group: _MatOptgroupBase);
     get active(): boolean;
+    // (undocumented)
+    _changeDetectorRef: ChangeDetectorRef;
     deselect(): void;
     get disabled(): boolean;
     set disabled(value: BooleanInput);
     get disableRipple(): boolean;
     focus(_origin?: FocusOrigin, options?: FocusOptions): void;
-    _getAriaSelected(): boolean | null;
     _getHostElement(): HTMLElement;
     getLabel(): string;
     _getTabIndex(): string;
     // (undocumented)
     readonly group: _MatOptgroupBase;
     _handleKeydown(event: KeyboardEvent): void;
+    get hideSingleSelectionIndicator(): boolean;
     id: string;
     get multiple(): boolean | undefined;
     // (undocumented)
@@ -321,6 +323,8 @@ export interface MatOptionParentComponent {
     // (undocumented)
     disableRipple?: boolean;
     // (undocumented)
+    hideSingleSelectionIndicator?: boolean;
+    // (undocumented)
     inertGroups?: boolean;
     // (undocumented)
     multiple?: boolean;
@@ -340,10 +344,11 @@ export class MatPseudoCheckbox {
     constructor(_animationMode?: string | undefined);
     // (undocumented)
     _animationMode?: string | undefined;
+    appearance: 'minimal' | 'full';
     disabled: boolean;
     state: MatPseudoCheckboxState;
     // (undocumented)
-    static ɵcmp: i0.ɵɵComponentDeclaration<MatPseudoCheckbox, "mat-pseudo-checkbox", never, { "state": "state"; "disabled": "disabled"; }, {}, never, never, false, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<MatPseudoCheckbox, "mat-pseudo-checkbox", never, { "state": "state"; "disabled": "disabled"; "appearance": "appearance"; }, {}, never, never, false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatPseudoCheckbox, [{ optional: true; }]>;
 }

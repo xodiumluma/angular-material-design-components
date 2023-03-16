@@ -41,20 +41,20 @@ font weight, font size, and letter spacing. Angular Material uses the [typograph
 from the 2018 version of the Material Design specification][2018-typography], outlined in the
 table below.
 
-| Name            | Description                                                                  |
-|-----------------|------------------------------------------------------------------------------|
-| `headline-1`     | One-off header, usually at the top of the page (e.g. a hero header).        |
-| `headline-2`     | One-off header, usually at the top of the page (e.g. a hero header).        |
-| `headline-3`     | One-off header, usually at the top of the page (e.g. a hero header).        |
-| `headline-4`     | One-off header, usually at the top of the page (e.g. a hero header).        |
-| `headline-5`     | Section heading corresponding to the `<h1>` tag.                            |
-| `headline-6`     | Section heading corresponding to the `<h2>` tag.                            |
-| `subtitle-1`     | Section heading corresponding to the `<h3>` tag.                            |
-| `subtitle-2`     | Section heading corresponding to the `<h4>` tag.                            |
-| `body-1`         | Base body text.                                                             |
-| `body-2`         | Bolder body text.                                                           |
-| `caption`        | Smaller body and hint text.                                                 |
-| `button`         | Buttons and anchors.                                                        |
+| Name            | Description                                                  |
+|-----------------|--------------------------------------------------------------|
+| `headline-1`     | One-off header, usually at the top of the page (e.g. a hero header). |
+| `headline-2`     | One-off header, usually at the top of the page (e.g. a hero header). |
+| `headline-3`     | One-off header, usually at the top of the page (e.g. a hero header). |
+| `headline-4`     | One-off header, usually at the top of the page (e.g. a hero header). |
+| `headline-5`     | Section heading corresponding to the `<h1>` tag.             |
+| `headline-6`     | Section heading corresponding to the `<h2>` tag.             |
+| `subtitle-1`     | Section heading corresponding to the `<h3>` tag.             |
+| `subtitle-2`     | Section heading corresponding to the `<h4>` tag.             |
+| `body-1`         | Base body text.                                              |
+| `body-2`         | Secondary body text.                                         |
+| `caption`        | Smaller body and hint text.                                  |
+| `button`         | Buttons and anchors.                                         |
 
 [2018-typography]: https://m2.material.io/design/typography/the-type-system.html#type-scale
 
@@ -136,8 +136,8 @@ $my-theme: mat.define-light-theme((
 
   $kids-theme: mat.define-light-theme((
    color: (
-     primary: $my-primary,
-     accent: $my-accent,
+     primary: $kids-primary,
+     accent: $kids-accent,
    ),
    typography: $kids-typography,
   ));
@@ -164,10 +164,20 @@ $kids-typography: mat.define-typography-config(
 
 ## Using typography styles in your application
 
-In addition to styles shared between components, the `core` mixin includes CSS classes for styling
-your application. These CSS classes correspond to the typography levels in your typography config.
-This mixin also emits styles for native header elements scoped within the `.mat-typography` CSS
-class. The table below lists the CSS classes emitted and the native elements styled.
+In addition to styles shared between components, the `typography-hierarchy` mixin includes CSS
+classes for styling your application. These CSS classes correspond to the typography levels in your
+typography config. This mixin also emits styles for native header elements scoped within the
+`.mat-typography` CSS class.
+
+```scss
+@use '@angular/material' as mat;
+
+// Use the default configuration.
+$my-typography: mat.define-typography-config();
+@include mat.typography-hierarchy($my-typography);
+```
+
+The table below lists the CSS classes emitted and the native elements styled.
 
 | CSS class                                | Level name     | Native elements |
 |------------------------------------------|----------------|-----------------|
@@ -194,11 +204,8 @@ typography level. The `.mat-h5` style uses the `body-2` level with the font-size
 
 The `button` and `input` typography levels do not map to CSS classes.
 
-You can also manually emit the CSS rules for these CSS classes and native elements by calling the `typography-hierarchy`
-mixin. This mixin accepts a typography config and a CSS selector under which the styles are scopes (defaulting to
-`.mat-typography`).
-
-The following example demonstrates usage of the typography styles emitted by the `core` mixin.
+The following example demonstrates usage of the typography styles emitted by the
+`typography-hierarchy` mixin.
 
 ```html
 <body>
