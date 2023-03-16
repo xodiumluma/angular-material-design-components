@@ -1,0 +1,1 @@
+load("//src/cdk:config.bzl", "CDK_ENTRYPOINTS")
