@@ -7,3 +7,7 @@ load(
   "MATERIAL_EXPERIMENTAL_TESTING_ENTRYPOINTS",
 )
 load("//:packages.bzl", "MDC_PACKAGES")
+
+# List of externals omitted from the APF package output
+# We don't want to sort externals - we want to group entries manually
+# buildifier: disable=unsorted-list-items
