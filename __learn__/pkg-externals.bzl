@@ -49,4 +49,9 @@ PKG_EXTERNALS = [
   "rxjs",
   "rxjs/operators",
   "selenium-webdriver",
+
+  # TODO: take out slider deep dependencies as we have removed dependencies on MDC's JS
+  "@material/slider/adapter",
+  "@material/slider/foundation",
+  "@material/slider/types",
 ]
