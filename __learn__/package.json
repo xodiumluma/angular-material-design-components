@@ -1,0 +1,17 @@
+{
+  "name": "components-srcs",
+  "description": "Angular Material Design components",
+  "homepage": "https://github.com/angular/components",
+  "bugs": "https://github.com/angular/components/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/angular/components.git"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.0.0 <19.0.0",
+    "yarn": "^1.22.17",
+    "npm": "Yarn is recommended over npm for dependency installation"
+  }
+
+}
