@@ -12,6 +12,16 @@
     "node": ">=14.0.0 <19.0.0",
     "yarn": "^1.22.17",
     "npm": "Yarn is recommended over npm for dependency installation"
+  },
+  "scripts": {
+    "postinstall": "node tools/postinstall/apply-patches.js",
+    "ng-dev": "ts-node --esm --project .ng-dev/tsconfig.json --transpile-only node_modules/@angular/ng-dev/bundles/cli.mjs",
+    "ng-dev:stamp": "yarn -s ng-dev release build-env-stamp --additional-stamping-script=tools/bazel-additional-stamp.mjs",
+    "build": "ts-node --esm --project scripts/tsconfig.json ./scripts/build-packages-dist-main.mts",
+    "build-docs-content": "ts-node --esm --project scripts/tsconfig.json ./scripts/build-docs-content-main.mts",
+    "build-and-check-release-output": "ts-node --esm --project scripts/tsconfig.json scripts/build-and-check-release-output.mts",
+    "dev-app": "ibazel run //src/dev-app:devserver",
+    "test": "node ./scripts/run-component-tests.js",
   }
 
 }
