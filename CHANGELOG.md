@@ -1,3 +1,31 @@
+<a name="16.0.0-next.3"></a>
+# 16.0.0-next.3 "limonite-lime" (2023-03-23)
+### material
+| Commit | Type | Description |
+| -- | -- | -- |
+| [7e9878c96](https://github.com/angular/components/commit/7e9878c96e18a5252d0c95d01d3b467d74525246) | fix | **card:** tokenize the card elevation ([#26770](https://github.com/angular/components/pull/26770)) |
+| [76eeaaf20](https://github.com/angular/components/commit/76eeaaf204cfcb491492b92f7b08c29074253164) | fix | **checkbox:** refactor to depend on @angular/material/core/tokens ([#26744](https://github.com/angular/components/pull/26744)) |
+| [96aadaa41](https://github.com/angular/components/commit/96aadaa411a3af93626af9aa73fb4abd6600d0b3) | fix | **core:** apply strong focus styles to selected option ([#26811](https://github.com/angular/components/pull/26811)) |
+| [7cd18004d](https://github.com/angular/components/commit/7cd18004d4f3c0c4665eebc19986b92bcdb7783b) | fix | **datepicker:** date range input not marked as required when using reactive forms ([#26749](https://github.com/angular/components/pull/26749)) |
+| [142e845a1](https://github.com/angular/components/commit/142e845a1232cf7fb7256072c60960b7be973eb3) | fix | **tooltip:** only expand hover area on side closest to trigger ([#26786](https://github.com/angular/components/pull/26786)) |
+## Special Thanks
+Kristiyan Kostadinov, Miles Malerba, Sneaky, Wagner Maciel and Zach Arend
+
+<!-- CHANGELOG SPLIT MARKER -->
+
+<a name="15.2.4"></a>
+# 15.2.4 "brimstone-bank" (2023-03-23)
+### material
+| Commit | Type | Description |
+| -- | -- | -- |
+| [580fbf500](https://github.com/angular/components/commit/580fbf500c87bbe8753d4bea22b65cd1196c3bbd) | fix | **core:** apply strong focus styles to selected option ([#26811](https://github.com/angular/components/pull/26811)) |
+| [1ba5ade41](https://github.com/angular/components/commit/1ba5ade41c86562d25397a0a3093984245f4118b) | fix | **datepicker:** date range input not marked as required when using reactive forms ([#26749](https://github.com/angular/components/pull/26749)) |
+| [acc7d8148](https://github.com/angular/components/commit/acc7d81484c8d58ca29dfb894984d9a6a8ed41ce) | fix | **tooltip:** only expand hover area on side closest to trigger ([#26786](https://github.com/angular/components/pull/26786)) |
+## Special Thanks
+Kristiyan Kostadinov, Wagner Maciel and Zach Arend
+
+<!-- CHANGELOG SPLIT MARKER -->
+
 <a name="16.0.0-next.2"></a>
 # 16.0.0-next.2 "feather-shark" (2023-03-16)
 ### material
