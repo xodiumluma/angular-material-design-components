@@ -25,7 +25,10 @@
     "test-local": "yarn -s test --local",
     "test-firefox": "yarn -s test --firefox",
     "test-tsec": "yarn bazelisk test //... --build_tag_filters=tsec --test_tag_filters=tsec",
-    "lint": "yarn -s tslint && yarn -s stylelint && yarn -s ownerslint && yarn -s ng-dev format changed --check"
+    "lint": "yarn -s tslint && yarn -s stylelint && yarn -s ownerslint && yarn -s ng-dev format changed --check",
+    "e2e": "bazel test //src/... --build_tag_filters=e2e --test_tag_filters=e2e --build_tests_only",
+    "deploy-dev-app": "node ./scripts/deploy-dev-app.js",
+    "breaking-changes": "ts-node --project scripts/tsconfig.json scripts/breaking-changes.ts",
   }
 
 }
