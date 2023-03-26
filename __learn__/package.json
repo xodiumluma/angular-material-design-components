@@ -22,6 +22,10 @@
     "build-and-check-release-output": "ts-node --esm --project scripts/tsconfig.json scripts/build-and-check-release-output.mts",
     "dev-app": "ibazel run //src/dev-app:devserver",
     "test": "node ./scripts/run-component-tests.js",
+    "test-local": "yarn -s test --local",
+    "test-firefox": "yarn -s test --firefox",
+    "test-tsec": "yarn bazelisk test //... --build_tag_filters=tsec --test_tag_filters=tsec",
+    "lint": "yarn -s tslint && yarn -s stylelint && yarn -s ownerslint && yarn -s ng-dev format changed --check"
   }
 
 }
