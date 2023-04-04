@@ -29,6 +29,16 @@
     "e2e": "bazel test //src/... --build_tag_filters=e2e --test_tag_filters=e2e --build_tests_only",
     "deploy-dev-app": "node ./scripts/deploy-dev-app.js",
     "breaking-changes": "ts-node --project scripts/tsconfig.json scripts/breaking-changes.ts",
+    "check-entry-point-setup": "node ./scripts/check-entry-point-setup.js",
+    "check-package-externals": "ts-node --project scripts/tsconfig.json scripts/check-package-externals.ts",
+    "format": "yarn -s ng-dev format changed",
+    "cherry-pick-patch": "ts-node --project tools/cherry-pick-patch/tsconfig.json tools/cherry-pick-patch/cherry-pick-patch.ts",
+    "ownerslint": "ts-node --project scripts/tsconfig.json scripts/ownerslint.ts",
+    "tslint": "tslint -c tslint.json --project ./tsconfig.json",
+    "stylelint": "stylelint \"src/**/*.+(css|scss)\" --config .stylelintrc.json",
+    "resync-caretaker-app": "ts-node --project scripts/tsconfig.json scripts/caretaking/resync-caretaker-app-prs.ts",
+    "ts-circular-deps:check": "yarn -s ng-dev ts-circular-deps check --config ./src/circular-deps-test.conf.js",
+    "ts-circular-deps:approve": "yarn -s ng-dev ts-circular-deps approve --config ./src/circular-deps-test.conf.js",
   }
 
 }
