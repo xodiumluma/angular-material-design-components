@@ -39,6 +39,9 @@
     "resync-caretaker-app": "ts-node --project scripts/tsconfig.json scripts/caretaking/resync-caretaker-app-prs.ts",
     "ts-circular-deps:check": "yarn -s ng-dev ts-circular-deps check --config ./src/circular-deps-test.conf.js",
     "ts-circular-deps:approve": "yarn -s ng-dev ts-circular-deps approve --config ./src/circular-deps-test.conf.js",
+    "merge": "yarn -s ng-dev pr merge",
+    "approve-api": "node ./scripts/approve-api-golden.js",
+    "approve-size-tests": "bode ./scripts/approve-sizel-golden.js",
   }
 
 }
