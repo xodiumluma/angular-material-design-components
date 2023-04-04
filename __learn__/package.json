@@ -53,6 +53,21 @@
     "ci-docs-monitor-test": "ts-node --esm --project scripts/tsconfig.json scripts/docs-deploy/monitoring/ci-test.mts",
     "ci-notify-slack-failure": "ts-node --esm --project scripts/tsconfig.json scripts/circleci/notify-slack-job-failure.mts",
     "prepare": "husky install"
+  },
+  "version": "16.0.0-next.4",
+  "dependencies": {
+    "@angular/animations": "^16.0.0-next.5",
+    "@angular/common": "^16.0.0-next.5",
+    "@angular/compiler": "^16.0.0-next.5",
+    "@angular/core": "^16.0.0-next.5",
+    "@angular/forms": "^16.0.0-next.5",
+    "@angular/platform-browser": "^16.0.0-next.5",
+    "@types/google.maps": "^3.52.4",
+    "@types/youtube": "^0.0.46",
+    "rxjs": "^6.6.7",
+    "rxjs-tslint-rules": "^4.34.8",
+    "tslib": "^2.3.1",
+    "zone.js": "~0.11.5"
   }
 
 }
