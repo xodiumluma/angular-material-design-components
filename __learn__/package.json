@@ -42,6 +42,7 @@
     "merge": "yarn -s ng-dev pr merge",
     "approve-api": "node ./scripts/approve-api-golden.js",
     "approve-size-tests": "bode ./scripts/approve-sizel-golden.js",
+    "integration-tests": "bazel test --test_tag_filters=-linker-integration-test --build_tests_only -- //integration/... -//integration/size-test/..."
   }
 
 }
