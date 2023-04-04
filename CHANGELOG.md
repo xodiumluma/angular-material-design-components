@@ -1,3 +1,39 @@
+<a name="16.0.0-next.4"></a>
+# 16.0.0-next.4 "plastic-pipe" (2023-03-29)
+### cdk
+| Commit | Type | Description |
+| -- | -- | -- |
+| [24fab9992f](https://github.com/angular/components/commit/24fab9992f6ec689bcab7750cbbec18685e236c2) | fix | **overlay:** don't close if scroll is coming from inside overlay ([#26840](https://github.com/angular/components/pull/26840)) |
+### material
+| Commit | Type | Description |
+| -- | -- | -- |
+| [6ad47bf0f7](https://github.com/angular/components/commit/6ad47bf0f7794147cbd05631dc972d5aa19bcfef) | fix | **core:** allow keyboard navigation to disabled options ([#26745](https://github.com/angular/components/pull/26745)) |
+| [e6f1a7dd54](https://github.com/angular/components/commit/e6f1a7dd54b8e783d9bb2d123576ca5764c6437b) | fix | **datepicker:** remove div as a child of button ([#26838](https://github.com/angular/components/pull/26838)) |
+| [a9b61352c5](https://github.com/angular/components/commit/a9b61352c575f7869a22d8a311dfe1c66c2da7ef) | fix | **form-field:** Add `mdc-label` class to `<label>` ([#26851](https://github.com/angular/components/pull/26851)) |
+### google-maps
+| Commit | Type | Description |
+| -- | -- | -- |
+| [e4901dfa72](https://github.com/angular/components/commit/e4901dfa720183b66ffc4d387aa5fba0b43210eb) | fix | update to latest typings ([#26854](https://github.com/angular/components/pull/26854)) |
+## Special Thanks
+Andrew Seguin, Jessica Janiuk, Kevin Vizcarra, Kristiyan Kostadinov, Wagner Maciel and Zach Arend
+
+<!-- CHANGELOG SPLIT MARKER -->
+
+<a name="15.2.5"></a>
+# 15.2.5 "metal-plumber" (2023-03-29)
+### cdk
+| Commit | Type | Description |
+| -- | -- | -- |
+| [4ec3abd723](https://github.com/angular/components/commit/4ec3abd7233df53586c2a52082d01199b58b8e1b) | fix | **overlay:** don't close if scroll is coming from inside overlay ([#26840](https://github.com/angular/components/pull/26840)) |
+### material
+| Commit | Type | Description |
+| -- | -- | -- |
+| [600d40eb24](https://github.com/angular/components/commit/600d40eb24502816a03133bff4b01080a02194c9) | fix | **datepicker:** remove div as a child of button ([#26838](https://github.com/angular/components/pull/26838)) |
+## Special Thanks
+Kristiyan Kostadinov and Wagner Maciel
+
+<!-- CHANGELOG SPLIT MARKER -->
+
 <a name="16.0.0-next.3"></a>
 # 16.0.0-next.3 "limonite-lime" (2023-03-23)
 ### material

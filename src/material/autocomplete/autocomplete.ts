@@ -174,7 +174,7 @@ export abstract class _MatAutocompleteBase
   set autoActiveFirstOption(value: BooleanInput) {
     this._autoActiveFirstOption = coerceBooleanProperty(value);
   }
-  private _autoActiveFirstOption = !!this._defaults.autoActiveFirstOption;
+  private _autoActiveFirstOption: boolean;
 
   /** Whether the active option should be selected as the user is navigating. */
   @Input()
@@ -184,7 +184,7 @@ export abstract class _MatAutocompleteBase
   set autoSelectActiveOption(value: BooleanInput) {
     this._autoSelectActiveOption = coerceBooleanProperty(value);
   }
-  private _autoSelectActiveOption = !!this._defaults.autoSelectActiveOption;
+  private _autoSelectActiveOption: boolean;
 
   /**
    * Specify the width of the autocomplete panel.  Can be any CSS sizing value, otherwise it will
@@ -249,10 +249,14 @@ export abstract class _MatAutocompleteBase
     // wasn't resolved in VoiceOver, and if it has, we can remove this and the `inertGroups`
     // option altogether.
     this.inertGroups = platform?.SAFARI || false;
+    this._autoActiveFirstOption = !!_defaults.autoActiveFirstOption;
+    this._autoSelectActiveOption = !!_defaults.autoSelectActiveOption;
   }
 
   ngAfterContentInit() {
-    this._keyManager = new ActiveDescendantKeyManager<_MatOptionBase>(this.options).withWrap();
+    this._keyManager = new ActiveDescendantKeyManager<_MatOptionBase>(this.options)
+      .withWrap()
+      .skipPredicate(this._skipPredicate);
     this._activeOptionChanges = this._keyManager.change.subscribe(index => {
       if (this.isOpen) {
         this.optionActivated.emit({source: this, option: this.options.toArray()[index] || null});
@@ -318,6 +322,10 @@ export abstract class _MatAutocompleteBase
     classList['mat-warn'] = this._color === 'warn';
     classList['mat-accent'] = this._color === 'accent';
   }
+
+  protected _skipPredicate(option: _MatOptionBase) {
+    return option.disabled;
+  }
 }
 
 @Component({
@@ -362,5 +370,23 @@ export class MatAutocomplete extends _MatAutocompleteBase {
         option._changeDetectorRef.markForCheck();
       }
     }
+  }
+
+  // `skipPredicate` determines if key manager should avoid putting a given option in the tab
+  // order. Allow disabled list items to receive focus via keyboard to align with WAI ARIA
+  // recommendation.
+  //
+  // Normally WAI ARIA's instructions are to exclude disabled items from the tab order, but it
+  // makes a few exceptions for compound widgets.
+  //
+  // From [Developing a Keyboard Interface](
+  // https://www.w3.org/WAI/ARIA/apg/practices/keyboard-interface/):
+  //   "For the following composite widget elements, keep them focusable when disabled: Options in a
+  //   Listbox..."
+  //
+  // The user can focus disabled options using the keyboard, but the user cannot click disabled
+  // options.
+  protected override _skipPredicate(_option: _MatOptionBase) {
+    return false;
   }
 }
