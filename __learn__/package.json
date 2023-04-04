@@ -42,7 +42,10 @@
     "merge": "yarn -s ng-dev pr merge",
     "approve-api": "node ./scripts/approve-api-golden.js",
     "approve-size-tests": "bode ./scripts/approve-sizel-golden.js",
-    "integration-tests": "bazel test --test_tag_filters=-linker-integration-test --build_tests_only -- //integration/... -//integration/size-test/..."
+    "integration-tests": "bazel test --test_tag_filters=-linker-integration-test --build_tests_only -- //integration/... -//integration/size-test/...",
+    "integration-tests:size-test": "bazel test //integration/size-test/...",
+    "test-linker-aot": "bazel test --partial_compilation --test_tag_filters=partial-compilation-integration,-firefox --build_tests_only -- //integration/... //src/...",
+    "test-linker-jit": "bazel test --partial_compilation --test_tag_filters=partial-compilation-integration,-firefox --build_tests_only --//tools:force_partial_git_compilation=True -- //integration/... //src/..."
   }
 
 }
