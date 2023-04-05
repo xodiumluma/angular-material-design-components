@@ -17,6 +17,7 @@ PKG_EXTERNALS = [
   "@angular/common",
   "@angular/common/http",
   "@angular/common/http/testing",
+  "@angular/common/testing",
   "@angular/core",
   "@angular/core/testing",
   "@angular/forms",
