@@ -56,3 +56,19 @@ PKG_EXTERNALS = [
   "@material/slider/foundation",
   "@material/slider/types",
 ]
+
+# Configures externals for all MDC packages
+def setup_mdc_externals():
+  for pkg_name in MDC_PACKAGES:
+      PKG_EXTERNALS.append(pkg_name)
+
+# For a given package & its entry points - create externals
+def setup_entry_point_externals(packageName, entryPoints):
+    PKG_EXTERNALS.extend(["@angular/%s/%s" % (packageName, entrypoint) for entrypoint in entryPoints])
+
+setup_mdc_externals()
+
+setup_entry_point_externals("cdk", CDK_ENTRYPOINTS)
+setup_entry_point_externals("cdk-experimental", CDK_EXPERIMENTAL_ENTRYPOINTS)
+setup_entry_point_externals("material", MATERIAL_ENTRYPOINTS + MATERIAL_TESTING_ENTRYPOINTS)
+setup_entry_point_externals("material-experimental", MATERIAL_EXPERIMENTAL_ENTRYPOINTS + MATERIAL_EXPERIMENTAL_TESTING_ENTRYPOINTS)
