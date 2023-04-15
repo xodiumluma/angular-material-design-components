@@ -1,3 +1,26 @@
+<a name="16.0.0-rc.0"></a>
+# 16.0.0-rc.0 "quilt-quail" (2023-04-13)
+### material
+| Commit | Type | Description |
+| -- | -- | -- |
+| [22410a996](https://github.com/angular/components/commit/22410a99676ae5e6da0248d18893be7f4756afab) | fix | **schematics:** use provider functions in ng add ([#26920](https://github.com/angular/components/pull/26920)) |
+| [c98c2c5fd](https://github.com/angular/components/commit/c98c2c5fd32757d4c337e3b991a0f3cee751b626) | fix | **table:** correct filterPredicate typo ([#26902](https://github.com/angular/components/pull/26902)) |
+
+<!-- CHANGELOG SPLIT MARKER -->
+
+<a name="15.2.7"></a>
+# 15.2.7 "paper-pelican" (2023-04-13)
+### material
+| Commit | Type | Description |
+| -- | -- | -- |
+| [de22cdc72](https://github.com/angular/components/commit/de22cdc7227187ad11e385caf0456639cfea1da8) | fix | **table:** correct filterPredicate typo ([#26902](https://github.com/angular/components/pull/26902)) |
+### material-luxon-adapter
+| Commit | Type | Description |
+| -- | -- | -- |
+| [6c00403a8](https://github.com/angular/components/commit/6c00403a874dd3132de6995d4dcd9e4ebf9dfb82) | fix | zone on DateTime ignored ([#26887](https://github.com/angular/components/pull/26887)) |
+
+<!-- CHANGELOG SPLIT MARKER -->
+
 <a name="16.0.0-next.5"></a>
 # 16.0.0-next.5 "polyester-peach" (2023-04-06)
 ### cdk
