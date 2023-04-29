@@ -18,7 +18,7 @@ build --incompatible_strict_action_env
 # Don't build runfile forests as a default policy
 # Create the forest on demand if the execution strategy depends on the runfile
 # https://github.com/bazelbuild/bazel/issues/6627
-# https://github.com/bazelbuild/bazel/commit/03246077f948f2790a83520e7dccc2625650df
+# https://github.com/bazelbuild/bazel/commit/03246077f948f2790a83520e7dccc2625650e6df
 build --nobuild_runfile_links
 
 # Controlling output
@@ -36,10 +36,10 @@ test --test_output=errors
 
 # Stamp the version
 # https://docs.bazel.build/versions/master/user-manual.html#flag--workspace_status_command
-build:release --workspace status command="yarn -s ng-dev release build-env-stamp --mode=release"
+build:release --workspace status command="yarn -s ng-dev:stamp --mode=release"
 build:release --stamp
 
-build:snapshot-build --workspace_status_command="yarn -s ng-dev release build-env-stamp --mode=release"
+build:snapshot-build --workspace_status_command="yarn -s ng-dev:stamp --mode=snapshot"
 build:snapshot-build --stamp
 
 # Bazel custom flags
@@ -96,7 +96,7 @@ build:remote --remote_accept_cached=true
 
 # --config=debug
 # --------------
-# Turn on debugging tests with this paramter
+# Turn on debugging tests with this parameter
 test:debug --test_arg=--node_options=--inspect_brk --test_output=streamed --test_strategy=exclusive --test_timeout=9999 --nocache_test_results
 
 # Local environment - needs to be the last statement
