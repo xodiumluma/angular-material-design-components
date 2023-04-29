@@ -142,6 +142,9 @@
     "@material/top-app-bar": "15.0.0-canary.684e33d25.0",
     "@material/touch-target": "15.0.0-canary.684e33d25.0",
     "@material/typography": "15.0.0-canary.684e33d25.0",
+    "@octokit/rest": "18.3.5",
+    "@rollup/plugin-commonjs": "^21.0.0",
+    "@rollup/plugin-node-resolve": "^13.1.3"
 
 
   }
