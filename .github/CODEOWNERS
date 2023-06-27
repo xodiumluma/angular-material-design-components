@@ -76,6 +76,7 @@
 /src/material/core/mdc-helpers/**                           @mmalerba
 /src/material/core/option/**                                @crisbeto
 /src/material/core/placeholder/**                           @mmalerba
+/src/material/core/private/**                               @wagnermaciel
 /src/material/core/ripple/**                                @devversion
 /src/material/core/selection/**                             @andrewseguin
 /src/material/core/selection/pseudo*/**                     @crisbeto @andrewseguin
@@ -131,10 +132,10 @@
 # Material experimental package
 /src/material-experimental/*                                @andrewseguin
 /src/material-experimental/column-resize/**                 @andrewseguin
-/src/material-experimental/mdc-tooltip/**                   @crisbeto
 /src/material-experimental/menubar/**                       @jelbourn
 /src/material-experimental/popover-edit/**                  @andrewseguin
 /src/material-experimental/selection/**                     @andrewseguin
+/src/material-experimental/theming/**                       @mmalerba
 
 # CDK experimental package
 /src/cdk-experimental/*                                     @andrewseguin

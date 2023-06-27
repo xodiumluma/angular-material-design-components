@@ -7,6 +7,7 @@
  */
 
 import {FocusMonitor, FocusOrigin} from '@angular/cdk/a11y';
+import {coerceBooleanProperty} from '@angular/cdk/coercion';
 import {Platform} from '@angular/cdk/platform';
 import {
   AfterViewInit,
@@ -25,8 +26,8 @@ import {
   mixinColor,
   mixinDisabled,
   mixinDisableRipple,
+  MatRippleLoader,
 } from '@angular/material/core';
-import {MAT_BUTTON_RIPPLE_UNINITIALIZED, MatButtonLazyLoader} from './button-lazy-loader';
 
 /** Inputs common to all buttons. */
 export const MAT_BUTTON_INPUTS = ['disabled', 'disableRipple', 'color'];
@@ -42,9 +43,6 @@ export const MAT_BUTTON_HOST = {
   // Add a class that applies to all buttons. This makes it easier to target if somebody
   // wants to target all Material buttons.
   '[class.mat-mdc-button-base]': 'true',
-  [MAT_BUTTON_RIPPLE_UNINITIALIZED]: '',
-  '[attr.mat-button-disabled]': '_isRippleDisabled()',
-  '[attr.mat-button-is-fab]': '_isFab',
 };
 
 /** List of classes to add to buttons instances based on host attribute selector. */
@@ -103,7 +101,7 @@ export class MatButtonBase
    * Handles the lazy creation of the MatButton ripple.
    * Used to improve initial load time of large applications.
    */
-  _rippleLoader: MatButtonLazyLoader = inject(MatButtonLazyLoader);
+  _rippleLoader: MatRippleLoader = inject(MatRippleLoader);
 
   /** Whether this button is a FAB. Used to apply the correct class on the ripple. */
   _isFab = false;
@@ -114,17 +112,33 @@ export class MatButtonBase
    * @breaking-change 17.0.0
    */
   get ripple(): MatRipple {
-    if (!this._ripple && this._rippleLoader) {
-      this._ripple = this._rippleLoader._createMatRipple(this._elementRef.nativeElement);
-    }
-    return this._ripple!;
+    return this._rippleLoader?.getRipple(this._elementRef.nativeElement)!;
   }
   set ripple(v: MatRipple) {
-    this._ripple = v;
+    this._rippleLoader?.attachRipple(this._elementRef.nativeElement, v);
   }
 
-  /** @docs-private Reference to the MatRipple instance of the button. */
-  protected _ripple?: MatRipple;
+  // We override `disableRipple` and `disabled` so we can hook into
+  // their setters and update the ripple disabled state accordingly.
+
+  /** Whether the ripple effect is disabled or not. */
+  override get disableRipple(): boolean {
+    return this._disableRipple;
+  }
+  override set disableRipple(value: any) {
+    this._disableRipple = coerceBooleanProperty(value);
+    this._updateRippleDisabled();
+  }
+  private _disableRipple: boolean = false;
+
+  override get disabled(): boolean {
+    return this._disabled;
+  }
+  override set disabled(value: any) {
+    this._disabled = coerceBooleanProperty(value);
+    this._updateRippleDisabled();
+  }
+  private _disabled: boolean = false;
 
   constructor(
     elementRef: ElementRef,
@@ -133,6 +147,10 @@ export class MatButtonBase
     public _animationMode?: string,
   ) {
     super(elementRef);
+
+    this._rippleLoader?.configureRipple(this._elementRef.nativeElement, {
+      className: 'mat-mdc-button-ripple',
+    });
 
     const classList = (elementRef.nativeElement as HTMLElement).classList;
 
@@ -169,10 +187,11 @@ export class MatButtonBase
     return attributes.some(attribute => this._elementRef.nativeElement.hasAttribute(attribute));
   }
 
-  _isRippleDisabled() {
-    if (this._ripple) {
-      this._ripple.disabled = this.disableRipple || this.disabled;
-    }
+  private _updateRippleDisabled(): void {
+    this._rippleLoader?.setDisabled(
+      this._elementRef.nativeElement,
+      this.disableRipple || this.disabled,
+    );
   }
 }
 
@@ -196,9 +215,6 @@ export const MAT_ANCHOR_HOST = {
   // Add a class that applies to all buttons. This makes it easier to target if somebody
   // wants to target all Material buttons.
   '[class.mat-mdc-button-base]': 'true',
-  [MAT_BUTTON_RIPPLE_UNINITIALIZED]: '',
-  '[attr.mat-button-disabled]': '_isRippleDisabled()',
-  '[attr.mat-button-is-fab]': '_isFab',
 };
 
 /**

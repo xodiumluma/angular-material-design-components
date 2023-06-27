@@ -7,7 +7,6 @@
 import { _AbstractConstructor } from '@angular/material/core';
 import { ActiveDescendantKeyManager } from '@angular/cdk/a11y';
 import { AfterContentInit } from '@angular/core';
-import { AfterViewInit } from '@angular/core';
 import { AnimationTriggerMetadata } from '@angular/animations';
 import { BooleanInput } from '@angular/cdk/coercion';
 import { CanDisable } from '@angular/material/core';
@@ -76,7 +75,7 @@ export function MAT_SELECT_SCROLL_STRATEGY_PROVIDER_FACTORY(overlay: Overlay): (
 export const MAT_SELECT_TRIGGER: InjectionToken<MatSelectTrigger>;
 
 // @public (undocumented)
-export class MatSelect extends _MatSelectBase<MatSelectChange> implements OnInit, AfterViewInit {
+export class MatSelect extends _MatSelectBase<MatSelectChange> implements OnInit {
     // (undocumented)
     close(): void;
     // (undocumented)
@@ -86,8 +85,6 @@ export class MatSelect extends _MatSelectBase<MatSelectChange> implements OnInit
     get hideSingleSelectionIndicator(): boolean;
     set hideSingleSelectionIndicator(value: BooleanInput);
     // (undocumented)
-    ngAfterViewInit(): void;
-    // (undocumented)
     ngOnInit(): void;
     // (undocumented)
     open(): void;
@@ -95,7 +92,8 @@ export class MatSelect extends _MatSelectBase<MatSelectChange> implements OnInit
     optionGroups: QueryList<MatOptgroup>;
     // (undocumented)
     options: QueryList<MatOption>;
-    _overlayWidth: number;
+    _overlayWidth: string | number;
+    panelWidth: string | number | null;
     // (undocumented)
     protected _positioningSettled(): void;
     // (undocumented)
@@ -108,7 +106,7 @@ export class MatSelect extends _MatSelectBase<MatSelectChange> implements OnInit
     protected _skipPredicate: (option: MatOption) => boolean;
     _syncParentProperties(): void;
     // (undocumented)
-    static ɵcmp: i0.ɵɵComponentDeclaration<MatSelect, "mat-select", ["matSelect"], { "disabled": { "alias": "disabled"; "required": false; }; "disableRipple": { "alias": "disableRipple"; "required": false; }; "tabIndex": { "alias": "tabIndex"; "required": false; }; "hideSingleSelectionIndicator": { "alias": "hideSingleSelectionIndicator"; "required": false; }; }, {}, ["customTrigger", "options", "optionGroups"], ["mat-select-trigger", "*"], false, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<MatSelect, "mat-select", ["matSelect"], { "disabled": { "alias": "disabled"; "required": false; }; "disableRipple": { "alias": "disableRipple"; "required": false; }; "tabIndex": { "alias": "tabIndex"; "required": false; }; "panelWidth": { "alias": "panelWidth"; "required": false; }; "hideSingleSelectionIndicator": { "alias": "hideSingleSelectionIndicator"; "required": false; }; }, {}, ["customTrigger", "options", "optionGroups"], ["mat-select-trigger", "*"], false, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatSelect, never>;
 }
@@ -242,6 +240,7 @@ export interface MatSelectConfig {
     disableOptionCentering?: boolean;
     hideSingleSelectionIndicator?: boolean;
     overlayPanelClass?: string | string[];
+    panelWidth?: string | number | null;
     typeaheadDebounceInterval?: number;
 }
 

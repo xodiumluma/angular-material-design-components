@@ -102,6 +102,7 @@ export class MatSliderThumb implements _MatSliderThumb, OnDestroy, ControlValueA
     this._updateThumbUIByValue();
     this._slider._onValueChange(this);
     this._cdr.detectChanges();
+    this._slider._cdr.markForCheck();
   }
   /** Event emitted when the `value` is changed. */
   @Output() readonly valueChange: EventEmitter<number> = new EventEmitter<number>();
@@ -243,10 +244,20 @@ export class MatSliderThumb implements _MatSliderThumb, OnDestroy, ControlValueA
   _skipUIUpdate: boolean = false;
 
   /** Callback called when the slider input value changes. */
-  private _onChangeFn: (value: any) => void = () => {};
+  protected _onChangeFn: ((value: any) => void) | undefined;
 
   /** Callback called when the slider input has been touched. */
   private _onTouchedFn: () => void = () => {};
+
+  /**
+   * Whether the NgModel has been initialized.
+   *
+   * This flag is used to ignore ghost null calls to
+   * writeValue which can break slider initialization.
+   *
+   * See https://github.com/angular/angular/issues/14988.
+   */
+  protected _isControlInitialized = false;
 
   constructor(
     readonly _ngZone: NgZone,
@@ -328,7 +339,7 @@ export class MatSliderThumb implements _MatSliderThumb, OnDestroy, ControlValueA
   }
 
   _onInput(): void {
-    this._onChangeFn(this.value);
+    this._onChangeFn?.(this.value);
     // handles arrowing and updating the value when
     // a step is defined.
     if (this._slider.step || !this._isActive) {
@@ -422,7 +433,7 @@ export class MatSliderThumb implements _MatSliderThumb, OnDestroy, ControlValueA
 
     this.value = value;
     this.valueChange.emit(this.value);
-    this._onChangeFn(this.value);
+    this._onChangeFn?.(this.value);
     this._slider._onValueChange(this);
     this._slider.step > 0
       ? this._updateThumbUIByValue()
@@ -500,7 +511,9 @@ export class MatSliderThumb implements _MatSliderThumb, OnDestroy, ControlValueA
    * @docs-private
    */
   writeValue(value: any): void {
-    this.value = value;
+    if (this._isControlInitialized || value !== null) {
+      this.value = value;
+    }
   }
 
   /**
@@ -510,6 +523,7 @@ export class MatSliderThumb implements _MatSliderThumb, OnDestroy, ControlValueA
    */
   registerOnChange(fn: any): void {
     this._onChangeFn = fn;
+    this._isControlInitialized = true;
   }
 
   /**
@@ -624,7 +638,7 @@ export class MatSliderRangeThumb extends MatSliderThumb implements _MatSliderRan
   }
 
   override _onPointerDown(event: PointerEvent): void {
-    if (this.disabled) {
+    if (this.disabled || event.button !== 0) {
       return;
     }
     if (this._sibling) {
@@ -738,8 +752,10 @@ export class MatSliderRangeThumb extends MatSliderThumb implements _MatSliderRan
    * @docs-private
    */
   override writeValue(value: any): void {
-    this.value = value;
-    this._updateWidthInactive();
-    this._updateSibling();
+    if (this._isControlInitialized || value !== null) {
+      this.value = value;
+      this._updateWidthInactive();
+      this._updateSibling();
+    }
   }
 }

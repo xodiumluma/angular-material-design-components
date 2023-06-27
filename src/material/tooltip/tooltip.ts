@@ -200,10 +200,15 @@ export abstract class _MatTooltipBase<T extends _TooltipComponentBase>
     }
   }
 
+  /**
+   * Whether tooltip should be relative to the click or touch origin
+   * instead of outside the element bounding box.
+   */
   @Input('matTooltipPositionAtOrigin')
   get positionAtOrigin(): boolean {
     return this._positionAtOrigin;
   }
+
   set positionAtOrigin(value: BooleanInput) {
     this._positionAtOrigin = coerceBooleanProperty(value);
     this._detach();
@@ -855,6 +860,7 @@ export abstract class _MatTooltipBase<T extends _TooltipComponentBase>
   exportAs: 'matTooltip',
   host: {
     'class': 'mat-mdc-tooltip-trigger',
+    '[class.mat-mdc-tooltip-disabled]': 'disabled',
   },
 })
 export class MatTooltip extends _MatTooltipBase<TooltipComponent> {

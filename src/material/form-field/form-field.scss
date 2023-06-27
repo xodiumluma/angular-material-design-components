@@ -81,6 +81,9 @@
   // MDC applies `pointer-events: none` to the `.mdc-text-field--disabled`. This breaks clicking on
   // prefix and suffix buttons, so we override `pointer-events` to always allow clicking.
   pointer-events: auto;
+  // Needs a z-index to ensure it's on top of other content clickable. See #27043.
+  position: relative;
+  z-index: 1;
 }
 
 // The prefix/suffix needs a little extra padding between the icon and the infix. Because we need to
@@ -152,4 +155,13 @@
     @include mdc-notched-outline.core-styles($query: animation);
     @include mdc-line-ripple.core-styles($query: animation);
   }
+}
+
+// Allow the label to grow 1px bigger than the notch.
+// If we see this actually happen we know we need to resize the notch.
+.mdc-notched-outline .mdc-floating-label {
+  max-width: calc(100% + 1px);
+}
+.mdc-notched-outline--upgraded .mdc-floating-label--float-above {
+  max-width: calc(100% * 4 / 3 + 1px);
 }
