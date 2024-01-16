@@ -8,7 +8,7 @@
 
 import {BidiModule, Directionality} from '@angular/cdk/bidi';
 import {Platform} from '@angular/cdk/platform';
-import {dispatchEvent, dispatchFakeEvent, dispatchPointerEvent} from '../../cdk/testing/private';
+import {dispatchEvent, dispatchFakeEvent, dispatchPointerEvent} from '@angular/cdk/testing/private';
 import {Component, Provider, QueryList, Type, ViewChild, ViewChildren} from '@angular/core';
 import {
   ComponentFixture,
@@ -38,8 +38,8 @@ describe('MDC-based MatSlider', () => {
   function createComponent<T>(component: Type<T>, providers: Provider[] = []): ComponentFixture<T> {
     TestBed.configureTestingModule({
       imports: [FormsModule, MatSliderModule, ReactiveFormsModule, BidiModule],
-      declarations: [component],
       providers: [...providers],
+      declarations: [component],
     }).compileComponents();
     platform = TestBed.inject(Platform);
     return TestBed.createComponent<T>(component);
@@ -59,7 +59,24 @@ describe('MDC-based MatSlider', () => {
     expect(input.min).withContext('min').toBe(min);
     expect(input.max).withContext('max').toBe(max);
     expect(input.value).withContext('value').toBe(value);
-    expect(input.translateX).withContext('translateX').toBeCloseTo(translateX, 0.1);
+
+    // The discrepancy between the "ideal" and "actual" translateX comes from
+    // the 3px offset from the start & end of the slider track to the first
+    // and last tick marks.
+    //
+    // The "actual" translateX is calculated based on a slider that is 6px
+    // smaller than the width of the slider. Using this "actual" translateX in
+    // tests would make it even more difficult than it already is to tell if
+    // the translateX is off, so we abstract things in here so tests can be
+    // more intuitive.
+    //
+    // The most clear way to compare the two tx's is to just turn them into
+    // percentages by dividing by their (total height) / 100.
+    const idealTXPercentage = Math.round(translateX / 3);
+    const actualTXPercentage = Math.round((input.translateX - 3) / 2.94);
+    expect(actualTXPercentage)
+      .withContext(`translateX: ${input.translateX} should be close to ${translateX}`)
+      .toBe(idealTXPercentage);
     if (step !== undefined) {
       expect(input.step).withContext('step').toBe(step);
     }
@@ -618,7 +635,13 @@ describe('MDC-based MatSlider', () => {
       pointerdown();
       pointerup();
       flush();
-      expect(isRippleVisible('focus')).toBeTrue();
+
+      // The slider immediately loses focus on pointerup for Safari.
+      if (platform.SAFARI) {
+        expect(isRippleVisible('hover')).toBeTrue();
+      } else {
+        expect(isRippleVisible('focus')).toBeTrue();
+      }
     }));
 
     it('should hide the focus ripple on blur', fakeAsync(() => {
@@ -891,6 +914,8 @@ describe('MDC-based MatSlider', () => {
     it('should set the aria-valuetext attribute with the given `displayWith` function', fakeAsync(() => {
       expect(input._hostElement.getAttribute('aria-valuetext')).toBe('$1');
       setValueByClick(slider, input, 199);
+      fixture.detectChanges();
+      flush();
       expect(input._hostElement.getAttribute('aria-valuetext')).toBe('$199');
     }));
 
@@ -1010,6 +1035,32 @@ describe('MDC-based MatSlider', () => {
       fixture.componentInstance.endValue = 70;
       fixture.detectChanges();
       expect(endInput.value).toBe(70);
+    });
+
+    it('should update the input width when the start value changes', () => {
+      const startInputEl = startInput._elementRef.nativeElement;
+      const endInputEl = endInput._elementRef.nativeElement;
+      const startInputWidthBefore = startInputEl.getBoundingClientRect().width;
+      const endInputWidthBefore = endInputEl.getBoundingClientRect().width;
+      fixture.componentInstance.startValue = 10;
+      fixture.detectChanges();
+      const startInputWidthAfter = startInputEl.getBoundingClientRect().width;
+      const endInputWidthAfter = endInputEl.getBoundingClientRect().width;
+      expect(startInputWidthBefore).not.toBe(startInputWidthAfter);
+      expect(endInputWidthBefore).not.toBe(endInputWidthAfter);
+    });
+
+    it('should update the input width when the end value changes', () => {
+      const startInputEl = startInput._elementRef.nativeElement;
+      const endInputEl = endInput._elementRef.nativeElement;
+      const startInputWidthBefore = startInputEl.getBoundingClientRect().width;
+      const endInputWidthBefore = endInputEl.getBoundingClientRect().width;
+      fixture.componentInstance.endValue = 90;
+      fixture.detectChanges();
+      const startInputWidthAfter = startInputEl.getBoundingClientRect().width;
+      const endInputWidthAfter = endInputEl.getBoundingClientRect().width;
+      expect(startInputWidthBefore).not.toBe(startInputWidthAfter);
+      expect(endInputWidthBefore).not.toBe(endInputWidthAfter);
     });
   });
 
@@ -1177,7 +1228,6 @@ describe('MDC-based MatSlider', () => {
       const startInput = slider._getInput(_MatThumb.START) as MatSliderRangeThumb;
       const endInput = slider._getInput(_MatThumb.END) as MatSliderRangeThumb;
       flush();
-      console.log('result: ', startInput.value);
       checkInput(startInput, {min: -1, max: -0.3, value: -0.7, translateX: 90});
       checkInput(endInput, {min: -0.7, max: 0, value: -0.3, translateX: 210});
     }));
@@ -1733,7 +1783,7 @@ function slideToValue(slider: MatSlider, input: MatSliderThumb, value: number) {
   dispatchEvent(input._hostElement, new Event('input'));
   dispatchPointerEvent(sliderElement, 'pointerup', endX, endY);
   dispatchEvent(input._hostElement, new Event('change'));
-  tick();
+  tick(10);
 }
 
 /** Returns the x and y coordinates for the given slider value. */

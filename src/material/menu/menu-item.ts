@@ -17,32 +17,23 @@ import {
   Input,
   AfterViewInit,
   ChangeDetectorRef,
+  booleanAttribute,
 } from '@angular/core';
-import {
-  CanDisable,
-  CanDisableRipple,
-  mixinDisabled,
-  mixinDisableRipple,
-} from '@angular/material/core';
 import {FocusableOption, FocusMonitor, FocusOrigin} from '@angular/cdk/a11y';
 import {Subject} from 'rxjs';
 import {DOCUMENT} from '@angular/common';
 import {MatMenuPanel, MAT_MENU_PANEL} from './menu-panel';
-
-// Boilerplate for applying mixins to MatMenuItem.
-/** @docs-private */
-const _MatMenuItemBase = mixinDisableRipple(mixinDisabled(class {}));
+import {MatRipple} from '@angular/material/core';
 
 /**
- * Single item inside of a `mat-menu`. Provides the menu item styling and accessibility treatment.
+ * Single item inside a `mat-menu`. Provides the menu item styling and accessibility treatment.
  */
 @Component({
   selector: '[mat-menu-item]',
   exportAs: 'matMenuItem',
-  inputs: ['disabled', 'disableRipple'],
   host: {
     '[attr.role]': 'role',
-    'class': 'mat-mdc-menu-item mat-mdc-focus-indicator mdc-list-item',
+    'class': 'mat-mdc-menu-item mat-mdc-focus-indicator',
     '[class.mat-mdc-menu-item-highlighted]': '_highlighted',
     '[class.mat-mdc-menu-item-submenu-trigger]': '_triggersSubmenu',
     '[attr.tabindex]': '_getTabIndex()',
@@ -54,13 +45,18 @@ const _MatMenuItemBase = mixinDisableRipple(mixinDisabled(class {}));
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   templateUrl: 'menu-item.html',
+  standalone: true,
+  imports: [MatRipple],
 })
-export class MatMenuItem
-  extends _MatMenuItemBase
-  implements FocusableOption, CanDisable, CanDisableRipple, AfterViewInit, OnDestroy
-{
+export class MatMenuItem implements FocusableOption, AfterViewInit, OnDestroy {
   /** ARIA role for the menu item. */
   @Input() role: 'menuitem' | 'menuitemradio' | 'menuitemcheckbox' = 'menuitem';
+
+  /** Whether the menu item is disabled. */
+  @Input({transform: booleanAttribute}) disabled: boolean = false;
+
+  /** Whether ripples are disabled on the menu item. */
+  @Input({transform: booleanAttribute}) disableRipple: boolean = false;
 
   /** Stream that emits when the menu item is hovered. */
   readonly _hovered: Subject<MatMenuItem> = new Subject<MatMenuItem>();
@@ -101,7 +97,6 @@ export class MatMenuItem
     @Inject(MAT_MENU_PANEL) @Optional() public _parentMenu?: MatMenuPanel<MatMenuItem>,
     private _changeDetectorRef?: ChangeDetectorRef,
   ) {
-    super();
     _parentMenu?.addItem?.(this);
   }
 
@@ -118,7 +113,7 @@ export class MatMenuItem
 
   ngAfterViewInit() {
     if (this._focusMonitor) {
-      // Start monitoring the element so it gets the appropriate focused classes. We want
+      // Start monitoring the element, so it gets the appropriate focused classes. We want
       // to show the focus style for menu items only when the focus was not caused by a
       // mouse or touch interaction.
       this._focusMonitor.monitor(this._elementRef, false);
@@ -166,7 +161,7 @@ export class MatMenuItem
     const clone = this._elementRef.nativeElement.cloneNode(true) as HTMLElement;
     const icons = clone.querySelectorAll('mat-icon, .material-icons');
 
-    // Strip away icons so they don't show up in the text.
+    // Strip away icons, so they don't show up in the text.
     for (let i = 0; i < icons.length; i++) {
       icons[i].remove();
     }

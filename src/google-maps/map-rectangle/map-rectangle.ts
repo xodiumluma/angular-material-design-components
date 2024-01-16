@@ -9,7 +9,16 @@
 // Workaround for: https://github.com/bazelbuild/rules_nodejs/issues/1265
 /// <reference types="google.maps" />
 
-import {Directive, Input, OnDestroy, OnInit, Output, NgZone, inject} from '@angular/core';
+import {
+  Directive,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+  NgZone,
+  inject,
+  EventEmitter,
+} from '@angular/core';
 import {BehaviorSubject, combineLatest, Observable, Subject} from 'rxjs';
 import {map, take, takeUntil} from 'rxjs/operators';
 
@@ -24,6 +33,7 @@ import {MapEventManager} from '../map-event-manager';
 @Directive({
   selector: 'map-rectangle',
   exportAs: 'mapRectangle',
+  standalone: true,
 })
 export class MapRectangle implements OnInit, OnDestroy {
   private _eventManager = new MapEventManager(inject(NgZone));
@@ -134,36 +144,59 @@ export class MapRectangle implements OnInit, OnDestroy {
   @Output() readonly rectangleRightclick: Observable<google.maps.MapMouseEvent> =
     this._eventManager.getLazyEmitter<google.maps.MapMouseEvent>('rightclick');
 
-  constructor(private readonly _map: GoogleMap, private readonly _ngZone: NgZone) {}
+  /** Event emitted when the rectangle is initialized. */
+  @Output() readonly rectangleInitialized: EventEmitter<google.maps.Rectangle> =
+    new EventEmitter<google.maps.Rectangle>();
+
+  constructor(
+    private readonly _map: GoogleMap,
+    private readonly _ngZone: NgZone,
+  ) {}
 
   ngOnInit() {
     if (this._map._isBrowser) {
       this._combineOptions()
         .pipe(take(1))
         .subscribe(options => {
-          // Create the object outside the zone so its events don't trigger change detection.
-          // We'll bring it back in inside the `MapEventManager` only for the events that the
-          // user has subscribed to.
-          this._ngZone.runOutsideAngular(() => {
-            this.rectangle = new google.maps.Rectangle(options);
-          });
-          this._assertInitialized();
-          this.rectangle.setMap(this._map.googleMap!);
-          this._eventManager.setTarget(this.rectangle);
+          if (google.maps.Rectangle && this._map.googleMap) {
+            this._initialize(this._map.googleMap, google.maps.Rectangle, options);
+          } else {
+            this._ngZone.runOutsideAngular(() => {
+              Promise.all([this._map._resolveMap(), google.maps.importLibrary('maps')]).then(
+                ([map, lib]) => {
+                  this._initialize(map, (lib as google.maps.MapsLibrary).Rectangle, options);
+                },
+              );
+            });
+          }
         });
+    }
+  }
 
+  private _initialize(
+    map: google.maps.Map,
+    rectangleConstructor: typeof google.maps.Rectangle,
+    options: google.maps.RectangleOptions,
+  ) {
+    // Create the object outside the zone so its events don't trigger change detection.
+    // We'll bring it back in inside the `MapEventManager` only for the events that the
+    // user has subscribed to.
+    this._ngZone.runOutsideAngular(() => {
+      this.rectangle = new rectangleConstructor(options);
+      this._assertInitialized();
+      this.rectangle.setMap(map);
+      this._eventManager.setTarget(this.rectangle);
+      this.rectangleInitialized.emit(this.rectangle);
       this._watchForOptionsChanges();
       this._watchForBoundsChanges();
-    }
+    });
   }
 
   ngOnDestroy() {
     this._eventManager.destroy();
     this._destroyed.next();
     this._destroyed.complete();
-    if (this.rectangle) {
-      this.rectangle.setMap(null);
-    }
+    this.rectangle?.setMap(null);
   }
 
   /**
@@ -232,12 +265,6 @@ export class MapRectangle implements OnInit, OnDestroy {
 
   private _assertInitialized(): asserts this is {rectangle: google.maps.Rectangle} {
     if (typeof ngDevMode === 'undefined' || ngDevMode) {
-      if (!this._map.googleMap) {
-        throw Error(
-          'Cannot access Google Map information before the API has been initialized. ' +
-            'Please wait for the API to load before trying to interact with it.',
-        );
-      }
       if (!this.rectangle) {
         throw Error(
           'Cannot interact with a Google Map Rectangle before it has been initialized. ' +

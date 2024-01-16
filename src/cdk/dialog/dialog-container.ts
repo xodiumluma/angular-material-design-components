@@ -14,7 +14,7 @@ import {
   InteractivityChecker,
 } from '@angular/cdk/a11y';
 import {OverlayRef} from '@angular/cdk/overlay';
-import {_getFocusedElementPierceShadowDom} from '@angular/cdk/platform';
+import {Platform, _getFocusedElementPierceShadowDom} from '@angular/cdk/platform';
 import {
   BasePortalOutlet,
   CdkPortalOutlet,
@@ -25,6 +25,7 @@ import {
 import {DOCUMENT} from '@angular/common';
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   ComponentRef,
   ElementRef,
@@ -35,6 +36,7 @@ import {
   Optional,
   ViewChild,
   ViewEncapsulation,
+  inject,
 } from '@angular/core';
 import {DialogConfig} from './dialog-config';
 
@@ -54,13 +56,15 @@ export function throwDialogContentAlreadyAttachedError() {
   // Using OnPush for dialogs caused some G3 sync issues. Disabled until we can track them down.
   // tslint:disable-next-line:validate-decorators
   changeDetection: ChangeDetectionStrategy.Default,
+  standalone: true,
+  imports: [CdkPortalOutlet],
   host: {
     'class': 'cdk-dialog-container',
     'tabindex': '-1',
     '[attr.id]': '_config.id || null',
     '[attr.role]': '_config.role',
     '[attr.aria-modal]': '_config.ariaModal',
-    '[attr.aria-labelledby]': '_config.ariaLabel ? null : _ariaLabelledBy',
+    '[attr.aria-labelledby]': '_config.ariaLabel ? null : _ariaLabelledByQueue[0]',
     '[attr.aria-label]': '_config.ariaLabel',
     '[attr.aria-describedby]': '_config.ariaDescribedBy || null',
   },
@@ -69,13 +73,14 @@ export class CdkDialogContainer<C extends DialogConfig = DialogConfig>
   extends BasePortalOutlet
   implements OnDestroy
 {
+  private _platform = inject(Platform);
   protected _document: Document;
 
   /** The portal outlet inside of this container into which the dialog content will be loaded. */
   @ViewChild(CdkPortalOutlet, {static: true}) _portalOutlet: CdkPortalOutlet;
 
   /** The class that traps and manages focus within the dialog. */
-  private _focusTrap: FocusTrap;
+  private _focusTrap: FocusTrap | null = null;
 
   /** Element that was focused before the dialog was opened. Save this to restore upon close. */
   private _elementFocusedBeforeDialogWasOpened: HTMLElement | null = null;
@@ -87,8 +92,15 @@ export class CdkDialogContainer<C extends DialogConfig = DialogConfig>
    */
   _closeInteractionType: FocusOrigin | null = null;
 
-  /** ID of the element that should be considered as the dialog's label. */
-  _ariaLabelledBy: string | null;
+  /**
+   * Queue of the IDs of the dialog's label element, based on their definition order. The first
+   * ID will be used as the `aria-labelledby` value. We use a queue here to handle the case
+   * where there are two or more titles in the DOM at a time and the first one is destroyed while
+   * the rest are present.
+   */
+  _ariaLabelledByQueue: string[] = [];
+
+  protected readonly _changeDetectorRef = inject(ChangeDetectorRef);
 
   constructor(
     protected _elementRef: ElementRef,
@@ -101,8 +113,26 @@ export class CdkDialogContainer<C extends DialogConfig = DialogConfig>
     private _focusMonitor?: FocusMonitor,
   ) {
     super();
-    this._ariaLabelledBy = this._config.ariaLabelledBy || null;
+
     this._document = _document;
+
+    if (this._config.ariaLabelledBy) {
+      this._ariaLabelledByQueue.push(this._config.ariaLabelledBy);
+    }
+  }
+
+  _addAriaLabelledBy(id: string) {
+    this._ariaLabelledByQueue.push(id);
+    this._changeDetectorRef.markForCheck();
+  }
+
+  _removeAriaLabelledBy(id: string) {
+    const index = this._ariaLabelledByQueue.indexOf(id);
+
+    if (index > -1) {
+      this._ariaLabelledByQueue.splice(index, 1);
+      this._changeDetectorRef.markForCheck();
+    }
   }
 
   protected _contentAttached() {
@@ -236,7 +266,7 @@ export class CdkDialogContainer<C extends DialogConfig = DialogConfig>
         break;
       case true:
       case 'first-tabbable':
-        this._focusTrap.focusInitialElementWhenReady().then(focusedSuccessfully => {
+        this._focusTrap?.focusInitialElementWhenReady().then(focusedSuccessfully => {
           // If we weren't able to find a focusable element in the dialog, then focus the dialog
           // container instead.
           if (!focusedSuccessfully) {
@@ -316,12 +346,14 @@ export class CdkDialogContainer<C extends DialogConfig = DialogConfig>
 
   /** Sets up the focus trap. */
   private _initializeFocusTrap() {
-    this._focusTrap = this._focusTrapFactory.create(this._elementRef.nativeElement);
+    if (this._platform.isBrowser) {
+      this._focusTrap = this._focusTrapFactory.create(this._elementRef.nativeElement);
 
-    // Save the previously focused element. This element will be re-focused
-    // when the dialog closes.
-    if (this._document) {
-      this._elementFocusedBeforeDialogWasOpened = _getFocusedElementPierceShadowDom();
+      // Save the previously focused element. This element will be re-focused
+      // when the dialog closes.
+      if (this._document) {
+        this._elementFocusedBeforeDialogWasOpened = _getFocusedElementPierceShadowDom();
+      }
     }
   }
 

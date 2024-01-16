@@ -6,7 +6,6 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {BooleanInput, coerceBooleanProperty} from '@angular/cdk/coercion';
 import {ANIMATION_MODULE_TYPE} from '@angular/platform-browser/animations';
 import {
   AfterViewInit,
@@ -29,20 +28,17 @@ import {
   ContentChildren,
   QueryList,
   OnInit,
+  DoCheck,
+  inject,
+  booleanAttribute,
+  numberAttribute,
 } from '@angular/core';
 import {DOCUMENT} from '@angular/common';
 import {
-  CanColor,
-  CanDisable,
-  CanDisableRipple,
-  HasTabIndex,
   MatRipple,
   MAT_RIPPLE_GLOBAL_OPTIONS,
-  mixinColor,
-  mixinDisableRipple,
-  mixinTabIndex,
-  mixinDisabled,
   RippleGlobalOptions,
+  MatRippleLoader,
 } from '@angular/material/core';
 import {FocusMonitor} from '@angular/cdk/a11y';
 import {merge, Subject, Subscription} from 'rxjs';
@@ -61,36 +57,18 @@ export interface MatChipEvent {
 }
 
 /**
- * Boilerplate for applying mixins to MatChip.
- * @docs-private
- */
-const _MatChipMixinBase = mixinTabIndex(
-  mixinColor(
-    mixinDisableRipple(
-      mixinDisabled(
-        class {
-          constructor(public _elementRef: ElementRef<HTMLElement>) {}
-        },
-      ),
-    ),
-    'primary',
-  ),
-  -1,
-);
-
-/**
  * Material design styled Chip base component. Used inside the MatChipSet component.
  *
  * Extended by MatChipOption and MatChipRow for different interaction patterns.
  */
 @Component({
   selector: 'mat-basic-chip, [mat-basic-chip], mat-chip, [mat-chip]',
-  inputs: ['color', 'disabled', 'disableRipple', 'tabIndex'],
   exportAs: 'matChip',
   templateUrl: 'chip.html',
   styleUrls: ['chip.css'],
   host: {
     'class': 'mat-mdc-chip',
+    '[class]': '"mat-" + (color || "primary")',
     '[class.mdc-evolution-chip]': '!_isBasicChip',
     '[class.mdc-evolution-chip--disabled]': 'disabled',
     '[class.mdc-evolution-chip--with-trailing-action]': '_hasTrailingIcon()',
@@ -106,30 +84,18 @@ const _MatChipMixinBase = mixinTabIndex(
     '[class._mat-animation-noopable]': '_animationsDisabled',
     '[id]': 'id',
     '[attr.role]': 'role',
-    '[attr.tabindex]': 'role ? tabIndex : null',
+    '[attr.tabindex]': '_getTabIndex()',
     '[attr.aria-label]': 'ariaLabel',
     '(keydown)': '_handleKeydown($event)',
   },
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [{provide: MAT_CHIP, useExisting: MatChip}],
+  standalone: true,
+  imports: [MatChipAction],
 })
-export class MatChip
-  extends _MatChipMixinBase
-  implements
-    OnInit,
-    AfterViewInit,
-    AfterContentInit,
-    CanColor,
-    CanDisableRipple,
-    CanDisable,
-    HasTabIndex,
-    OnDestroy
-{
+export class MatChip implements OnInit, AfterViewInit, AfterContentInit, DoCheck, OnDestroy {
   protected _document: Document;
-
-  /** Whether the ripple is centered on the chip. */
-  readonly _isRippleCentered = false;
 
   /** Emits when the chip is focused. */
   readonly _onFocus = new Subject<MatChipEvent>();
@@ -204,29 +170,35 @@ export class MatChip
   }
   protected _value: any;
 
+  // TODO: should be typed as `ThemePalette` but internal apps pass in arbitrary strings.
+  /** Theme color palette of the chip. */
+  @Input() color?: string | null;
+
   /**
    * Determines whether or not the chip displays the remove styling and emits (removed) events.
    */
-  @Input()
-  get removable(): boolean {
-    return this._removable;
-  }
-  set removable(value: BooleanInput) {
-    this._removable = coerceBooleanProperty(value);
-  }
-  protected _removable: boolean = true;
+  @Input({transform: booleanAttribute})
+  removable: boolean = true;
 
   /**
    * Colors the chip for emphasis as if it were selected.
    */
-  @Input()
-  get highlighted(): boolean {
-    return this._highlighted;
-  }
-  set highlighted(value: BooleanInput) {
-    this._highlighted = coerceBooleanProperty(value);
-  }
-  protected _highlighted: boolean = false;
+  @Input({transform: booleanAttribute})
+  highlighted: boolean = false;
+
+  /** Whether the ripple effect is disabled or not. */
+  @Input({transform: booleanAttribute})
+  disableRipple: boolean = false;
+
+  /** Whether the chip is disabled. */
+  @Input({transform: booleanAttribute})
+  disabled: boolean = false;
+
+  /** Tab index of the chip. */
+  @Input({
+    transform: (value: unknown) => (value == null ? undefined : numberAttribute(value)),
+  })
+  tabIndex: number = -1;
 
   /** Emitted when a chip is to be removed. */
   @Output() readonly removed: EventEmitter<MatChipEvent> = new EventEmitter<MatChipEvent>();
@@ -251,14 +223,25 @@ export class MatChip
    * @deprecated Considered an implementation detail. To be removed.
    * @breaking-change 17.0.0
    */
-  @ViewChild(MatRipple) ripple: MatRipple;
+  get ripple(): MatRipple {
+    return this._rippleLoader?.getRipple(this._elementRef.nativeElement)!;
+  }
+  set ripple(v: MatRipple) {
+    this._rippleLoader?.attachRipple(this._elementRef.nativeElement, v);
+  }
 
   /** Action receiving the primary set of user interactions. */
   @ViewChild(MatChipAction) primaryAction: MatChipAction;
 
+  /**
+   * Handles the lazy creation of the MatChip ripple.
+   * Used to improve initial load time of large applications.
+   */
+  _rippleLoader: MatRippleLoader = inject(MatRippleLoader);
+
   constructor(
     public _changeDetectorRef: ChangeDetectorRef,
-    elementRef: ElementRef<HTMLElement>,
+    public _elementRef: ElementRef<HTMLElement>,
     protected _ngZone: NgZone,
     private _focusMonitor: FocusMonitor,
     @Inject(DOCUMENT) _document: any,
@@ -268,13 +251,17 @@ export class MatChip
     private _globalRippleOptions?: RippleGlobalOptions,
     @Attribute('tabindex') tabIndex?: string,
   ) {
-    super(elementRef);
     this._document = _document;
     this._animationsDisabled = animationMode === 'NoopAnimations';
     if (tabIndex != null) {
-      this.tabIndex = parseInt(tabIndex) ?? this.defaultTabIndex;
+      this.tabIndex = parseInt(tabIndex) ?? -1;
     }
     this._monitorFocus();
+
+    this._rippleLoader?.configureRipple(this._elementRef.nativeElement, {
+      className: 'mat-mdc-chip-ripple',
+      disabled: this._isRippleDisabled(),
+    });
   }
 
   ngOnInit() {
@@ -305,8 +292,13 @@ export class MatChip
     ).subscribe(() => this._changeDetectorRef.markForCheck());
   }
 
+  ngDoCheck(): void {
+    this._rippleLoader.setDisabled(this._elementRef.nativeElement, this._isRippleDisabled());
+  }
+
   ngOnDestroy() {
     this._focusMonitor.stopMonitoring(this._elementRef);
+    this._rippleLoader?.destroyRipple(this._elementRef.nativeElement);
     this._actionChanges?.unsubscribe();
     this.destroyed.emit({chip: this});
     this.destroyed.complete();
@@ -391,6 +383,14 @@ export class MatChip
   /** Handles interactions with the primary action of the chip. */
   _handlePrimaryActionInteraction() {
     // Empty here, but is overwritten in child classes.
+  }
+
+  /** Gets the tabindex of the chip. */
+  _getTabIndex() {
+    if (!this.role) {
+      return null;
+    }
+    return this.disabled ? -1 : this.tabIndex;
   }
 
   /** Starts the focus monitoring process on the chip. */

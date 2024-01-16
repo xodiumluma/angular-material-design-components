@@ -18,6 +18,7 @@ import {
   OnDestroy,
   ViewChild,
   ViewEncapsulation,
+  inject,
 } from '@angular/core';
 import {MatRipple, RippleAnimationConfig, RippleRef, RippleState} from '@angular/material/core';
 import {
@@ -28,6 +29,7 @@ import {
   MAT_SLIDER,
   MAT_SLIDER_VISUAL_THUMB,
 } from './slider-interface';
+import {Platform} from '@angular/cdk/platform';
 
 /**
  * The visual slider thumb.
@@ -46,6 +48,8 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   providers: [{provide: MAT_SLIDER_VISUAL_THUMB, useExisting: MatSliderVisualThumb}],
+  standalone: true,
+  imports: [MatRipple],
 })
 export class MatSliderVisualThumb implements _MatSliderVisualThumb, AfterViewInit, OnDestroy {
   /** Whether the slider displays a numeric value label upon pressing the thumb. */
@@ -94,6 +98,8 @@ export class MatSliderVisualThumb implements _MatSliderVisualThumb, AfterViewIni
   /** The host native HTML input element. */
   _hostElement: HTMLElement;
 
+  private _platform = inject(Platform);
+
   constructor(
     readonly _cdr: ChangeDetectorRef,
     private readonly _ngZone: NgZone,
@@ -137,7 +143,7 @@ export class MatSliderVisualThumb implements _MatSliderVisualThumb, AfterViewIni
     }
 
     const rect = this._hostElement.getBoundingClientRect();
-    const isHovered = this._isSliderThumbHovered(event, rect);
+    const isHovered = this._slider._isCursorOnSliderThumb(event, rect);
     this._isHovered = isHovered;
 
     if (isHovered) {
@@ -186,6 +192,12 @@ export class MatSliderVisualThumb implements _MatSliderVisualThumb, AfterViewIni
     // Happens when the user starts dragging a thumb, tabs away, and then stops dragging.
     if (!this._sliderInput._isFocused) {
       this._hideRipple(this._focusRippleRef);
+    }
+
+    // On Safari we need to immediately re-show the hover ripple because
+    // sliders do not retain focus from pointer events on that platform.
+    if (this._platform.SAFARI) {
+      this._showHoverRipple();
     }
   };
 
@@ -298,14 +310,5 @@ export class MatSliderVisualThumb implements _MatSliderVisualThumb, AfterViewIni
       this._isShowingRipple(this._focusRippleRef) ||
       this._isShowingRipple(this._activeRippleRef)
     );
-  }
-
-  private _isSliderThumbHovered(event: PointerEvent, rect: DOMRect) {
-    const radius = rect.width / 2;
-    const centerX = rect.x + radius;
-    const centerY = rect.y + radius;
-    const dx = event.clientX - centerX;
-    const dy = event.clientY - centerY;
-    return Math.pow(dx, 2) + Math.pow(dy, 2) < Math.pow(radius, 2);
   }
 }

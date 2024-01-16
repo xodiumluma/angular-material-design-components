@@ -1,4 +1,5 @@
-import {HarnessLoader} from '@angular/cdk/testing';
+import {HarnessLoader, TestKey} from '@angular/cdk/testing';
+import {COMMA} from '@angular/cdk/keycodes';
 import {TestbedHarnessEnvironment} from '@angular/cdk/testing/testbed';
 import {Component} from '@angular/core';
 import {ComponentFixture, TestBed} from '@angular/core/testing';
@@ -11,8 +12,7 @@ describe('MatChipInputHarness', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MatChipsModule],
-      declarations: [ChipInputHarnessTest],
+      imports: [MatChipsModule, ChipInputHarnessTest],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ChipInputHarnessTest);
@@ -69,19 +69,35 @@ describe('MatChipInputHarness', () => {
     await harness.blur();
     expect(await harness.isFocused()).toBe(false);
   });
+
+  it('should be able to trigger a separator key', async () => {
+    const input = await loader.getHarness(MatChipInputHarness);
+    await input.setValue('Hello');
+    await input.sendSeparatorKey(TestKey.COMMA);
+    expect(fixture.componentInstance.add).toHaveBeenCalled();
+  });
 });
 
 @Component({
   template: `
     <mat-chip-grid #grid1>
-      <input [matChipInputFor]="grid1" [required]="required" placeholder="Placeholder" />
+      <input
+        [matChipInputFor]="grid1"
+        [required]="required"
+        placeholder="Placeholder"
+        (matChipInputTokenEnd)="add()"
+        [matChipInputSeparatorKeyCodes]="separatorKeyCodes"/>
     </mat-chip-grid>
 
     <mat-chip-grid #grid2>
       <input [matChipInputFor]="grid2" disabled />
     </mat-chip-grid>
   `,
+  standalone: true,
+  imports: [MatChipsModule],
 })
 class ChipInputHarnessTest {
   required = false;
+  add = jasmine.createSpy('add spy');
+  separatorKeyCodes = [COMMA];
 }

@@ -32,18 +32,29 @@ export class MapGeocoder {
    */
   geocode(request: google.maps.GeocoderRequest): Observable<MapGeocoderResponse> {
     return new Observable(observer => {
-      // Initialize the `Geocoder` lazily since the Google Maps API may
-      // not have been loaded when the provider is instantiated.
-      if (!this._geocoder) {
-        this._geocoder = new google.maps.Geocoder();
-      }
-
-      this._geocoder.geocode(request, (results, status) => {
-        this._ngZone.run(() => {
-          observer.next({results: results || [], status});
-          observer.complete();
+      this._getGeocoder().then(geocoder => {
+        geocoder.geocode(request, (results, status) => {
+          this._ngZone.run(() => {
+            observer.next({results: results || [], status});
+            observer.complete();
+          });
         });
       });
     });
+  }
+
+  private _getGeocoder(): Promise<google.maps.Geocoder> {
+    if (!this._geocoder) {
+      if (google.maps.Geocoder) {
+        this._geocoder = new google.maps.Geocoder();
+      } else {
+        return google.maps.importLibrary('geocoding').then(lib => {
+          this._geocoder = new (lib as google.maps.GeocodingLibrary).Geocoder();
+          return this._geocoder;
+        });
+      }
+    }
+
+    return Promise.resolve(this._geocoder);
   }
 }

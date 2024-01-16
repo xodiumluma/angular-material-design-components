@@ -13,22 +13,17 @@ import {
   ElementRef,
   Inject,
   InjectionToken,
+  Input,
   NgZone,
   Optional,
   ViewEncapsulation,
+  booleanAttribute,
 } from '@angular/core';
 import {ANIMATION_MODULE_TYPE} from '@angular/platform-browser/animations';
 
 import {MatAnchor} from './button';
-import {
-  MAT_ANCHOR_HOST,
-  MAT_ANCHOR_INPUTS,
-  MAT_BUTTON_HOST,
-  MAT_BUTTON_INPUTS,
-  MatButtonBase,
-} from './button-base';
+import {MAT_ANCHOR_HOST, MAT_BUTTON_HOST, MatButtonBase} from './button-base';
 import {ThemePalette} from '@angular/material/core';
-import {BooleanInput, coerceBooleanProperty} from '@angular/cdk/coercion';
 
 /** Default FAB options that can be overridden. */
 export interface MatFabDefaultOptions {
@@ -55,8 +50,6 @@ export function MAT_FAB_DEFAULT_OPTIONS_FACTORY(): MatFabDefaultOptions {
 // Default FAB configuration.
 const defaults = MAT_FAB_DEFAULT_OPTIONS_FACTORY();
 
-let buttonInputs = [...MAT_ANCHOR_INPUTS, 'extended'];
-
 /**
  * Material Design floating action button (FAB) component. These buttons represent the primary
  * or most common action for users to interact with.
@@ -68,7 +61,6 @@ let buttonInputs = [...MAT_ANCHOR_INPUTS, 'extended'];
   selector: `button[mat-fab]`,
   templateUrl: 'button.html',
   styleUrls: ['fab.css'],
-  inputs: buttonInputs,
   host: {
     ...MAT_BUTTON_HOST,
     '[class.mdc-fab--extended]': 'extended',
@@ -77,17 +69,12 @@ let buttonInputs = [...MAT_ANCHOR_INPUTS, 'extended'];
   exportAs: 'matButton',
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
 })
 export class MatFabButton extends MatButtonBase {
   override _isFab = true;
 
-  get extended(): boolean {
-    return this._extended;
-  }
-  set extended(value: BooleanInput) {
-    this._extended = coerceBooleanProperty(value);
-  }
-  private _extended: boolean;
+  @Input({transform: booleanAttribute}) extended: boolean;
 
   constructor(
     elementRef: ElementRef,
@@ -98,7 +85,7 @@ export class MatFabButton extends MatButtonBase {
   ) {
     super(elementRef, platform, ngZone, animationMode);
     this._options = this._options || defaults;
-    this.color = this.defaultColor = this._options!.color || defaults.color;
+    this.color = this._options!.color || defaults.color;
   }
 }
 
@@ -111,11 +98,11 @@ export class MatFabButton extends MatButtonBase {
   selector: `button[mat-mini-fab]`,
   templateUrl: 'button.html',
   styleUrls: ['fab.css'],
-  inputs: MAT_BUTTON_INPUTS,
   host: MAT_BUTTON_HOST,
   exportAs: 'matButton',
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
 })
 export class MatMiniFabButton extends MatButtonBase {
   override _isFab = true;
@@ -129,7 +116,7 @@ export class MatMiniFabButton extends MatButtonBase {
   ) {
     super(elementRef, platform, ngZone, animationMode);
     this._options = this._options || defaults;
-    this.color = this.defaultColor = this._options!.color || defaults.color;
+    this.color = this._options!.color || defaults.color;
   }
 }
 
@@ -144,7 +131,6 @@ export class MatMiniFabButton extends MatButtonBase {
   selector: `a[mat-fab]`,
   templateUrl: 'button.html',
   styleUrls: ['fab.css'],
-  inputs: buttonInputs,
   host: {
     ...MAT_ANCHOR_HOST,
     '[class.mdc-fab--extended]': 'extended',
@@ -153,17 +139,12 @@ export class MatMiniFabButton extends MatButtonBase {
   exportAs: 'matButton, matAnchor',
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
 })
 export class MatFabAnchor extends MatAnchor {
   override _isFab = true;
 
-  get extended(): boolean {
-    return this._extended;
-  }
-  set extended(value: BooleanInput) {
-    this._extended = coerceBooleanProperty(value);
-  }
-  private _extended: boolean;
+  @Input({transform: booleanAttribute}) extended: boolean;
 
   constructor(
     elementRef: ElementRef,
@@ -174,7 +155,7 @@ export class MatFabAnchor extends MatAnchor {
   ) {
     super(elementRef, platform, ngZone, animationMode);
     this._options = this._options || defaults;
-    this.color = this.defaultColor = this._options!.color || defaults.color;
+    this.color = this._options!.color || defaults.color;
   }
 }
 
@@ -187,11 +168,11 @@ export class MatFabAnchor extends MatAnchor {
   selector: `a[mat-mini-fab]`,
   templateUrl: 'button.html',
   styleUrls: ['fab.css'],
-  inputs: MAT_ANCHOR_INPUTS,
   host: MAT_ANCHOR_HOST,
   exportAs: 'matButton, matAnchor',
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
 })
 export class MatMiniFabAnchor extends MatAnchor {
   override _isFab = true;
@@ -205,6 +186,6 @@ export class MatMiniFabAnchor extends MatAnchor {
   ) {
     super(elementRef, platform, ngZone, animationMode);
     this._options = this._options || defaults;
-    this.color = this.defaultColor = this._options!.color || defaults.color;
+    this.color = this._options!.color || defaults.color;
   }
 }

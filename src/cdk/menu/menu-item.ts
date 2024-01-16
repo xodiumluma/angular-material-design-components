@@ -7,6 +7,7 @@
  */
 
 import {
+  booleanAttribute,
   Directive,
   ElementRef,
   EventEmitter,
@@ -16,7 +17,6 @@ import {
   OnDestroy,
   Output,
 } from '@angular/core';
-import {BooleanInput, coerceBooleanProperty} from '@angular/cdk/coercion';
 import {FocusableOption, InputModalityDetector} from '@angular/cdk/a11y';
 import {ENTER, hasModifierKey, LEFT_ARROW, RIGHT_ARROW, SPACE} from '@angular/cdk/keycodes';
 import {Directionality} from '@angular/cdk/bidi';
@@ -27,6 +27,7 @@ import {CDK_MENU, Menu} from './menu-interface';
 import {FocusNext, MENU_STACK} from './menu-stack';
 import {FocusableElement} from './pointer-focus-tracker';
 import {MENU_AIM, Toggler} from './menu-aim';
+import {eventDispatchesNativeClick} from './event-detection';
 
 /**
  * Directive which provides the ability for an element to be focused and navigated to using the
@@ -44,15 +45,15 @@ import {MENU_AIM, Toggler} from './menu-aim';
     '[attr.aria-disabled]': 'disabled || null',
     '(blur)': '_resetTabIndex()',
     '(focus)': '_setTabIndex()',
-    '(click)': '_handleClick()',
+    '(click)': 'trigger()',
     '(keydown)': '_onKeydown($event)',
   },
 })
 export class CdkMenuItem implements FocusableOption, FocusableElement, Toggler, OnDestroy {
   protected readonly _dir = inject(Directionality, {optional: true});
-  private readonly _inputModalityDetector = inject(InputModalityDetector);
   readonly _elementRef: ElementRef<HTMLElement> = inject(ElementRef);
   protected _ngZone = inject(NgZone);
+  private readonly _inputModalityDetector = inject(InputModalityDetector);
 
   /** The menu aim service used by this menu. */
   private readonly _menuAim = inject(MENU_AIM, {optional: true});
@@ -67,14 +68,7 @@ export class CdkMenuItem implements FocusableOption, FocusableElement, Toggler, 
   private readonly _menuTrigger = inject(CdkMenuTrigger, {optional: true, self: true});
 
   /**  Whether the CdkMenuItem is disabled - defaults to false */
-  @Input('cdkMenuItemDisabled')
-  get disabled(): boolean {
-    return this._disabled;
-  }
-  set disabled(value: BooleanInput) {
-    this._disabled = coerceBooleanProperty(value);
-  }
-  private _disabled = false;
+  @Input({alias: 'cdkMenuItemDisabled', transform: booleanAttribute}) disabled: boolean = false;
 
   /**
    * The text used to locate this item during menu typeahead. If not specified,
@@ -195,7 +189,8 @@ export class CdkMenuItem implements FocusableOption, FocusableElement, Toggler, 
     switch (event.keyCode) {
       case SPACE:
       case ENTER:
-        if (!hasModifierKey(event)) {
+        // Skip events that will trigger clicks so the handler doesn't get triggered twice.
+        if (!hasModifierKey(event) && !eventDispatchesNativeClick(this._elementRef, event)) {
           this.trigger({keepOpen: event.keyCode === SPACE && !this.closeOnSpacebarTrigger});
         }
         break;
@@ -223,15 +218,6 @@ export class CdkMenuItem implements FocusableOption, FocusableElement, Toggler, 
           }
         }
         break;
-    }
-  }
-
-  /** Handles clicks on the menu item. */
-  _handleClick() {
-    // Don't handle clicks originating from the keyboard since we
-    // already do the same on `keydown` events for enter and space.
-    if (this._inputModalityDetector.mostRecentModality !== 'keyboard') {
-      this.trigger();
     }
   }
 
@@ -284,7 +270,14 @@ export class CdkMenuItem implements FocusableOption, FocusableElement, Toggler, 
       this._ngZone.runOutsideAngular(() =>
         fromEvent(this._elementRef.nativeElement, 'mouseenter')
           .pipe(
-            filter(() => !this._menuStack.isEmpty() && !this.hasMenu),
+            filter(() => {
+              return (
+                // Skip fake `mouseenter` events dispatched by touch devices.
+                this._inputModalityDetector.mostRecentModality !== 'touch' &&
+                !this._menuStack.isEmpty() &&
+                !this.hasMenu
+              );
+            }),
             takeUntil(this.destroyed),
           )
           .subscribe(() => {

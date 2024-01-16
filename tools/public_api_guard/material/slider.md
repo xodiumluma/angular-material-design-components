@@ -4,32 +4,25 @@
 
 ```ts
 
-import { _AbstractConstructor } from '@angular/material/core';
 import { AfterViewInit } from '@angular/core';
-import { BooleanInput } from '@angular/cdk/coercion';
-import { CanColor } from '@angular/material/core';
-import { CanDisableRipple } from '@angular/material/core';
 import { ChangeDetectorRef } from '@angular/core';
-import { _Constructor } from '@angular/material/core';
 import { ControlValueAccessor } from '@angular/forms';
 import { Directionality } from '@angular/cdk/bidi';
 import { ElementRef } from '@angular/core';
 import { EventEmitter } from '@angular/core';
 import * as i0 from '@angular/core';
-import * as i4 from '@angular/material/core';
-import * as i5 from '@angular/common';
+import * as i1 from '@angular/material/core';
 import { MatRipple } from '@angular/material/core';
 import { NgZone } from '@angular/core';
-import { NumberInput } from '@angular/cdk/coercion';
 import { OnDestroy } from '@angular/core';
-import { Platform } from '@angular/cdk/platform';
 import { QueryList } from '@angular/core';
 import { RippleGlobalOptions } from '@angular/material/core';
 import { Subject } from 'rxjs';
+import { ThemePalette } from '@angular/material/core';
 
 // @public
-export class MatSlider extends _MatSliderMixinBase implements AfterViewInit, CanDisableRipple, OnDestroy, _MatSlider {
-    constructor(_ngZone: NgZone, _cdr: ChangeDetectorRef, _platform: Platform, elementRef: ElementRef<HTMLElement>, _dir: Directionality, _globalRippleOptions?: RippleGlobalOptions | undefined, animationMode?: string);
+export class MatSlider implements AfterViewInit, OnDestroy, _MatSlider {
+    constructor(_ngZone: NgZone, _cdr: ChangeDetectorRef, _elementRef: ElementRef<HTMLElement>, _dir: Directionality, _globalRippleOptions?: RippleGlobalOptions | undefined, animationMode?: string);
     // (undocumented)
     _cachedLeft: number;
     // (undocumented)
@@ -37,13 +30,17 @@ export class MatSlider extends _MatSliderMixinBase implements AfterViewInit, Can
     _calcTickMarkTransform(index: number): string;
     // (undocumented)
     readonly _cdr: ChangeDetectorRef;
+    color: ThemePalette;
     // (undocumented)
     readonly _dir: Directionality;
     get disabled(): boolean;
-    set disabled(v: BooleanInput);
+    set disabled(v: boolean);
+    disableRipple: boolean;
     get discrete(): boolean;
-    set discrete(v: BooleanInput);
+    set discrete(v: boolean);
     displayWith: (value: number) => string;
+    // (undocumented)
+    readonly _elementRef: ElementRef<HTMLElement>;
     // (undocumented)
     _endThumbTransform: string;
     protected endValueIndicatorText: string;
@@ -55,18 +52,31 @@ export class MatSlider extends _MatSliderMixinBase implements AfterViewInit, Can
     _hasAnimation: boolean;
     _input: _MatSliderThumb;
     // (undocumented)
-    _inputOffset: number;
-    // (undocumented)
     _inputPadding: number;
     _inputs: QueryList<_MatSliderRangeThumb>;
+    _isCursorOnSliderThumb(event: PointerEvent, rect: DOMRect): boolean;
     // (undocumented)
     _isRange: boolean;
     _isRtl: boolean;
     _knobRadius: number;
     get max(): number;
-    set max(v: NumberInput);
+    set max(v: number);
     get min(): number;
-    set min(v: NumberInput);
+    set min(v: number);
+    // (undocumented)
+    static ngAcceptInputType_disabled: unknown;
+    // (undocumented)
+    static ngAcceptInputType_disableRipple: unknown;
+    // (undocumented)
+    static ngAcceptInputType_discrete: unknown;
+    // (undocumented)
+    static ngAcceptInputType_max: unknown;
+    // (undocumented)
+    static ngAcceptInputType_min: unknown;
+    // (undocumented)
+    static ngAcceptInputType_showTickMarks: unknown;
+    // (undocumented)
+    static ngAcceptInputType_step: unknown;
     // (undocumented)
     ngAfterViewInit(): void;
     // (undocumented)
@@ -85,8 +95,6 @@ export class MatSlider extends _MatSliderMixinBase implements AfterViewInit, Can
     // (undocumented)
     _onValueChange(source: _MatSliderThumb): void;
     // (undocumented)
-    readonly _platform: Platform;
-    // (undocumented)
     _rippleRadius: number;
     _setTrackActiveStyles(styles: {
         left: string;
@@ -96,13 +104,12 @@ export class MatSlider extends _MatSliderMixinBase implements AfterViewInit, Can
     }): void;
     // (undocumented)
     _setTransition(withAnimation: boolean): void;
-    get showTickMarks(): boolean;
-    set showTickMarks(v: BooleanInput);
+    showTickMarks: boolean;
     // (undocumented)
     _startThumbTransform: string;
     protected startValueIndicatorText: string;
     get step(): number;
-    set step(v: NumberInput);
+    set step(v: number);
     _thumbs: QueryList<_MatSliderVisualThumb>;
     _tickMarks: _MatTickMark[];
     _tickMarkTrackWidth: number;
@@ -113,9 +120,9 @@ export class MatSlider extends _MatSliderMixinBase implements AfterViewInit, Can
     _updateTrackUI(source: _MatSliderThumb): void;
     _updateValueIndicatorUI(source: _MatSliderThumb): void;
     // (undocumented)
-    static ɵcmp: i0.ɵɵComponentDeclaration<MatSlider, "mat-slider", ["matSlider"], { "color": { "alias": "color"; "required": false; }; "disableRipple": { "alias": "disableRipple"; "required": false; }; "disabled": { "alias": "disabled"; "required": false; }; "discrete": { "alias": "discrete"; "required": false; }; "showTickMarks": { "alias": "showTickMarks"; "required": false; }; "min": { "alias": "min"; "required": false; }; "max": { "alias": "max"; "required": false; }; "step": { "alias": "step"; "required": false; }; "displayWith": { "alias": "displayWith"; "required": false; }; }, {}, ["_input", "_inputs"], ["*"], false, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<MatSlider, "mat-slider", ["matSlider"], { "disabled": { "alias": "disabled"; "required": false; }; "discrete": { "alias": "discrete"; "required": false; }; "showTickMarks": { "alias": "showTickMarks"; "required": false; }; "min": { "alias": "min"; "required": false; }; "color": { "alias": "color"; "required": false; }; "disableRipple": { "alias": "disableRipple"; "required": false; }; "max": { "alias": "max"; "required": false; }; "step": { "alias": "step"; "required": false; }; "displayWith": { "alias": "displayWith"; "required": false; }; }, {}, ["_input", "_inputs"], ["*"], true, never>;
     // (undocumented)
-    static ɵfac: i0.ɵɵFactoryDeclaration<MatSlider, [null, null, null, null, { optional: true; }, { optional: true; }, { optional: true; }]>;
+    static ɵfac: i0.ɵɵFactoryDeclaration<MatSlider, [null, null, null, { optional: true; }, { optional: true; }, { optional: true; }]>;
 }
 
 // @public @deprecated
@@ -139,7 +146,7 @@ export class MatSliderModule {
     // (undocumented)
     static ɵinj: i0.ɵɵInjectorDeclaration<MatSliderModule>;
     // (undocumented)
-    static ɵmod: i0.ɵɵNgModuleDeclaration<MatSliderModule, [typeof i1.MatSlider, typeof i2.MatSliderThumb, typeof i2.MatSliderRangeThumb, typeof i3.MatSliderVisualThumb], [typeof i4.MatCommonModule, typeof i5.CommonModule, typeof i4.MatRippleModule], [typeof i1.MatSlider, typeof i2.MatSliderThumb, typeof i2.MatSliderRangeThumb]>;
+    static ɵmod: i0.ɵɵNgModuleDeclaration<MatSliderModule, never, [typeof i1.MatCommonModule, typeof i1.MatRippleModule, typeof i2.MatSlider, typeof i3.MatSliderThumb, typeof i3.MatSliderRangeThumb, typeof i4.MatSliderVisualThumb], [typeof i2.MatSlider, typeof i3.MatSliderThumb, typeof i3.MatSliderRangeThumb]>;
 }
 
 // @public (undocumented)
@@ -171,6 +178,8 @@ export class MatSliderRangeThumb extends MatSliderThumb implements _MatSliderRan
     // (undocumented)
     _setIsLeftThumb(): void;
     // (undocumented)
+    _setValue(value: string): void;
+    // (undocumented)
     _updateMinMax(): void;
     // (undocumented)
     _updateStaticStyles(): void;
@@ -180,7 +189,7 @@ export class MatSliderRangeThumb extends MatSliderThumb implements _MatSliderRan
     _updateWidthInactive(): void;
     writeValue(value: any): void;
     // (undocumented)
-    static ɵdir: i0.ɵɵDirectiveDeclaration<MatSliderRangeThumb, "input[matSliderStartThumb], input[matSliderEndThumb]", ["matSliderRangeThumb"], {}, {}, never, never, false, never>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<MatSliderRangeThumb, "input[matSliderStartThumb], input[matSliderEndThumb]", ["matSliderRangeThumb"], {}, {}, never, never, true, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatSliderRangeThumb, never>;
 }
@@ -200,7 +209,7 @@ export class MatSliderThumb implements _MatSliderThumb, OnDestroy, ControlValueA
     _clamp(v: number): number;
     protected readonly _destroyed: Subject<void>;
     get disabled(): boolean;
-    set disabled(v: BooleanInput);
+    set disabled(v: boolean);
     readonly dragEnd: EventEmitter<MatSliderDragEvent>;
     readonly dragStart: EventEmitter<MatSliderDragEvent>;
     // (undocumented)
@@ -222,9 +231,11 @@ export class MatSliderThumb implements _MatSliderThumb, OnDestroy, ControlValueA
     _isFocused: boolean;
     _knobRadius: number;
     get max(): number;
-    set max(v: NumberInput);
+    set max(v: number);
     get min(): number;
-    set min(v: NumberInput);
+    set min(v: number);
+    // (undocumented)
+    static ngAcceptInputType_value: unknown;
     // (undocumented)
     ngOnDestroy(): void;
     // (undocumented)
@@ -250,13 +261,15 @@ export class MatSliderThumb implements _MatSliderThumb, OnDestroy, ControlValueA
     registerOnChange(fn: any): void;
     registerOnTouched(fn: any): void;
     setDisabledState(isDisabled: boolean): void;
+    protected _setValue(value: string): void;
     _skipUIUpdate: boolean;
     // (undocumented)
     protected _slider: _MatSlider;
     // (undocumented)
     get step(): number;
-    set step(v: NumberInput);
+    set step(v: number);
     thumbPosition: _MatThumb;
+    _tickMarkOffset: number;
     get translateX(): number;
     set translateX(v: number);
     // (undocumented)
@@ -275,12 +288,12 @@ export class MatSliderThumb implements _MatSliderThumb, OnDestroy, ControlValueA
     _updateWidthInactive(): void;
     // (undocumented)
     get value(): number;
-    set value(v: NumberInput);
+    set value(value: number);
     readonly valueChange: EventEmitter<number>;
     _valuetext: string;
     writeValue(value: any): void;
     // (undocumented)
-    static ɵdir: i0.ɵɵDirectiveDeclaration<MatSliderThumb, "input[matSliderThumb]", ["matSliderThumb"], { "value": { "alias": "value"; "required": false; }; }, { "valueChange": "valueChange"; "dragStart": "dragStart"; "dragEnd": "dragEnd"; }, never, never, false, never>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<MatSliderThumb, "input[matSliderThumb]", ["matSliderThumb"], { "value": { "alias": "value"; "required": false; }; }, { "valueChange": "valueChange"; "dragStart": "dragStart"; "dragEnd": "dragEnd"; }, never, never, true, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatSliderThumb, never>;
 }
@@ -312,7 +325,7 @@ export class MatSliderVisualThumb implements _MatSliderVisualThumb, AfterViewIni
     _valueIndicatorContainer: ElementRef<HTMLElement>;
     valueIndicatorText: string;
     // (undocumented)
-    static ɵcmp: i0.ɵɵComponentDeclaration<MatSliderVisualThumb, "mat-slider-visual-thumb", never, { "discrete": { "alias": "discrete"; "required": false; }; "thumbPosition": { "alias": "thumbPosition"; "required": false; }; "valueIndicatorText": { "alias": "valueIndicatorText"; "required": false; }; }, {}, never, never, false, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<MatSliderVisualThumb, "mat-slider-visual-thumb", never, { "discrete": { "alias": "discrete"; "required": false; }; "thumbPosition": { "alias": "thumbPosition"; "required": false; }; "valueIndicatorText": { "alias": "valueIndicatorText"; "required": false; }; }, {}, never, never, true, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatSliderVisualThumb, never>;
 }

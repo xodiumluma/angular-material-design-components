@@ -38,7 +38,7 @@ Users can move through the chips using the arrow keys and select/deselect them w
 
 Use `<mat-chip-grid>` and `<mat-chip-row>` for assisting users with text entry.
 
-Chips are always used inside a container. To create chips connected to an input field, start by creating a `<mat-chip-grid>` as the container. Add an `<input/>` element, and register it to the `<mat-chip-grid>` by passing the `matChipInputFor` Input. Always use an `<input/>` element with `<mat-chip-grid>`. Nest a `<mat-chip-row>` element inside the `<mat-chip-grid>` for each piece of data entered by the user. An example of of using chips for text input.
+Chips are always used inside a container. To create chips connected to an input field, start by creating a `<mat-chip-grid>` as the container. Add an `<input/>` element, and register it to the `<mat-chip-grid>` by passing the `matChipInputFor` Input. Always use an `<input/>` element with `<mat-chip-grid>`. Nest a `<mat-chip-row>` element inside the `<mat-chip-grid>` for each piece of data entered by the user. An example of using chips for text input.
 
 <!-- example(chips-input) -->
 
@@ -94,7 +94,7 @@ See the [accessibility](#accessibility) section for best practices on implementi
 
 ### Orientation
 
-By default, chips are displayed horizontally. To stack chips vertically, apply the `mat-mdc-chip-set-stacked` class to `<mat-chip-set>`, `<mat-chip-listbox>` or `<mat-chip-grid>`. 
+By default, chips are displayed horizontally. To stack chips vertically, apply the `mat-mdc-chip-set-stacked` class to `<mat-chip-set>`, `<mat-chip-listbox>` or `<mat-chip-grid>`.
 
 <!-- example(chips-stacked) -->
 
@@ -141,14 +141,15 @@ The chips components support 3 user interaction patterns, each with its own cont
 ```html
 <mat-form-field>
   <mat-chip-grid #myChipGrid [(ngModel)]="mySelection"
-  aria-label="enter sandwich fillings">
-    <mat-chip-row *ngFor="let filling of fillings"
-                 (removed)="remove(filling)">
-      {{filling.name}}
-      <button matChipRemove>
-        <mat-icon>cancel</mat-icon>
-      </button>
-    </mat-chip-row>
+    aria-label="enter sandwich fillings">
+    @for (filling of fillings; track filling) {
+      <mat-chip-row (removed)="remove(filling)">
+        {{filling.name}}
+        <button matChipRemove>
+          <mat-icon>cancel</mat-icon>
+        </button>
+      </mat-chip-row>
+    }
     <input [matChipInputFor]="myChipGrid"
            [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
            (matChipInputTokenEnd)="add($event)" />
@@ -186,8 +187,10 @@ For both MatChipGrid and MatChipListbox, always apply an accessible label to the
 
 Always apply MatChipRemove to a `<button>` element, never a `<mat-icon>` element.
 
-When using `MatChipRemove`, you should always communicate removals for assistive technology. One way to accomplish this is by sending a message with `LiveAnnouncer`. Otherwise, removing a chip may only be communicated visually.
-
 When using MatChipListbox, never nest other interactive controls inside of the `<mat-chip-option>` element. Nesting controls degrades the experience for assistive technology users.
 
 By default, `MatChipListbox` displays a checkmark to identify selected items. While you can hide the checkmark indicator for single-selection via `hideSingleSelectionIndicator`, this makes the component less accessible by making it harder or impossible for users to visually identify selected items.
+
+When using `MatChipRemove`, you should always communicate removals for assistive technology. One way to accomplish this is by sending a message with `LiveAnnouncer`. Otherwise, removing a chip may only be communicated visually.
+
+When a chip is editable, provide instructions to assistive technology how to edit the chip using a keyboard. One way to accomplish this is adding an `aria-description` attribute with instructions to press enter to edit the chip.

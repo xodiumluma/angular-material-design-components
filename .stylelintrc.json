@@ -11,7 +11,6 @@
     "./tools/stylelint/no-nested-mixin.ts",
     "./tools/stylelint/no-concrete-rules.ts",
     "./tools/stylelint/no-top-level-ampersand-in-mixin.ts",
-    "./tools/stylelint/theme-mixin-api.ts",
     "./tools/stylelint/no-import.ts",
     "./tools/stylelint/single-line-comment-only.ts",
     "./tools/stylelint/no-unused-import.ts",
@@ -33,7 +32,6 @@
         "filePattern": "**/!(*-example.css)"
       }
     ],
-    "material/theme-mixin-api": true,
     "material/selector-no-deep": true,
     "material/no-nested-mixin": true,
     "material/no-unused-import": true,
@@ -43,12 +41,7 @@
         "filePattern": "\\.scss$"
       }
     ],
-    "material/no-import": [
-      true,
-      {
-        "exclude": "\\.import\\.scss$"
-      }
-    ],
+    "material/no-import": true,
     "material/no-ampersand-beyond-selector-start": [
       true,
       {
@@ -141,7 +134,7 @@
     ],
     "linebreaks": "unix",
     "selector-class-pattern": [
-      "^_?(mat-|cdk-|example-|demo-|ng-|mdc-|map-|test-)",
+      "^_?(mat-|cdk-|example-|demo-|ng-|mdc-|map-|test-|youtube-player-)",
       {
         "resolveNestedSelectors": true
       }

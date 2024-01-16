@@ -12,11 +12,17 @@ import {MatSliderModule} from '@angular/material/slider';
 import {MatTabsModule} from '@angular/material/tabs';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import {MatCheckboxModule} from '@angular/material/checkbox';
-import {MatDialog, MatDialogModule, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import {
+  MatDialog,
+  MAT_DIALOG_DATA,
+  MatDialogTitle,
+  MatDialogContent,
+} from '@angular/material/dialog';
 import {MatButtonModule} from '@angular/material/button';
+import {ThemePalette} from '@angular/material/core';
 
 interface DialogData {
-  color: string;
+  color: ThemePalette;
   discrete: boolean;
   showTickMarks: boolean;
 }
@@ -30,7 +36,6 @@ interface DialogData {
     MatButtonModule,
     MatButtonToggleModule,
     MatCheckboxModule,
-    MatDialogModule,
     MatSliderModule,
     MatTabsModule,
     ReactiveFormsModule,
@@ -40,7 +45,7 @@ interface DialogData {
 export class SliderDemo {
   discrete = true;
   showTickMarks = true;
-  colorModel = 'primary';
+  colorModel: ThemePalette = 'primary';
 
   noop = () => {};
   min = '0';
@@ -130,7 +135,7 @@ export class SliderDemo {
   </div>
   `,
   standalone: true,
-  imports: [MatDialogModule, MatSliderModule],
+  imports: [MatSliderModule, MatDialogTitle, MatDialogContent],
 })
 export class SliderDialogDemo {
   constructor(@Inject(MAT_DIALOG_DATA) public data: DialogData) {}

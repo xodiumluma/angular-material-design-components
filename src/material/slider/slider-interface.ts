@@ -13,13 +13,13 @@ import {MatRipple, RippleGlobalOptions} from '@angular/material/core';
  * Thumb types: range slider has two thumbs (START, END) whereas single point
  * slider only has one thumb (END).
  */
-export const enum _MatThumb {
+export enum _MatThumb {
   START = 1,
   END = 2,
 }
 
 /** Tick mark enum, for discrete sliders. */
-export const enum _MatTickMark {
+export enum _MatTickMark {
   ACTIVE = 0,
   INACTIVE = 1,
 }
@@ -82,6 +82,9 @@ export class MatSliderChange {
 }
 
 export interface _MatSlider {
+  /** Whether the given pointer event occurred within the bounds of the slider pointer's DOM Rect. */
+  _isCursorOnSliderThumb(event: PointerEvent, rect: DOMRect): boolean;
+
   /** Gets the slider thumb input of the given thumb position. */
   _getInput(thumbPosition: _MatThumb): _MatSliderThumb | _MatSliderRangeThumb | undefined;
 
@@ -117,18 +120,6 @@ export interface _MatSlider {
    * thumb ripple extends past the end of the slider track clickable.
    */
   _inputPadding: number;
-
-  /**
-   * The offset represents left most translateX of the slider knob. Inversely,
-   * (slider width - offset) = the right most translateX of the slider knob.
-   *
-   * Note:
-   *    * The native slider knob differs from the visual slider. It's knob cannot slide past
-   *      the end of the track AT ALL.
-   *    * The visual slider knob CAN slide past the end of the track slightly. It's knob can slide
-   *      past the end of the track such that it's center lines up with the end of the track.
-   */
-  _inputOffset: number;
 
   /** The radius of the visual slider's ripple. */
   _rippleRadius: number;

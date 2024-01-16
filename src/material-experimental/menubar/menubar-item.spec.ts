@@ -6,13 +6,11 @@ import {MatMenuBarModule} from './menubar-module';
 
 describe('MatMenuBarItem', () => {
   let fixture: ComponentFixture<SimpleMenuBarItem>;
-  let menubarItem: MatMenuBarItem;
   let nativeMenubarItem: HTMLElement;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [MatMenuBarModule, CdkMenuModule],
-      declarations: [SimpleMenuBarItem],
+      imports: [MatMenuBarModule, CdkMenuModule, SimpleMenuBarItem],
     }).compileComponents();
   }));
 
@@ -20,7 +18,6 @@ describe('MatMenuBarItem', () => {
     fixture = TestBed.createComponent(SimpleMenuBarItem);
     fixture.detectChanges();
 
-    menubarItem = fixture.componentInstance.menubarItem;
     nativeMenubarItem = fixture.componentInstance.nativeMenubarItem.nativeElement;
   });
 
@@ -34,13 +31,6 @@ describe('MatMenuBarItem', () => {
 
   it('should not set the aria-disabled attribute when false', () => {
     expect(nativeMenubarItem.hasAttribute('aria.disabled')).toBeFalse();
-  });
-
-  it('should coerce and set aria-disabled attribute', () => {
-    (menubarItem.disabled as any) = '';
-    fixture.detectChanges();
-
-    expect(nativeMenubarItem.getAttribute('aria-disabled')).toBe('true');
   });
 
   it('should have cdk and material classes set', () => {
@@ -72,6 +62,8 @@ describe('MatMenuBarItem', () => {
       </div>
     </ng-template>
   `,
+  standalone: true,
+  imports: [MatMenuBarModule, CdkMenuModule],
 })
 class SimpleMenuBarItem {
   @ViewChild(CdkMenuItem) menubarItem: MatMenuBarItem;

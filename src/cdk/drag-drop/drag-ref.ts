@@ -14,7 +14,7 @@ import {
   _getEventTarget,
   _getShadowRoot,
 } from '@angular/cdk/platform';
-import {coerceBooleanProperty, coerceElement} from '@angular/cdk/coercion';
+import {coerceElement} from '@angular/cdk/coercion';
 import {isFakeMousedownFromScreenReader, isFakeTouchstartFromScreenReader} from '@angular/cdk/a11y';
 import {Subscription, Subject, Observable} from 'rxjs';
 import type {DropListRef} from './drop-list-ref';
@@ -27,7 +27,7 @@ import {
   toggleVisibility,
 } from './dom/styling';
 import {getTransformTransitionDurationInMs} from './dom/transition-duration';
-import {getMutableClientRect, adjustClientRect} from './dom/client-rect';
+import {getMutableClientRect, adjustDomRect} from './dom/dom-rect';
 import {ParentPositionTracker} from './dom/parent-position-tracker';
 import {deepCloneNode} from './dom/clone-node';
 
@@ -234,13 +234,13 @@ export class DragRef<T = any> {
   private _nativeInteractionsEnabled = true;
 
   /** Client rect of the root element when the dragging sequence has started. */
-  private _initialClientRect?: ClientRect;
+  private _initialDomRect?: DOMRect;
 
   /** Cached dimensions of the preview element. Should be read via `_getPreviewRect`. */
-  private _previewRect?: ClientRect;
+  private _previewRect?: DOMRect;
 
   /** Cached dimensions of the boundary element. */
-  private _boundaryRect?: ClientRect;
+  private _boundaryRect?: DOMRect;
 
   /** Element that will be used as a template to create the draggable item's preview. */
   private _previewTemplate?: DragPreviewTemplate | null;
@@ -287,12 +287,10 @@ export class DragRef<T = any> {
     return this._disabled || !!(this._dropContainer && this._dropContainer.disabled);
   }
   set disabled(value: boolean) {
-    const newValue = coerceBooleanProperty(value);
-
-    if (newValue !== this._disabled) {
-      this._disabled = newValue;
+    if (value !== this._disabled) {
+      this._disabled = value;
       this._toggleNativeDragInteractions();
-      this._handles.forEach(handle => toggleNativeDragInteractions(handle, newValue));
+      this._handles.forEach(handle => toggleNativeDragInteractions(handle, value));
     }
   }
   private _disabled = false;
@@ -357,7 +355,7 @@ export class DragRef<T = any> {
   constrainPosition?: (
     userPointerPosition: Point,
     dragRef: DragRef,
-    dimensions: ClientRect,
+    dimensions: DOMRect,
     pickupPositionInElement: Point,
   ) => Point;
 
@@ -698,7 +696,7 @@ export class DragRef<T = any> {
     } else {
       // If there's a position constraint function, we want the element's top/left to be at the
       // specific position on the page. Use the initial position as a reference if that's the case.
-      const offset = this.constrainPosition ? this._initialClientRect! : this._pickupPositionOnPage;
+      const offset = this.constrainPosition ? this._initialDomRect! : this._pickupPositionOnPage;
       const activeTransform = this._activeTransform;
       activeTransform.x = constrainedPointerPosition.x - offset.x + this._passiveTransform.x;
       activeTransform.y = constrainedPointerPosition.y - offset.y + this._passiveTransform.y;
@@ -887,7 +885,7 @@ export class DragRef<T = any> {
     // Avoid multiple subscriptions and memory leaks when multi touch
     // (isDragging check above isn't enough because of possible temporal and/or dimensional delays)
     this._removeSubscriptions();
-    this._initialClientRect = this._rootElement.getBoundingClientRect();
+    this._initialDomRect = this._rootElement.getBoundingClientRect();
     this._pointerMoveSubscription = this._dragDropRegistry.pointerMove.subscribe(this._pointerMove);
     this._pointerUpSubscription = this._dragDropRegistry.pointerUp.subscribe(this._pointerUp);
     this._scrollSubscription = this._dragDropRegistry
@@ -905,7 +903,7 @@ export class DragRef<T = any> {
     this._pickupPositionInElement =
       previewTemplate && previewTemplate.template && !previewTemplate.matchSize
         ? {x: 0, y: 0}
-        : this._getPointerPositionInElement(this._initialClientRect, referenceElement, event);
+        : this._getPointerPositionInElement(this._initialDomRect, referenceElement, event);
     const pointerPosition =
       (this._pickupPositionOnPage =
       this._lastKnownPointerPosition =
@@ -927,7 +925,7 @@ export class DragRef<T = any> {
 
     this._destroyPreview();
     this._destroyPlaceholder();
-    this._initialClientRect =
+    this._initialDomRect =
       this._boundaryRect =
       this._previewRect =
       this._initialTransform =
@@ -1045,7 +1043,7 @@ export class DragRef<T = any> {
     if (previewTemplate && previewConfig) {
       // Measure the element before we've inserted the preview
       // since the insertion could throw off the measurement.
-      const rootRect = previewConfig.matchSize ? this._initialClientRect : null;
+      const rootRect = previewConfig.matchSize ? this._initialDomRect : null;
       const viewRef = previewConfig.viewContainer.createEmbeddedView(
         previewTemplate,
         previewConfig.context,
@@ -1063,7 +1061,7 @@ export class DragRef<T = any> {
       }
     } else {
       preview = deepCloneNode(this._rootElement);
-      matchElementSize(preview, this._initialClientRect!);
+      matchElementSize(preview, this._initialDomRect!);
 
       if (this._initialTransform) {
         preview.style.transform = this._initialTransform;
@@ -1181,7 +1179,7 @@ export class DragRef<T = any> {
    * @param event Event that initiated the dragging.
    */
   private _getPointerPositionInElement(
-    elementRect: ClientRect,
+    elementRect: DOMRect,
     referenceElement: HTMLElement,
     event: MouseEvent | TouchEvent,
   ): Point {
@@ -1234,17 +1232,26 @@ export class DragRef<T = any> {
   private _getConstrainedPointerPosition(point: Point): Point {
     const dropContainerLock = this._dropContainer ? this._dropContainer.lockAxis : null;
     let {x, y} = this.constrainPosition
-      ? this.constrainPosition(point, this, this._initialClientRect!, this._pickupPositionInElement)
+      ? this.constrainPosition(point, this, this._initialDomRect!, this._pickupPositionInElement)
       : point;
 
     if (this.lockAxis === 'x' || dropContainerLock === 'x') {
-      y = this._pickupPositionOnPage.y;
+      y =
+        this._pickupPositionOnPage.y -
+        (this.constrainPosition ? this._pickupPositionInElement.y : 0);
     } else if (this.lockAxis === 'y' || dropContainerLock === 'y') {
-      x = this._pickupPositionOnPage.x;
+      x =
+        this._pickupPositionOnPage.x -
+        (this.constrainPosition ? this._pickupPositionInElement.x : 0);
     }
 
     if (this._boundaryRect) {
-      const {x: pickupX, y: pickupY} = this._pickupPositionInElement;
+      // If not using a custom constrain we need to account for the pickup position in the element
+      // otherwise we do not need to do this, as it has already been accounted for
+      const {x: pickupX, y: pickupY} = !this.constrainPosition
+        ? this._pickupPositionInElement
+        : {x: 0, y: 0};
+
       const boundaryRect = this._boundaryRect;
       const {width: previewWidth, height: previewHeight} = this._getPreviewRect();
       const minY = boundaryRect.top + pickupY;
@@ -1445,14 +1452,14 @@ export class DragRef<T = any> {
     if (scrollDifference) {
       const target = _getEventTarget<HTMLElement | Document>(event)!;
 
-      // ClientRect dimensions are based on the scroll position of the page and its parent
-      // node so we have to update the cached boundary ClientRect if the user has scrolled.
+      // DOMRect dimensions are based on the scroll position of the page and its parent
+      // node so we have to update the cached boundary DOMRect if the user has scrolled.
       if (
         this._boundaryRect &&
         target !== this._boundaryElement &&
         target.contains(this._boundaryElement)
       ) {
-        adjustClientRect(this._boundaryRect, scrollDifference.top, scrollDifference.left);
+        adjustDomRect(this._boundaryRect, scrollDifference.top, scrollDifference.left);
       }
 
       this._pickupPositionOnPage.x += scrollDifference.left;
@@ -1521,13 +1528,13 @@ export class DragRef<T = any> {
   }
 
   /** Lazily resolves and returns the dimensions of the preview. */
-  private _getPreviewRect(): ClientRect {
+  private _getPreviewRect(): DOMRect {
     // Cache the preview element rect if we haven't cached it already or if
     // we cached it too early before the element dimensions were computed.
     if (!this._previewRect || (!this._previewRect.width && !this._previewRect.height)) {
       this._previewRect = this._preview
         ? this._preview.getBoundingClientRect()
-        : this._initialClientRect!;
+        : this._initialDomRect!;
     }
 
     return this._previewRect;
@@ -1601,7 +1608,7 @@ function getRootNode(viewRef: EmbeddedViewRef<any>, _document: Document): HTMLEl
  * @param target Element that needs to be resized.
  * @param sourceRect Dimensions of the source element.
  */
-function matchElementSize(target: HTMLElement, sourceRect: ClientRect): void {
+function matchElementSize(target: HTMLElement, sourceRect: DOMRect): void {
   target.style.width = `${sourceRect.width}px`;
   target.style.height = `${sourceRect.height}px`;
   target.style.transform = getTransform(sourceRect.left, sourceRect.top);

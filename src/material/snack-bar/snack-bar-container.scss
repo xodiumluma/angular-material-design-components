@@ -3,6 +3,7 @@
 @use '@material/theme/custom-properties' as mdc-custom-properties;
 @use '../core/tokens/m2/mdc/snack-bar' as tokens-mdc-snack-bar;
 @use '../core/tokens/m2/mat/snack-bar' as tokens-mat-snack-bar;
+@use '../core/tokens/m2/mat/text-button' as tokens-mat-text-button;
 @use '../core/tokens/token-utils';
 @use '../core/mdc-helpers/mdc-helpers';
 
@@ -47,7 +48,6 @@
     // surface element.
     @include mdc-snackbar-theme.elevation(mdc-snackbar-theme.$elevation);
     @include mdc-snackbar-theme.theme-styles(tokens-mdc-snack-bar.get-token-slots());
-    @include mdc-snackbar-theme.theme(tokens-mdc-snack-bar.get-unthemable-tokens());
 
     // MDC sets the position as fixed and sets the container on the bottom center of the page (or
     // otherwise can be set to be "leading"). Our overlay handles a more advanced configuration
@@ -68,10 +68,12 @@
       }
 
       // Darken the ripples in the button so they're visible against the dark background.
-      --mat-mdc-button-persistent-ripple-color: currentColor;
+      @include token-utils.create-token-values(tokens-mat-text-button.$prefix, (
+        state-layer-color: currentColor,
+        ripple-color: currentColor,
+      ));
 
       .mat-ripple-element {
-        background-color: currentColor;
         opacity: 0.1;
       }
     }

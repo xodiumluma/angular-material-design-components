@@ -2,20 +2,18 @@
 @use '@angular/cdk';
 @use '@material/checkbox/checkbox' as mdc-checkbox;
 @use '@material/checkbox/checkbox-theme' as mdc-checkbox-theme;
-@use '@material/form-field' as mdc-form-field;
 @use '@material/touch-target' as mdc-touch-target;
 @use '@material/theme/custom-properties' as mdc-custom-properties;
 @use '../core/mdc-helpers/mdc-helpers';
 @use '../core/style/layout-common';
 @use '../core/style/vendor-prefixes';
 @use '../core/tokens/m2/mdc/checkbox' as tokens-mdc-checkbox;
+@use '../core/tokens/m2/mat/checkbox' as tokens-mat-checkbox;
 @use '../core/tokens/token-utils';
 
 @include mdc-custom-properties.configure($emit-fallback-values: false, $emit-fallback-vars: false) {
   // Add the checkbox static styles.
   @include mdc-checkbox.static-styles();
-  // TODO(mmalerba): Switch to static-styles, theme-styles, and theme once they're available.
-  @include mdc-form-field.core-styles($query: mdc-helpers.$mdc-base-styles-query);
 
   $mdc-checkbox-slots: tokens-mdc-checkbox.get-token-slots();
 
@@ -141,11 +139,6 @@
       }
     }
   }
-
-  html {
-    // Add default values for MDC checkbox tokens that aren't outputted by the theming API.
-    @include mdc-checkbox-theme.theme(tokens-mdc-checkbox.get-unthemable-tokens());
-  }
 }
 
 .mat-mdc-checkbox {
@@ -178,6 +171,11 @@
 
   &.mat-mdc-checkbox-disabled label {
     cursor: default;
+
+    @include token-utils.use-tokens(tokens-mat-checkbox.$prefix,
+      tokens-mat-checkbox.get-token-slots()) {
+      @include token-utils.create-token-slot(color, disabled-label-color);
+    }
   }
 
   // The MDC styles result in extra padding if the label is present but empty. To fix this we hide
@@ -228,6 +226,11 @@
   @include mdc-touch-target.touch-target(
     $set-width: true,
     $query: mdc-helpers.$mdc-base-styles-query);
+
+  @include token-utils.use-tokens(tokens-mat-checkbox.$prefix,
+    tokens-mat-checkbox.get-token-slots()) {
+    @include token-utils.create-token-slot(display, touch-target-display);
+  }
 }
 
 // Checkbox components have to set `border-radius: 50%` in order to support density scaling

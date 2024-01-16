@@ -7,10 +7,10 @@
  */
 
 /** Possible versions that can be automatically migrated by `ng update`. */
-// Used in an `Object.keys` call below so it can't be `const enum`.
+
 // tslint:disable-next-line:prefer-const-enum
 export enum TargetVersion {
-  V16 = 'version 16',
+  V17 = 'version 17',
 }
 
 /**

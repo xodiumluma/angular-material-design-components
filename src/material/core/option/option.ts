@@ -7,7 +7,6 @@
  */
 
 import {FocusableOption, FocusOrigin} from '@angular/cdk/a11y';
-import {BooleanInput, coerceBooleanProperty} from '@angular/cdk/coercion';
 import {ENTER, hasModifierKey, SPACE} from '@angular/cdk/keycodes';
 import {
   Component,
@@ -17,7 +16,6 @@ import {
   ChangeDetectorRef,
   Optional,
   Inject,
-  Directive,
   AfterViewChecked,
   OnDestroy,
   Input,
@@ -25,10 +23,13 @@ import {
   EventEmitter,
   QueryList,
   ViewChild,
+  booleanAttribute,
 } from '@angular/core';
 import {Subject} from 'rxjs';
-import {MatOptgroup, MAT_OPTGROUP, _MatOptgroupBase} from './optgroup';
+import {MAT_OPTGROUP, MatOptgroup} from './optgroup';
 import {MatOptionParentComponent, MAT_OPTION_PARENT_COMPONENT} from './option-parent';
+import {MatRipple} from '../ripple/ripple';
+import {MatPseudoCheckbox} from '../selection/pseudo-checkbox/pseudo-checkbox';
 
 /**
  * Option IDs need to be unique across components, so this counter exists outside of
@@ -40,14 +41,48 @@ let _uniqueIdCounter = 0;
 export class MatOptionSelectionChange<T = any> {
   constructor(
     /** Reference to the option that emitted the event. */
-    public source: _MatOptionBase<T>,
+    public source: MatOption<T>,
     /** Whether the change in the option's value was a result of a user action. */
     public isUserInput = false,
   ) {}
 }
 
-@Directive()
-export class _MatOptionBase<T = any> implements FocusableOption, AfterViewChecked, OnDestroy {
+/**
+ * Single option inside of a `<mat-select>` element.
+ */
+@Component({
+  selector: 'mat-option',
+  exportAs: 'matOption',
+  host: {
+    'role': 'option',
+    '[class.mdc-list-item--selected]': 'selected',
+    '[class.mat-mdc-option-multiple]': 'multiple',
+    '[class.mat-mdc-option-active]': 'active',
+    '[class.mdc-list-item--disabled]': 'disabled',
+    '[id]': 'id',
+    // Set aria-selected to false for non-selected items and true for selected items. Conform to
+    // [WAI ARIA Listbox authoring practices guide](
+    //  https://www.w3.org/WAI/ARIA/apg/patterns/listbox/), "If any options are selected, each
+    // selected option has either aria-selected or aria-checked  set to true. All options that are
+    // selectable but not selected have either aria-selected or aria-checked set to false." Align
+    // aria-selected implementation of Chips and List components.
+    //
+    // Set `aria-selected="false"` on not-selected listbox options to fix VoiceOver announcing
+    // every option as "selected" (#21491).
+    '[attr.aria-selected]': 'selected',
+    '[attr.aria-disabled]': 'disabled.toString()',
+    '(click)': '_selectViaInteraction()',
+    '(keydown)': '_handleKeydown($event)',
+    'class': 'mat-mdc-option mdc-list-item',
+  },
+  styleUrls: ['option.css'],
+  templateUrl: 'option.html',
+  encapsulation: ViewEncapsulation.None,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [MatPseudoCheckbox, MatRipple],
+})
+export class MatOption<T = any> implements FocusableOption, AfterViewChecked, OnDestroy {
   private _selected = false;
   private _active = false;
   private _disabled = false;
@@ -70,12 +105,12 @@ export class _MatOptionBase<T = any> implements FocusableOption, AfterViewChecke
   @Input() id: string = `mat-option-${_uniqueIdCounter++}`;
 
   /** Whether the option is disabled. */
-  @Input()
+  @Input({transform: booleanAttribute})
   get disabled(): boolean {
     return (this.group && this.group.disabled) || this._disabled;
   }
-  set disabled(value: BooleanInput) {
-    this._disabled = coerceBooleanProperty(value);
+  set disabled(value: boolean) {
+    this._disabled = value;
   }
 
   /** Whether ripples for the option are disabled. */
@@ -101,8 +136,8 @@ export class _MatOptionBase<T = any> implements FocusableOption, AfterViewChecke
   constructor(
     private _element: ElementRef<HTMLElement>,
     public _changeDetectorRef: ChangeDetectorRef,
-    private _parent: MatOptionParentComponent,
-    readonly group: _MatOptgroupBase,
+    @Optional() @Inject(MAT_OPTION_PARENT_COMPONENT) private _parent: MatOptionParentComponent,
+    @Optional() @Inject(MAT_OPTGROUP) public group: MatOptgroup,
   ) {}
 
   /**
@@ -125,20 +160,26 @@ export class _MatOptionBase<T = any> implements FocusableOption, AfterViewChecke
   }
 
   /** Selects the option. */
-  select(): void {
+  select(emitEvent = true): void {
     if (!this._selected) {
       this._selected = true;
       this._changeDetectorRef.markForCheck();
-      this._emitSelectionChangeEvent();
+
+      if (emitEvent) {
+        this._emitSelectionChangeEvent();
+      }
     }
   }
 
   /** Deselects the option. */
-  deselect(): void {
+  deselect(emitEvent = true): void {
     if (this._selected) {
       this._selected = false;
       this._changeDetectorRef.markForCheck();
-      this._emitSelectionChangeEvent();
+
+      if (emitEvent) {
+        this._emitSelectionChangeEvent();
+      }
     }
   }
 
@@ -243,50 +284,6 @@ export class _MatOptionBase<T = any> implements FocusableOption, AfterViewChecke
   /** Emits the selection change event. */
   private _emitSelectionChangeEvent(isUserInput = false): void {
     this.onSelectionChange.emit(new MatOptionSelectionChange<T>(this, isUserInput));
-  }
-}
-
-/**
- * Single option inside of a `<mat-select>` element.
- */
-@Component({
-  selector: 'mat-option',
-  exportAs: 'matOption',
-  host: {
-    'role': 'option',
-    '[class.mdc-list-item--selected]': 'selected',
-    '[class.mat-mdc-option-multiple]': 'multiple',
-    '[class.mat-mdc-option-active]': 'active',
-    '[class.mdc-list-item--disabled]': 'disabled',
-    '[id]': 'id',
-    // Set aria-selected to false for non-selected items and true for selected items. Conform to
-    // [WAI ARIA Listbox authoring practices guide](
-    //  https://www.w3.org/WAI/ARIA/apg/patterns/listbox/), "If any options are selected, each
-    // selected option has either aria-selected or aria-checked  set to true. All options that are
-    // selectable but not selected have either aria-selected or aria-checked set to false." Align
-    // aria-selected implementation of Chips and List components.
-    //
-    // Set `aria-selected="false"` on not-selected listbox options to fix VoiceOver announcing
-    // every option as "selected" (#21491).
-    '[attr.aria-selected]': 'selected',
-    '[attr.aria-disabled]': 'disabled.toString()',
-    '(click)': '_selectViaInteraction()',
-    '(keydown)': '_handleKeydown($event)',
-    'class': 'mat-mdc-option mdc-list-item',
-  },
-  styleUrls: ['option.css'],
-  templateUrl: 'option.html',
-  encapsulation: ViewEncapsulation.None,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-})
-export class MatOption<T = any> extends _MatOptionBase<T> {
-  constructor(
-    element: ElementRef<HTMLElement>,
-    changeDetectorRef: ChangeDetectorRef,
-    @Optional() @Inject(MAT_OPTION_PARENT_COMPONENT) parent: MatOptionParentComponent,
-    @Optional() @Inject(MAT_OPTGROUP) group: MatOptgroup,
-  ) {
-    super(element, changeDetectorRef, parent, group);
   }
 }
 

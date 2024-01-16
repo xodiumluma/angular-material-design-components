@@ -14,7 +14,6 @@ import {
   ChangeDetectorRef,
   Component,
   ContentChildren,
-  Directive,
   ElementRef,
   Inject,
   Input,
@@ -24,6 +23,7 @@ import {
   QueryList,
   ViewChild,
   ViewEncapsulation,
+  booleanAttribute,
 } from '@angular/core';
 import {ViewportRuler} from '@angular/cdk/scrolling';
 import {Platform} from '@angular/cdk/platform';
@@ -32,45 +32,8 @@ import {ANIMATION_MODULE_TYPE} from '@angular/platform-browser/animations';
 import {MatTabLabelWrapper} from './tab-label-wrapper';
 import {MatInkBar} from './ink-bar';
 import {MatPaginatedTabHeader} from './paginated-tab-header';
-import {BooleanInput, coerceBooleanProperty} from '@angular/cdk/coercion';
-
-/**
- * Base class with all of the `MatTabHeader` functionality.
- * @docs-private
- */
-@Directive()
-export abstract class _MatTabHeaderBase
-  extends MatPaginatedTabHeader
-  implements AfterContentChecked, AfterContentInit, AfterViewInit, OnDestroy
-{
-  /** Whether the ripple effect is disabled or not. */
-  @Input()
-  get disableRipple(): boolean {
-    return this._disableRipple;
-  }
-
-  set disableRipple(value: BooleanInput) {
-    this._disableRipple = coerceBooleanProperty(value);
-  }
-
-  private _disableRipple: boolean = false;
-
-  constructor(
-    elementRef: ElementRef,
-    changeDetectorRef: ChangeDetectorRef,
-    viewportRuler: ViewportRuler,
-    @Optional() dir: Directionality,
-    ngZone: NgZone,
-    platform: Platform,
-    @Optional() @Inject(ANIMATION_MODULE_TYPE) animationMode?: string,
-  ) {
-    super(elementRef, changeDetectorRef, viewportRuler, dir, ngZone, platform, animationMode);
-  }
-
-  protected _itemSelected(event: KeyboardEvent) {
-    event.preventDefault();
-  }
-}
+import {CdkObserveContent} from '@angular/cdk/observers';
+import {MatRipple} from '@angular/material/core';
 
 /**
  * The header of the tab group which displays a list of all the tabs in the tab group. Includes
@@ -83,8 +46,6 @@ export abstract class _MatTabHeaderBase
   selector: 'mat-tab-header',
   templateUrl: 'tab-header.html',
   styleUrls: ['tab-header.css'],
-  inputs: ['selectedIndex'],
-  outputs: ['selectFocusedIndex', 'indexFocused'],
   encapsulation: ViewEncapsulation.None,
   // tslint:disable-next-line:validate-decorators
   changeDetection: ChangeDetectionStrategy.Default,
@@ -93,8 +54,13 @@ export abstract class _MatTabHeaderBase
     '[class.mat-mdc-tab-header-pagination-controls-enabled]': '_showPaginationControls',
     '[class.mat-mdc-tab-header-rtl]': "_getLayoutDirection() == 'rtl'",
   },
+  standalone: true,
+  imports: [MatRipple, CdkObserveContent],
 })
-export class MatTabHeader extends _MatTabHeaderBase implements AfterContentInit {
+export class MatTabHeader
+  extends MatPaginatedTabHeader
+  implements AfterContentChecked, AfterContentInit, AfterViewInit, OnDestroy
+{
   @ContentChildren(MatTabLabelWrapper, {descendants: false}) _items: QueryList<MatTabLabelWrapper>;
   @ViewChild('tabListContainer', {static: true}) _tabListContainer: ElementRef;
   @ViewChild('tabList', {static: true}) _tabList: ElementRef;
@@ -102,6 +68,10 @@ export class MatTabHeader extends _MatTabHeaderBase implements AfterContentInit 
   @ViewChild('nextPaginator') _nextPaginator: ElementRef<HTMLElement>;
   @ViewChild('previousPaginator') _previousPaginator: ElementRef<HTMLElement>;
   _inkBar: MatInkBar;
+
+  /** Whether the ripple effect is disabled or not. */
+  @Input({transform: booleanAttribute})
+  disableRipple: boolean = false;
 
   constructor(
     elementRef: ElementRef,
@@ -118,5 +88,9 @@ export class MatTabHeader extends _MatTabHeaderBase implements AfterContentInit 
   override ngAfterContentInit() {
     this._inkBar = new MatInkBar(this._items);
     super.ngAfterContentInit();
+  }
+
+  protected _itemSelected(event: KeyboardEvent) {
+    event.preventDefault();
   }
 }

@@ -10,7 +10,7 @@
 // behaviors once we move it out of experimental.
 import {CommonModule} from '@angular/common';
 import {NgModule} from '@angular/core';
-import {MatLegacyTableModule} from '@angular/material/legacy-table';
+import {MatTableModule} from '@angular/material/table';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatSelectAll} from './select-all';
 import {MatSelection} from './selection';
@@ -19,14 +19,16 @@ import {MatSelectionColumn} from './selection-column';
 import {MatRowSelection} from './row-selection';
 
 @NgModule({
-  imports: [CommonModule, MatLegacyTableModule, MatCheckboxModule],
-  exports: [MatSelectAll, MatSelection, MatSelectionToggle, MatSelectionColumn, MatRowSelection],
-  declarations: [
+  imports: [
+    CommonModule,
+    MatTableModule,
+    MatCheckboxModule,
     MatSelectAll,
     MatSelection,
     MatSelectionToggle,
     MatSelectionColumn,
     MatRowSelection,
   ],
+  exports: [MatSelectAll, MatSelection, MatSelectionToggle, MatSelectionColumn, MatRowSelection],
 })
 export class MatSelectionModule {}

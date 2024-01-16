@@ -15,7 +15,7 @@ import {ElementRef, InjectionToken, OnDestroy, OnInit, QueryList} from '@angular
  */
 export interface MatInkBarItem extends OnInit, OnDestroy {
   elementRef: ElementRef<HTMLElement>;
-  activateInkBar(previousIndicatorClientRect?: ClientRect): void;
+  activateInkBar(previousIndicatorClientRect?: DOMRect): void;
   deactivateInkBar(): void;
   fitInkBarToContent: boolean;
 }
@@ -53,10 +53,10 @@ export class MatInkBar {
     currentItem?.deactivateInkBar();
 
     if (correspondingItem) {
-      const clientRect = currentItem?.elementRef.nativeElement.getBoundingClientRect?.();
+      const domRect = currentItem?.elementRef.nativeElement.getBoundingClientRect?.();
 
-      // The ink bar won't animate unless we give it the `ClientRect` of the previous item.
-      correspondingItem.activateInkBar(clientRect);
+      // The ink bar won't animate unless we give it the `DOMRect` of the previous item.
+      correspondingItem.activateInkBar(domRect);
       this._currentItem = correspondingItem;
     }
   }
@@ -97,7 +97,7 @@ export function mixinInkBarItem<
     }
 
     /** Aligns the ink bar to the current item. */
-    activateInkBar(previousIndicatorClientRect?: ClientRect) {
+    activateInkBar(previousIndicatorClientRect?: DOMRect) {
       const element = this.elementRef.nativeElement;
 
       // Early exit if no indicator is present to handle cases where an indicator
@@ -185,7 +185,7 @@ export function mixinInkBarItem<
 }
 
 /**
- * Interface for a a MatInkBar positioner method, defining the positioning and width of the ink
+ * Interface for a MatInkBar positioner method, defining the positioning and width of the ink
  * bar in a set of tabs.
  */
 export interface _MatInkBarPositioner {

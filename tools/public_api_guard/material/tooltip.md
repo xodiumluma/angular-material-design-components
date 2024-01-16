@@ -9,16 +9,15 @@ import { AnimationTriggerMetadata } from '@angular/animations';
 import { AriaDescriber } from '@angular/cdk/a11y';
 import { BooleanInput } from '@angular/cdk/coercion';
 import { ChangeDetectorRef } from '@angular/core';
-import { ComponentType } from '@angular/cdk/overlay';
 import { ConnectedPosition } from '@angular/cdk/overlay';
 import { Directionality } from '@angular/cdk/bidi';
 import { ElementRef } from '@angular/core';
 import { FocusMonitor } from '@angular/cdk/a11y';
 import * as i0 from '@angular/core';
-import * as i2 from '@angular/cdk/a11y';
-import * as i3 from '@angular/common';
-import * as i4 from '@angular/cdk/overlay';
-import * as i5 from '@angular/material/core';
+import * as i1 from '@angular/cdk/a11y';
+import * as i2 from '@angular/common';
+import * as i3 from '@angular/cdk/overlay';
+import * as i4 from '@angular/material/core';
 import * as i6 from '@angular/cdk/scrolling';
 import { InjectionToken } from '@angular/core';
 import { NgZone } from '@angular/core';
@@ -57,31 +56,9 @@ export const MAT_TOOLTIP_SCROLL_STRATEGY_FACTORY_PROVIDER: {
 };
 
 // @public
-export class MatTooltip extends _MatTooltipBase<TooltipComponent> {
-    constructor(overlay: Overlay, elementRef: ElementRef<HTMLElement>, scrollDispatcher: ScrollDispatcher, viewContainerRef: ViewContainerRef, ngZone: NgZone, platform: Platform, ariaDescriber: AriaDescriber, focusMonitor: FocusMonitor, scrollStrategy: any, dir: Directionality, defaultOptions: MatTooltipDefaultOptions, _document: any);
-    // (undocumented)
-    protected _addOffset(position: ConnectedPosition): ConnectedPosition;
-    // (undocumented)
-    protected readonly _cssClassPrefix = "mat-mdc";
-    // (undocumented)
-    protected readonly _tooltipComponent: typeof TooltipComponent;
-    // (undocumented)
-    static ɵdir: i0.ɵɵDirectiveDeclaration<MatTooltip, "[matTooltip]", ["matTooltip"], {}, {}, never, never, false, never>;
-    // (undocumented)
-    static ɵfac: i0.ɵɵFactoryDeclaration<MatTooltip, [null, null, null, null, null, null, null, null, null, { optional: true; }, { optional: true; }, null]>;
-}
-
-// @public
-export const matTooltipAnimations: {
-    readonly tooltipState: AnimationTriggerMetadata;
-};
-
-// @public (undocumented)
-export abstract class _MatTooltipBase<T extends _TooltipComponentBase> implements OnDestroy, AfterViewInit {
+export class MatTooltip implements OnDestroy, AfterViewInit {
     constructor(_overlay: Overlay, _elementRef: ElementRef<HTMLElement>, _scrollDispatcher: ScrollDispatcher, _viewContainerRef: ViewContainerRef, _ngZone: NgZone, _platform: Platform, _ariaDescriber: AriaDescriber, _focusMonitor: FocusMonitor, scrollStrategy: any, _dir: Directionality, _defaultOptions: MatTooltipDefaultOptions, _document: any);
     protected _addOffset(position: ConnectedPosition): ConnectedPosition;
-    // (undocumented)
-    protected readonly _cssClassPrefix: string;
     // (undocumented)
     protected _dir: Directionality;
     get disabled(): boolean;
@@ -126,17 +103,18 @@ export abstract class _MatTooltipBase<T extends _TooltipComponentBase> implement
         [key: string]: any;
     });
     // (undocumented)
-    protected abstract readonly _tooltipComponent: ComponentType<T>;
-    // (undocumented)
-    _tooltipInstance: T | null;
+    _tooltipInstance: TooltipComponent | null;
     touchGestures: TooltipTouchGestures;
     // (undocumented)
-    protected _viewportMargin: number;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<MatTooltip, "[matTooltip]", ["matTooltip"], { "position": { "alias": "matTooltipPosition"; "required": false; }; "positionAtOrigin": { "alias": "matTooltipPositionAtOrigin"; "required": false; }; "disabled": { "alias": "matTooltipDisabled"; "required": false; }; "showDelay": { "alias": "matTooltipShowDelay"; "required": false; }; "hideDelay": { "alias": "matTooltipHideDelay"; "required": false; }; "touchGestures": { "alias": "matTooltipTouchGestures"; "required": false; }; "message": { "alias": "matTooltip"; "required": false; }; "tooltipClass": { "alias": "matTooltipClass"; "required": false; }; }, {}, never, never, true, never>;
     // (undocumented)
-    static ɵdir: i0.ɵɵDirectiveDeclaration<_MatTooltipBase<any>, never, never, { "position": { "alias": "matTooltipPosition"; "required": false; }; "positionAtOrigin": { "alias": "matTooltipPositionAtOrigin"; "required": false; }; "disabled": { "alias": "matTooltipDisabled"; "required": false; }; "showDelay": { "alias": "matTooltipShowDelay"; "required": false; }; "hideDelay": { "alias": "matTooltipHideDelay"; "required": false; }; "touchGestures": { "alias": "matTooltipTouchGestures"; "required": false; }; "message": { "alias": "matTooltip"; "required": false; }; "tooltipClass": { "alias": "matTooltipClass"; "required": false; }; }, {}, never, never, false, never>;
-    // (undocumented)
-    static ɵfac: i0.ɵɵFactoryDeclaration<_MatTooltipBase<any>, never>;
+    static ɵfac: i0.ɵɵFactoryDeclaration<MatTooltip, [null, null, null, null, null, null, null, null, null, null, { optional: true; }, null]>;
 }
+
+// @public
+export const matTooltipAnimations: {
+    readonly tooltipState: AnimationTriggerMetadata;
+};
 
 // @public
 export interface MatTooltipDefaultOptions {
@@ -156,7 +134,7 @@ export class MatTooltipModule {
     // (undocumented)
     static ɵinj: i0.ɵɵInjectorDeclaration<MatTooltipModule>;
     // (undocumented)
-    static ɵmod: i0.ɵɵNgModuleDeclaration<MatTooltipModule, [typeof i1.MatTooltip, typeof i1.TooltipComponent], [typeof i2.A11yModule, typeof i3.CommonModule, typeof i4.OverlayModule, typeof i5.MatCommonModule], [typeof i1.MatTooltip, typeof i1.TooltipComponent, typeof i5.MatCommonModule, typeof i6.CdkScrollableModule]>;
+    static ɵmod: i0.ɵɵNgModuleDeclaration<MatTooltipModule, never, [typeof i1.A11yModule, typeof i2.CommonModule, typeof i3.OverlayModule, typeof i4.MatCommonModule, typeof i5.MatTooltip, typeof i5.TooltipComponent], [typeof i5.MatTooltip, typeof i5.TooltipComponent, typeof i4.MatCommonModule, typeof i6.CdkScrollableModule]>;
 }
 
 // @public
@@ -166,34 +144,19 @@ export const SCROLL_THROTTLE_MS = 20;
 export const TOOLTIP_PANEL_CLASS = "mat-mdc-tooltip-panel";
 
 // @public
-export class TooltipComponent extends _TooltipComponentBase {
-    constructor(changeDetectorRef: ChangeDetectorRef, _elementRef: ElementRef<HTMLElement>, animationMode?: string);
-    // (undocumented)
-    _hideAnimation: string;
-    // (undocumented)
-    _isMultiline: boolean;
-    // (undocumented)
-    protected _onShow(): void;
-    // (undocumented)
-    _showAnimation: string;
-    _tooltip: ElementRef<HTMLElement>;
-    // (undocumented)
-    static ɵcmp: i0.ɵɵComponentDeclaration<TooltipComponent, "mat-tooltip-component", never, {}, {}, never, never, false, never>;
-    // (undocumented)
-    static ɵfac: i0.ɵɵFactoryDeclaration<TooltipComponent, [null, null, { optional: true; }]>;
-}
-
-// @public (undocumented)
-export abstract class _TooltipComponentBase implements OnDestroy {
-    constructor(_changeDetectorRef: ChangeDetectorRef, animationMode?: string);
+export class TooltipComponent implements OnDestroy {
+    constructor(_changeDetectorRef: ChangeDetectorRef, _elementRef: ElementRef<HTMLElement>, animationMode?: string);
     afterHidden(): Observable<void>;
     _cancelPendingAnimations(): void;
+    // (undocumented)
+    protected _elementRef: ElementRef<HTMLElement>;
     _handleAnimationEnd({ animationName }: AnimationEvent): void;
     _handleBodyInteraction(): void;
     // (undocumented)
     _handleMouseLeave({ relatedTarget }: MouseEvent): void;
     hide(delay: number): void;
-    protected abstract readonly _hideAnimation: string;
+    // (undocumented)
+    _isMultiline: boolean;
     isVisible(): boolean;
     _markForCheck(): void;
     message: string;
@@ -202,16 +165,15 @@ export abstract class _TooltipComponentBase implements OnDestroy {
     ngOnDestroy(): void;
     protected _onShow(): void;
     show(delay: number): void;
-    protected abstract readonly _showAnimation: string;
-    abstract _tooltip: ElementRef<HTMLElement>;
+    _tooltip: ElementRef<HTMLElement>;
     tooltipClass: string | string[] | Set<string> | {
         [key: string]: any;
     };
     _triggerElement: HTMLElement;
     // (undocumented)
-    static ɵdir: i0.ɵɵDirectiveDeclaration<_TooltipComponentBase, never, never, {}, {}, never, never, false, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<TooltipComponent, "mat-tooltip-component", never, {}, {}, never, never, true, never>;
     // (undocumented)
-    static ɵfac: i0.ɵɵFactoryDeclaration<_TooltipComponentBase, [null, { optional: true; }]>;
+    static ɵfac: i0.ɵɵFactoryDeclaration<TooltipComponent, [null, null, { optional: true; }]>;
 }
 
 // @public

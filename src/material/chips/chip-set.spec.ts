@@ -7,8 +7,7 @@ import {MatChip, MatChipSet, MatChipsModule} from './index';
 describe('MDC-based MatChipSet', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [MatChipsModule, CommonModule],
-      declarations: [BasicChipSet, IndirectDescendantsChipSet],
+      imports: [MatChipsModule, CommonModule, BasicChipSet, IndirectDescendantsChipSet],
     });
 
     TestBed.compileComponents();
@@ -98,16 +97,24 @@ describe('MDC-based MatChipSet', () => {
 
     expect(chips.toArray().every(chip => chip.disabled)).toBe(false);
   });
+
+  it('should be able to access the `empty` getter before the chips are initialized', () => {
+    const fixture = TestBed.createComponent(BasicChipSet);
+    const chipSet = fixture.debugElement.query(By.directive(MatChipSet))!;
+    expect(chipSet.componentInstance.empty).toBe(true);
+  });
 });
 
 @Component({
   template: `
       <mat-chip-set>
-        <mat-chip *ngFor="let i of chips">
-          {{name}} {{i + 1}}
-        </mat-chip>
+        @for (i of chips; track i) {
+          <mat-chip>{{name}} {{i + 1}}</mat-chip>
+        }
       </mat-chip-set>
   `,
+  standalone: true,
+  imports: [MatChipsModule, CommonModule],
 })
 class BasicChipSet {
   name: string = 'Test';
@@ -117,12 +124,14 @@ class BasicChipSet {
 @Component({
   template: `
     <mat-chip-set>
-      <ng-container [ngSwitch]="true">
-        <mat-chip *ngFor="let i of chips">
-          {{name}} {{i + 1}}
-        </mat-chip>
-      </ng-container>
+      @if (true) {
+        @for (i of chips; track i) {
+          <mat-chip>{{name}} {{i + 1}}</mat-chip>
+        }
+      }
     </mat-chip-set>
   `,
+  standalone: true,
+  imports: [MatChipsModule, CommonModule],
 })
 class IndirectDescendantsChipSet extends BasicChipSet {}

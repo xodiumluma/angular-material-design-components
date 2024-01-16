@@ -11,6 +11,7 @@ import {
   ElementRef,
   Input,
   OnChanges,
+  OnDestroy,
   OnInit,
   Optional,
   SimpleChanges,
@@ -28,6 +29,7 @@ let dialogElementUid = 0;
 @Directive({
   selector: '[mat-dialog-close], [matDialogClose]',
   exportAs: 'matDialogClose',
+  standalone: true,
   host: {
     '(click)': '_onButtonClick($event)',
     '[attr.aria-label]': 'ariaLabel || null',
@@ -92,12 +94,13 @@ export class MatDialogClose implements OnInit, OnChanges {
 @Directive({
   selector: '[mat-dialog-title], [matDialogTitle]',
   exportAs: 'matDialogTitle',
+  standalone: true,
   host: {
     'class': 'mat-mdc-dialog-title mdc-dialog__title',
     '[id]': 'id',
   },
 })
-export class MatDialogTitle implements OnInit {
+export class MatDialogTitle implements OnInit, OnDestroy {
   @Input() id: string = `mat-mdc-dialog-title-${dialogElementUid++}`;
 
   constructor(
@@ -115,11 +118,21 @@ export class MatDialogTitle implements OnInit {
 
     if (this._dialogRef) {
       Promise.resolve().then(() => {
-        const container = this._dialogRef._containerInstance;
+        // Note: we null check the queue, because there are some internal
+        // tests that are mocking out `MatDialogRef` incorrectly.
+        this._dialogRef._containerInstance?._addAriaLabelledBy?.(this.id);
+      });
+    }
+  }
 
-        if (container && !container._ariaLabelledBy) {
-          container._ariaLabelledBy = this.id;
-        }
+  ngOnDestroy() {
+    // Note: we null check because there are some internal
+    // tests that are mocking out `MatDialogRef` incorrectly.
+    const instance = this._dialogRef?._containerInstance;
+
+    if (instance) {
+      Promise.resolve().then(() => {
+        instance._removeAriaLabelledBy?.(this.id);
       });
     }
   }
@@ -131,6 +144,7 @@ export class MatDialogTitle implements OnInit {
 @Directive({
   selector: `[mat-dialog-content], mat-dialog-content, [matDialogContent]`,
   host: {'class': 'mat-mdc-dialog-content mdc-dialog__content'},
+  standalone: true,
 })
 export class MatDialogContent {}
 
@@ -140,6 +154,7 @@ export class MatDialogContent {}
  */
 @Directive({
   selector: `[mat-dialog-actions], mat-dialog-actions, [matDialogActions]`,
+  standalone: true,
   host: {
     'class': 'mat-mdc-dialog-actions mdc-dialog__actions',
     '[class.mat-mdc-dialog-actions-align-center]': 'align === "center"',

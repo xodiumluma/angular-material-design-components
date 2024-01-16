@@ -6,12 +6,12 @@
 
 import { ActiveDescendantKeyManager } from '@angular/cdk/a11y';
 import { AfterContentInit } from '@angular/core';
-import { BooleanInput } from '@angular/cdk/coercion';
 import { ChangeDetectorRef } from '@angular/core';
 import { ControlValueAccessor } from '@angular/forms';
 import { Highlightable } from '@angular/cdk/a11y';
 import * as i0 from '@angular/core';
 import { ListKeyManagerOption } from '@angular/cdk/a11y';
+import { NgZone } from '@angular/core';
 import { OnDestroy } from '@angular/core';
 import { QueryList } from '@angular/core';
 import { SelectionModel } from '@angular/cdk/collections';
@@ -19,14 +19,14 @@ import { Subject } from 'rxjs';
 
 // @public (undocumented)
 export class CdkListbox<T = unknown> implements AfterContentInit, OnDestroy, ControlValueAccessor {
+    constructor();
     protected readonly changeDetectorRef: ChangeDetectorRef;
     get compareWith(): undefined | ((o1: T, o2: T) => boolean);
     set compareWith(fn: undefined | ((o1: T, o2: T) => boolean));
     deselect(option: CdkOption<T>): void;
     deselectValue(value: T): void;
     protected readonly destroyed: Subject<void>;
-    get disabled(): boolean;
-    set disabled(value: BooleanInput);
+    disabled: boolean;
     protected readonly element: HTMLElement;
     get enabledTabIndex(): number | null;
     set enabledTabIndex(value: number | null);
@@ -44,15 +44,26 @@ export class CdkListbox<T = unknown> implements AfterContentInit, OnDestroy, Con
     isValueSelected(value: T): boolean;
     protected listKeyManager: ActiveDescendantKeyManager<CdkOption<T>>;
     get multiple(): boolean;
-    set multiple(value: BooleanInput);
-    get navigateDisabledOptions(): BooleanInput;
-    set navigateDisabledOptions(skip: BooleanInput);
-    get navigationWrapDisabled(): BooleanInput;
-    set navigationWrapDisabled(wrap: BooleanInput);
+    set multiple(value: boolean);
+    get navigateDisabledOptions(): boolean;
+    set navigateDisabledOptions(skip: boolean);
+    get navigationWrapDisabled(): boolean;
+    set navigationWrapDisabled(wrap: boolean);
+    // (undocumented)
+    static ngAcceptInputType_disabled: unknown;
+    // (undocumented)
+    static ngAcceptInputType_multiple: unknown;
+    // (undocumented)
+    static ngAcceptInputType_navigateDisabledOptions: unknown;
+    // (undocumented)
+    static ngAcceptInputType_navigationWrapDisabled: unknown;
+    // (undocumented)
+    static ngAcceptInputType_useActiveDescendant: unknown;
     // (undocumented)
     ngAfterContentInit(): void;
     // (undocumented)
     ngOnDestroy(): void;
+    protected readonly ngZone: NgZone;
     protected options: QueryList<CdkOption<T>>;
     get orientation(): 'horizontal' | 'vertical';
     set orientation(value: 'horizontal' | 'vertical');
@@ -68,8 +79,7 @@ export class CdkListbox<T = unknown> implements AfterContentInit, OnDestroy, Con
     toggleValue(value: T): void;
     protected triggerOption(option: CdkOption<T> | null): void;
     protected triggerRange(trigger: CdkOption<T> | null, from: number, to: number, on: boolean): void;
-    get useActiveDescendant(): boolean;
-    set useActiveDescendant(shouldUseActiveDescendant: BooleanInput);
+    useActiveDescendant: boolean;
     get value(): readonly T[];
     set value(value: readonly T[]);
     readonly valueChange: Subject<ListboxValueChangeEvent<T>>;
@@ -96,7 +106,7 @@ export class CdkOption<T = unknown> implements ListKeyManagerOption, Highlightab
     deselect(): void;
     protected destroyed: Subject<void>;
     get disabled(): boolean;
-    set disabled(value: BooleanInput);
+    set disabled(value: boolean);
     readonly element: HTMLElement;
     get enabledTabIndex(): number | null;
     set enabledTabIndex(value: number | null);
@@ -109,6 +119,8 @@ export class CdkOption<T = unknown> implements ListKeyManagerOption, Highlightab
     isActive(): boolean;
     isSelected(): boolean;
     protected readonly listbox: CdkListbox<T>;
+    // (undocumented)
+    static ngAcceptInputType_disabled: unknown;
     // (undocumented)
     ngOnDestroy(): void;
     select(): void;

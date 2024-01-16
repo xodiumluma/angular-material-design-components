@@ -12,6 +12,7 @@ import {DOCUMENT} from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  ComponentRef,
   ElementRef,
   EventEmitter,
   Inject,
@@ -24,6 +25,7 @@ import {MatDialogConfig} from './dialog-config';
 import {ANIMATION_MODULE_TYPE} from '@angular/platform-browser/animations';
 import {CdkDialogContainer} from '@angular/cdk/dialog';
 import {coerceNumberProperty} from '@angular/cdk/coercion';
+import {CdkPortalOutlet, ComponentPortal} from '@angular/cdk/portal';
 
 /** Event that captures the state of dialog container animations. */
 interface LegacyDialogAnimationEvent {
@@ -46,91 +48,6 @@ export const OPEN_ANIMATION_DURATION = 150;
 /** Duration of the closing animation in milliseconds. */
 export const CLOSE_ANIMATION_DURATION = 75;
 
-/**
- * Base class for the `MatDialogContainer`. The base class does not implement
- * animations as these are left to implementers of the dialog container.
- */
-// tslint:disable-next-line:validate-decorators
-@Component({template: ''})
-export abstract class _MatDialogContainerBase extends CdkDialogContainer<MatDialogConfig> {
-  /** Emits when an animation state changes. */
-  _animationStateChanged = new EventEmitter<LegacyDialogAnimationEvent>();
-
-  constructor(
-    elementRef: ElementRef,
-    focusTrapFactory: FocusTrapFactory,
-    @Optional() @Inject(DOCUMENT) _document: any,
-    dialogConfig: MatDialogConfig,
-    interactivityChecker: InteractivityChecker,
-    ngZone: NgZone,
-    overlayRef: OverlayRef,
-    focusMonitor?: FocusMonitor,
-  ) {
-    super(
-      elementRef,
-      focusTrapFactory,
-      _document,
-      dialogConfig,
-      interactivityChecker,
-      ngZone,
-      overlayRef,
-      focusMonitor,
-    );
-  }
-
-  /** Starts the dialog exit animation. */
-  abstract _startExitAnimation(): void;
-
-  protected override _captureInitialFocus(): void {
-    if (!this._config.delayFocusTrap) {
-      this._trapFocus();
-    }
-  }
-
-  /**
-   * Callback for when the open dialog animation has finished. Intended to
-   * be called by sub-classes that use different animation implementations.
-   */
-  protected _openAnimationDone(totalTime: number) {
-    if (this._config.delayFocusTrap) {
-      this._trapFocus();
-    }
-
-    this._animationStateChanged.next({state: 'opened', totalTime});
-  }
-}
-
-const TRANSITION_DURATION_PROPERTY = '--mat-dialog-transition-duration';
-
-// TODO(mmalerba): Remove this function after animation durations are required
-//  to be numbers.
-/**
- * Converts a CSS time string to a number in ms. If the given time is already a
- * number, it is assumed to be in ms.
- */
-function parseCssTime(time: string | number | undefined): number | null {
-  if (time == null) {
-    return null;
-  }
-  if (typeof time === 'number') {
-    return time;
-  }
-  if (time.endsWith('ms')) {
-    return coerceNumberProperty(time.substring(0, time.length - 2));
-  }
-  if (time.endsWith('s')) {
-    return coerceNumberProperty(time.substring(0, time.length - 1)) * 1000;
-  }
-  if (time === '0') {
-    return 0;
-  }
-  return null; // anything else is invalid.
-}
-
-/**
- * Internal component that wraps user-provided dialog content in a MDC dialog.
- * @docs-private
- */
 @Component({
   selector: 'mat-dialog-container',
   templateUrl: 'dialog-container.html',
@@ -139,19 +56,24 @@ function parseCssTime(time: string | number | undefined): number | null {
   // Disabled for consistency with the non-MDC dialog container.
   // tslint:disable-next-line:validate-decorators
   changeDetection: ChangeDetectionStrategy.Default,
+  standalone: true,
+  imports: [CdkPortalOutlet],
   host: {
     'class': 'mat-mdc-dialog-container mdc-dialog',
     'tabindex': '-1',
     '[attr.aria-modal]': '_config.ariaModal',
     '[id]': '_config.id',
     '[attr.role]': '_config.role',
-    '[attr.aria-labelledby]': '_config.ariaLabel ? null : _ariaLabelledBy',
+    '[attr.aria-labelledby]': '_config.ariaLabel ? null : _ariaLabelledByQueue[0]',
     '[attr.aria-label]': '_config.ariaLabel',
     '[attr.aria-describedby]': '_config.ariaDescribedBy || null',
     '[class._mat-animation-noopable]': '!_animationsEnabled',
   },
 })
-export class MatDialogContainer extends _MatDialogContainerBase implements OnDestroy {
+export class MatDialogContainer extends CdkDialogContainer<MatDialogConfig> implements OnDestroy {
+  /** Emits when an animation state changes. */
+  _animationStateChanged = new EventEmitter<LegacyDialogAnimationEvent>();
+
   /** Whether animations are enabled. */
   _animationsEnabled: boolean = this._animationMode !== 'NoopAnimations';
 
@@ -171,9 +93,9 @@ export class MatDialogContainer extends _MatDialogContainerBase implements OnDes
   constructor(
     elementRef: ElementRef,
     focusTrapFactory: FocusTrapFactory,
-    @Optional() @Inject(DOCUMENT) document: any,
+    @Optional() @Inject(DOCUMENT) _document: any,
     dialogConfig: MatDialogConfig,
-    checker: InteractivityChecker,
+    interactivityChecker: InteractivityChecker,
     ngZone: NgZone,
     overlayRef: OverlayRef,
     @Optional() @Inject(ANIMATION_MODULE_TYPE) private _animationMode?: string,
@@ -182,9 +104,9 @@ export class MatDialogContainer extends _MatDialogContainerBase implements OnDes
     super(
       elementRef,
       focusTrapFactory,
-      document,
+      _document,
       dialogConfig,
-      checker,
+      interactivityChecker,
       ngZone,
       overlayRef,
       focusMonitor,
@@ -206,14 +128,6 @@ export class MatDialogContainer extends _MatDialogContainerBase implements OnDes
     //      in React's `setState` mechanism.
     //      https://github.com/material-components/material-components-web/pull/3682.
     this._startOpenAnimation();
-  }
-
-  override ngOnDestroy() {
-    super.ngOnDestroy();
-
-    if (this._animationTimer !== null) {
-      clearTimeout(this._animationTimer);
-    }
   }
 
   /** Starts the dialog open animation if enabled. */
@@ -323,4 +237,71 @@ export class MatDialogContainer extends _MatDialogContainerBase implements OnDes
       }
     });
   }
+
+  protected override _captureInitialFocus(): void {
+    if (!this._config.delayFocusTrap) {
+      this._trapFocus();
+    }
+  }
+
+  /**
+   * Callback for when the open dialog animation has finished. Intended to
+   * be called by sub-classes that use different animation implementations.
+   */
+  protected _openAnimationDone(totalTime: number) {
+    if (this._config.delayFocusTrap) {
+      this._trapFocus();
+    }
+
+    this._animationStateChanged.next({state: 'opened', totalTime});
+  }
+
+  override ngOnDestroy() {
+    super.ngOnDestroy();
+
+    if (this._animationTimer !== null) {
+      clearTimeout(this._animationTimer);
+    }
+  }
+
+  override attachComponentPortal<T>(portal: ComponentPortal<T>): ComponentRef<T> {
+    // When a component is passed into the dialog, the host element interrupts
+    // the `display:flex` from affecting the dialog title, content, and
+    // actions. To fix this, we make the component host `display: contents` by
+    // marking its host with the `mat-mdc-dialog-component-host` class.
+    //
+    // Note that this problem does not exist when a template ref is used since
+    // the title, contents, and actions are then nested directly under the
+    // dialog surface.
+    const ref = super.attachComponentPortal(portal);
+    ref.location.nativeElement.classList.add('mat-mdc-dialog-component-host');
+    return ref;
+  }
+}
+
+const TRANSITION_DURATION_PROPERTY = '--mat-dialog-transition-duration';
+
+// TODO(mmalerba): Remove this function after animation durations are required
+//  to be numbers.
+/**
+ * Converts a CSS time string to a number in ms. If the given time is already a
+ * number, it is assumed to be in ms.
+ */
+function parseCssTime(time: string | number | undefined): number | null {
+  if (time == null) {
+    return null;
+  }
+  if (typeof time === 'number') {
+    return time;
+  }
+  if (time.endsWith('ms')) {
+    return coerceNumberProperty(time.substring(0, time.length - 2));
+  }
+  if (time.endsWith('s')) {
+    return coerceNumberProperty(time.substring(0, time.length - 1)) * 1000;
+  }
+  if (time === '0') {
+    return 0;
+  }
+  return null; // anything else is invalid.
 }

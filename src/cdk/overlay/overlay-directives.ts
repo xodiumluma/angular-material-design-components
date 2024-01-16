@@ -7,7 +7,6 @@
  */
 
 import {Direction, Directionality} from '@angular/cdk/bidi';
-import {BooleanInput, coerceBooleanProperty} from '@angular/cdk/coercion';
 import {ESCAPE, hasModifierKey} from '@angular/cdk/keycodes';
 import {TemplatePortal} from '@angular/cdk/portal';
 import {
@@ -24,6 +23,8 @@ import {
   SimpleChanges,
   TemplateRef,
   ViewContainerRef,
+  booleanAttribute,
+  inject,
 } from '@angular/core';
 import {Subscription} from 'rxjs';
 import {takeWhile} from 'rxjs/operators';
@@ -69,6 +70,13 @@ const defaultPositionList: ConnectedPosition[] = [
 /** Injection token that determines the scroll handling while the connected overlay is open. */
 export const CDK_CONNECTED_OVERLAY_SCROLL_STRATEGY = new InjectionToken<() => ScrollStrategy>(
   'cdk-connected-overlay-scroll-strategy',
+  {
+    providedIn: 'root',
+    factory: () => {
+      const overlay = inject(Overlay);
+      return () => overlay.scrollStrategies.reposition();
+    },
+  },
 );
 
 /**
@@ -99,11 +107,6 @@ export class CdkOverlayOrigin {
 export class CdkConnectedOverlay implements OnDestroy, OnChanges {
   private _overlayRef: OverlayRef;
   private _templatePortal: TemplatePortal;
-  private _hasBackdrop = false;
-  private _lockPosition = false;
-  private _growAfterOpen = false;
-  private _flexibleDimensions = false;
-  private _push = false;
   private _backdropSubscription = Subscription.EMPTY;
   private _attachSubscription = Subscription.EMPTY;
   private _detachSubscription = Subscription.EMPTY;
@@ -112,6 +115,7 @@ export class CdkConnectedOverlay implements OnDestroy, OnChanges {
   private _offsetY: number;
   private _position: FlexibleConnectedPositionStrategy;
   private _scrollStrategyFactory: () => ScrollStrategy;
+  private _disposeOnNavigation = false;
 
   /** Origin for the connected overlay. */
   @Input('cdkConnectedOverlayOrigin')
@@ -186,48 +190,31 @@ export class CdkConnectedOverlay implements OnDestroy, OnChanges {
   @Input('cdkConnectedOverlayTransformOriginOn') transformOriginSelector: string;
 
   /** Whether or not the overlay should attach a backdrop. */
-  @Input('cdkConnectedOverlayHasBackdrop')
-  get hasBackdrop(): boolean {
-    return this._hasBackdrop;
-  }
-  set hasBackdrop(value: BooleanInput) {
-    this._hasBackdrop = coerceBooleanProperty(value);
-  }
+  @Input({alias: 'cdkConnectedOverlayHasBackdrop', transform: booleanAttribute})
+  hasBackdrop: boolean = false;
 
   /** Whether or not the overlay should be locked when scrolling. */
-  @Input('cdkConnectedOverlayLockPosition')
-  get lockPosition(): boolean {
-    return this._lockPosition;
-  }
-  set lockPosition(value: BooleanInput) {
-    this._lockPosition = coerceBooleanProperty(value);
-  }
+  @Input({alias: 'cdkConnectedOverlayLockPosition', transform: booleanAttribute})
+  lockPosition: boolean = false;
 
   /** Whether the overlay's width and height can be constrained to fit within the viewport. */
-  @Input('cdkConnectedOverlayFlexibleDimensions')
-  get flexibleDimensions(): boolean {
-    return this._flexibleDimensions;
-  }
-  set flexibleDimensions(value: BooleanInput) {
-    this._flexibleDimensions = coerceBooleanProperty(value);
-  }
+  @Input({alias: 'cdkConnectedOverlayFlexibleDimensions', transform: booleanAttribute})
+  flexibleDimensions: boolean = false;
 
   /** Whether the overlay can grow after the initial open when flexible positioning is turned on. */
-  @Input('cdkConnectedOverlayGrowAfterOpen')
-  get growAfterOpen(): boolean {
-    return this._growAfterOpen;
-  }
-  set growAfterOpen(value: BooleanInput) {
-    this._growAfterOpen = coerceBooleanProperty(value);
-  }
+  @Input({alias: 'cdkConnectedOverlayGrowAfterOpen', transform: booleanAttribute})
+  growAfterOpen: boolean = false;
 
   /** Whether the overlay can be pushed on-screen if none of the provided positions fit. */
-  @Input('cdkConnectedOverlayPush')
-  get push(): boolean {
-    return this._push;
+  @Input({alias: 'cdkConnectedOverlayPush', transform: booleanAttribute}) push: boolean = false;
+
+  /** Whether the overlay should be disposed of when the user goes backwards/forwards in history. */
+  @Input({alias: 'cdkConnectedOverlayDisposeOnNavigation', transform: booleanAttribute})
+  get disposeOnNavigation(): boolean {
+    return this._disposeOnNavigation;
   }
-  set push(value: BooleanInput) {
-    this._push = coerceBooleanProperty(value);
+  set disposeOnNavigation(value: boolean) {
+    this._disposeOnNavigation = value;
   }
 
   /** Event emitted when the backdrop is clicked. */
@@ -335,6 +322,7 @@ export class CdkConnectedOverlay implements OnDestroy, OnChanges {
       positionStrategy,
       scrollStrategy: this.scrollStrategy,
       hasBackdrop: this.hasBackdrop,
+      disposeOnNavigation: this.disposeOnNavigation,
     });
 
     if (this.width || this.width === 0) {

@@ -44,7 +44,7 @@ import {
 import {normalizePassiveListenerOptions} from '@angular/cdk/platform';
 import {asapScheduler, merge, Observable, of as observableOf, Subscription} from 'rxjs';
 import {delay, filter, take, takeUntil} from 'rxjs/operators';
-import {_MatMenuBase, MenuCloseReason} from './menu';
+import {MatMenu, MenuCloseReason} from './menu';
 import {throwMatMenuRecursiveError} from './menu-errors';
 import {MatMenuItem} from './menu-item';
 import {MAT_MENU_PANEL, MatMenuPanel} from './menu-panel';
@@ -53,6 +53,13 @@ import {MenuPositionX, MenuPositionY} from './menu-positions';
 /** Injection token that determines the scroll handling while the menu is open. */
 export const MAT_MENU_SCROLL_STRATEGY = new InjectionToken<() => ScrollStrategy>(
   'mat-menu-scroll-strategy',
+  {
+    providedIn: 'root',
+    factory: () => {
+      const overlay = inject(Overlay);
+      return () => overlay.scrollStrategies.reposition();
+    },
+  },
 );
 
 /** @docs-private */
@@ -77,8 +84,11 @@ const passiveEventListenerOptions = normalizePassiveListenerOptions({passive: tr
  */
 export const MENU_PANEL_TOP_PADDING = 8;
 
+/** Directive applied to an element that should trigger a `mat-menu`. */
 @Directive({
+  selector: `[mat-menu-trigger-for], [matMenuTriggerFor]`,
   host: {
+    'class': 'mat-mdc-menu-trigger',
     '[attr.aria-haspopup]': 'menu ? "menu" : null',
     '[attr.aria-expanded]': 'menuOpen',
     '[attr.aria-controls]': 'menuOpen ? menu.panelId : null',
@@ -86,8 +96,10 @@ export const MENU_PANEL_TOP_PADDING = 8;
     '(mousedown)': '_handleMousedown($event)',
     '(keydown)': '_handleKeydown($event)',
   },
+  exportAs: 'matMenuTrigger',
+  standalone: true,
 })
-export abstract class _MatMenuTriggerBase implements AfterContentInit, OnDestroy {
+export class MatMenuTrigger implements AfterContentInit, OnDestroy {
   private _portal: TemplatePortal;
   private _overlayRef: OverlayRef | null = null;
   private _menuOpen: boolean = false;
@@ -96,13 +108,12 @@ export abstract class _MatMenuTriggerBase implements AfterContentInit, OnDestroy
   private _menuCloseSubscription = Subscription.EMPTY;
   private _scrollStrategy: () => ScrollStrategy;
   private _changeDetectorRef = inject(ChangeDetectorRef);
-  protected _panelClass: string | null;
 
   /**
    * We're specifically looking for a `MatMenu` here since the generic `MatMenuPanel`
    * interface lacks some functionality around nested menus and animations.
    */
-  private _parentMaterialMenu: _MatMenuBase | undefined;
+  private _parentMaterialMenu: MatMenu | undefined;
 
   /**
    * Cached value of the padding of the parent menu panel.
@@ -256,7 +267,7 @@ export abstract class _MatMenuTriggerBase implements AfterContentInit, OnDestroy
     private _ngZone?: NgZone,
   ) {
     this._scrollStrategy = scrollStrategy;
-    this._parentMaterialMenu = parentMenu instanceof _MatMenuBase ? parentMenu : undefined;
+    this._parentMaterialMenu = parentMenu instanceof MatMenu ? parentMenu : undefined;
 
     _element.nativeElement.addEventListener(
       'touchstart',
@@ -330,11 +341,7 @@ export abstract class _MatMenuTriggerBase implements AfterContentInit, OnDestroy
     this._closingActionsSubscription = this._menuClosingActions().subscribe(() => this.closeMenu());
     this._initMenu(menu);
 
-    if (this._panelClass) {
-      overlayRef.overlayElement.classList.add(this._panelClass);
-    }
-
-    if (menu instanceof _MatMenuBase) {
+    if (menu instanceof MatMenu) {
       menu._startAnimation();
       menu._directDescendantItems.changes.pipe(takeUntil(menu.close)).subscribe(() => {
         // Re-adjust the position without locking when the amount of items
@@ -389,7 +396,7 @@ export abstract class _MatMenuTriggerBase implements AfterContentInit, OnDestroy
 
     this._openedBy = undefined;
 
-    if (menu instanceof _MatMenuBase) {
+    if (menu instanceof MatMenu) {
       menu._resetAnimation();
 
       if (menu.lazyContent) {
@@ -658,7 +665,7 @@ export abstract class _MatMenuTriggerBase implements AfterContentInit, OnDestroy
         // If the same menu is used between multiple triggers, it might still be animating
         // while the new trigger tries to re-open it. Wait for the animation to finish
         // before doing so. Also interrupt if the user moves to another item.
-        if (this.menu instanceof _MatMenuBase && this.menu._isAnimating) {
+        if (this.menu instanceof MatMenu && this.menu._isAnimating) {
           // We need the `delay(0)` here in order to avoid
           // 'changed after checked' errors in some cases. See #12194.
           this.menu._animationDone
@@ -681,16 +688,4 @@ export abstract class _MatMenuTriggerBase implements AfterContentInit, OnDestroy
 
     return this._portal;
   }
-}
-
-/** Directive applied to an element that should trigger a `mat-menu`. */
-@Directive({
-  selector: `[mat-menu-trigger-for], [matMenuTriggerFor]`,
-  host: {
-    'class': 'mat-mdc-menu-trigger',
-  },
-  exportAs: 'matMenuTrigger',
-})
-export class MatMenuTrigger extends _MatMenuTriggerBase {
-  protected override _panelClass = 'mat-mdc-menu-panel-wrapper';
 }

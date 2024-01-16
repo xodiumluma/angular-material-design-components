@@ -6,7 +6,6 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {BooleanInput, coerceBooleanProperty} from '@angular/cdk/coercion';
 import {
   ContentChild,
   Directive,
@@ -15,6 +14,7 @@ import {
   Input,
   Optional,
   TemplateRef,
+  booleanAttribute,
 } from '@angular/core';
 import {CanStick, CanStickCtor, mixinHasStickyInput} from './can-stick';
 import {CDK_TABLE} from './tokens';
@@ -28,7 +28,10 @@ export interface CellDef {
  * Cell definition for a CDK table.
  * Captures the template of a column's data row cell as well as cell-specific properties.
  */
-@Directive({selector: '[cdkCellDef]'})
+@Directive({
+  selector: '[cdkCellDef]',
+  standalone: true,
+})
 export class CdkCellDef implements CellDef {
   constructor(/** @docs-private */ public template: TemplateRef<any>) {}
 }
@@ -37,7 +40,10 @@ export class CdkCellDef implements CellDef {
  * Header cell definition for a CDK table.
  * Captures the template of a column's header cell and as well as cell-specific properties.
  */
-@Directive({selector: '[cdkHeaderCellDef]'})
+@Directive({
+  selector: '[cdkHeaderCellDef]',
+  standalone: true,
+})
 export class CdkHeaderCellDef implements CellDef {
   constructor(/** @docs-private */ public template: TemplateRef<any>) {}
 }
@@ -46,7 +52,10 @@ export class CdkHeaderCellDef implements CellDef {
  * Footer cell definition for a CDK table.
  * Captures the template of a column's footer cell and as well as cell-specific properties.
  */
-@Directive({selector: '[cdkFooterCellDef]'})
+@Directive({
+  selector: '[cdkFooterCellDef]',
+  standalone: true,
+})
 export class CdkFooterCellDef implements CellDef {
   constructor(/** @docs-private */ public template: TemplateRef<any>) {}
 }
@@ -65,6 +74,7 @@ const _CdkColumnDefBase: CanStickCtor & typeof CdkColumnDefBase =
   selector: '[cdkColumnDef]',
   inputs: ['sticky'],
   providers: [{provide: 'MAT_SORT_HEADER_COLUMN_DEF', useExisting: CdkColumnDef}],
+  standalone: true,
 })
 export class CdkColumnDef extends _CdkColumnDefBase implements CanStick {
   /** Unique name for this column. */
@@ -82,14 +92,15 @@ export class CdkColumnDef extends _CdkColumnDefBase implements CanStick {
    * that it mimics the `CanStick` mixin such that `_hasStickyChanged` is set to true if the value
    * has been changed.
    */
-  @Input('stickyEnd')
+  @Input({transform: booleanAttribute})
   get stickyEnd(): boolean {
     return this._stickyEnd;
   }
-  set stickyEnd(v: BooleanInput) {
-    const prevValue = this._stickyEnd;
-    this._stickyEnd = coerceBooleanProperty(v);
-    this._hasStickyChanged = prevValue !== this._stickyEnd;
+  set stickyEnd(value: boolean) {
+    if (value !== this._stickyEnd) {
+      this._stickyEnd = value;
+      this._hasStickyChanged = true;
+    }
   }
   _stickyEnd: boolean = false;
 
@@ -161,6 +172,7 @@ export class BaseCdkCell {
     'class': 'cdk-header-cell',
     'role': 'columnheader',
   },
+  standalone: true,
 })
 export class CdkHeaderCell extends BaseCdkCell {
   constructor(columnDef: CdkColumnDef, elementRef: ElementRef) {
@@ -174,13 +186,13 @@ export class CdkHeaderCell extends BaseCdkCell {
   host: {
     'class': 'cdk-footer-cell',
   },
+  standalone: true,
 })
 export class CdkFooterCell extends BaseCdkCell {
   constructor(columnDef: CdkColumnDef, elementRef: ElementRef) {
     super(columnDef, elementRef);
-    if (columnDef._table?._elementRef.nativeElement.nodeType === 1) {
-      const tableRole = columnDef._table._elementRef.nativeElement.getAttribute('role');
-      const role = tableRole === 'grid' || tableRole === 'treegrid' ? 'gridcell' : 'cell';
+    const role = columnDef._table?._getCellRole();
+    if (role) {
       elementRef.nativeElement.setAttribute('role', role);
     }
   }
@@ -192,13 +204,13 @@ export class CdkFooterCell extends BaseCdkCell {
   host: {
     'class': 'cdk-cell',
   },
+  standalone: true,
 })
 export class CdkCell extends BaseCdkCell {
   constructor(columnDef: CdkColumnDef, elementRef: ElementRef) {
     super(columnDef, elementRef);
-    if (columnDef._table?._elementRef.nativeElement.nodeType === 1) {
-      const tableRole = columnDef._table._elementRef.nativeElement.getAttribute('role');
-      const role = tableRole === 'grid' || tableRole === 'treegrid' ? 'gridcell' : 'cell';
+    const role = columnDef._table?._getCellRole();
+    if (role) {
       elementRef.nativeElement.setAttribute('role', role);
     }
   }

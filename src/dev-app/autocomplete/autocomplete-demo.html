@@ -1,23 +1,32 @@
 Space above cards: <input type="number" [formControl]="topHeightCtrl">
 <div [style.height.px]="topHeightCtrl.value"></div>
 <div class="demo-autocomplete">
-  <mat-card *ngIf="(reactiveStates | async) as tempStates">
-    Reactive length: {{ tempStates?.length }}
+  <mat-card>
+    Reactive length: {{ reactiveStates.length }}
     <div>Reactive value: {{ stateCtrl.value | json }}</div>
     <div>Reactive dirty: {{ stateCtrl.dirty }}</div>
 
     <mat-form-field [color]="reactiveStatesTheme">
       <mat-label>State</mat-label>
-      <input matInput [matAutocomplete]="reactiveAuto" [formControl]="stateCtrl">
+      <input
+        #reactiveInput
+        matInput
+        [matAutocomplete]="reactiveAuto"
+        [formControl]="stateCtrl"
+        (input)="reactiveStates = filterStates(reactiveInput.value)"
+        (focus)="reactiveStates = filterStates(reactiveInput.value)">
     </mat-form-field>
-    <mat-autocomplete #reactiveAuto="matAutocomplete" [displayWith]="displayFn"
+    <mat-autocomplete #reactiveAuto="matAutocomplete"
+      [displayWith]="displayFn"
       [hideSingleSelectionIndicator]="reactiveHideSingleSelectionIndicator"
-      [autoActiveFirstOption]="reactiveAutoActiveFirstOption">
-      <mat-option *ngFor="let state of tempStates; let index = index" [value]="state"
-        [disabled]="reactiveIsStateDisabled(state.index)">
-        <span>{{ state.name }}</span>
-        <span class="demo-secondary-text"> ({{ state.code }}) </span>
-      </mat-option>
+      [autoActiveFirstOption]="reactiveAutoActiveFirstOption"
+      [requireSelection]="reactiveRequireSelection">
+      @for (state of reactiveStates; track state; let index = $index) {
+        <mat-option [value]="state" [disabled]="reactiveIsStateDisabled(state.index)">
+          <span>{{ state.name }}</span>
+          <span class="demo-secondary-text"> ({{ state.code }}) </span>
+        </mat-option>
+      }
     </mat-autocomplete>
 
     <p>
@@ -45,6 +54,11 @@ Space above cards: <input type="number" [formControl]="topHeightCtrl">
         Automatically activate first option
       </mat-checkbox>
     </p>
+    <p>
+      <mat-checkbox [(ngModel)]="reactiveRequireSelection">
+        Require Selection
+      </mat-checkbox>
+    </p>
 
   </mat-card>
 
@@ -53,31 +67,36 @@ Space above cards: <input type="number" [formControl]="topHeightCtrl">
     <div>Template-driven value (currentState): {{ currentState }}</div>
     <div>Template-driven dirty: {{ modelDir ? modelDir.dirty : false }}</div>
 
-    <!-- Added an ngIf below to test that autocomplete works with ngIf -->
-    <mat-form-field *ngIf="true" [color]="templateStatesTheme">
-      <mat-label>State</mat-label>
-      <input matInput [matAutocomplete]="tdAuto" [(ngModel)]="currentState"
-        (ngModelChange)="tdStates = filterStates(currentState)" [disabled]="tdDisabled">
-      <mat-autocomplete #tdAuto="matAutocomplete"
-        [hideSingleSelectionIndicator]="templateHideSingleSelectionIndicator"
-        [autoActiveFirstOption]="templateAutoActiveFirstOption">
-        <mat-option *ngFor="let state of tdStates" [value]="state.name"
-          [disabled]="templateIsStateDisabled(state.index)">
-          <span>{{ state.name }}</span>
-        </mat-option>
-      </mat-autocomplete>
-    </mat-form-field>
+    <!-- Added an @if below to test that autocomplete works with @if -->
+    @if (true) {
+      <mat-form-field [color]="templateStatesTheme">
+        <mat-label>State</mat-label>
+        <input matInput [matAutocomplete]="tdAuto" [(ngModel)]="currentState"
+          (ngModelChange)="tdStates = filterStates(currentState)" [disabled]="tdDisabled">
+        <mat-autocomplete #tdAuto="matAutocomplete"
+          [hideSingleSelectionIndicator]="templateHideSingleSelectionIndicator"
+          [autoActiveFirstOption]="templateAutoActiveFirstOption"
+          [requireSelection]="templateRequireSelection">
+          @for (state of tdStates; track state) {
+            <mat-option [value]="state.name"
+              [disabled]="templateIsStateDisabled(state.index)">
+              <span>{{ state.name }}</span>
+            </mat-option>
+          }
+        </mat-autocomplete>
+      </mat-form-field>
+    }
 
     <p>
-      <button mat-button (click)="modelDir.reset()">RESET</button>
+      <button mat-button (click)="clearTemplateState()">RESET</button>
       <button mat-button (click)="currentState='California'">SET VALUE</button>
       <button mat-button (click)="tdDisabled=!tdDisabled">
         TOGGLE DISABLED
       </button>
       <select [(ngModel)]="templateStatesTheme">
-        <option *ngFor="let theme of availableThemes" [value]="theme.value">
-          {{theme.name}}
-        </option>
+        @for (theme of availableThemes; track theme) {
+          <option [value]="theme.value">{{theme.name}}</option>
+        }
       </select>
     </p>
     <p>
@@ -87,6 +106,11 @@ Space above cards: <input type="number" [formControl]="topHeightCtrl">
     <p>
       <mat-checkbox [(ngModel)]="templateAutoActiveFirstOption">
         Automatically activate first option
+      </mat-checkbox>
+    </p>
+    <p>
+      <mat-checkbox [(ngModel)]="templateRequireSelection">
+        Require Selection
       </mat-checkbox>
     </p>
     <p>
@@ -122,8 +146,11 @@ Space above cards: <input type="number" [formControl]="topHeightCtrl">
 </div>
 
 <mat-autocomplete #groupedAuto="matAutocomplete">
-  <mat-optgroup *ngFor="let group of filteredGroupedStates"
-    [label]="'States starting with ' + group.letter">
-    <mat-option *ngFor="let state of group.states" [value]="state.name">{{ state.name }}</mat-option>
-  </mat-optgroup>
+  @for (group of filteredGroupedStates; track group) {
+    <mat-optgroup [label]="'States starting with ' + group.letter">
+      @for (state of group.states; track state) {
+        <mat-option [value]="state.name">{{ state.name }}</mat-option>
+      }
+    </mat-optgroup>
+  }
 </mat-autocomplete>

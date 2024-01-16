@@ -18,9 +18,6 @@
   .mat-mdc-standard-chip {
     // Add the official slots for the MDC chip.
     @include mdc-chip-theme.theme-styles($token-slots);
-
-    // Add default values for tokens that aren't outputted by the theming API.
-    @include mdc-chip-theme.theme(m2-mdc-chip.get-unthemable-tokens());
   }
 
   // Add additional slots for the MDC chip tokens, needed in Angular Material.
@@ -184,7 +181,7 @@
 }
 
 // The ripple container should match the bounds of the entire chip.
-.mat-mdc-chip-ripple {
+.mat-mdc-chip .mat-ripple.mat-mdc-chip-ripple {
   @include layout-common.fill;
 
   // Disable pointer events for the ripple container and state overlay because the container

@@ -4,7 +4,7 @@
 @use '../core/tokens/m2/mdc/plain-tooltip' as m2-mdc-plain-tooltip;
 
 @include mdc-custom-properties.configure($emit-fallback-values: false,
-$emit-fallback-vars: false) {
+  $emit-fallback-vars: false) {
   $mdc-tooltip-token-slots: m2-mdc-plain-tooltip.get-token-slots();
 
   // Add the MDC tooltip static styles.
@@ -13,9 +13,6 @@ $emit-fallback-vars: false) {
   .mat-mdc-tooltip {
     // Add the official slots for the MDC tooltip.
     @include mdc-plain-tooltip-theme.theme-styles($mdc-tooltip-token-slots);
-
-    // Add default values for MDC tooltip tokens that aren't outputted by the theming API.
-    @include mdc-plain-tooltip-theme.theme(m2-mdc-plain-tooltip.get-unthemable-tokens());
   }
 }
 
@@ -62,7 +59,8 @@ $emit-fallback-vars: false) {
   }
 }
 
-.mat-mdc-tooltip-panel-non-interactive {
+// We need the additional specificity here, because it can be overridden by `.cdk-overlay-panel`.
+.mat-mdc-tooltip-panel.mat-mdc-tooltip-panel-non-interactive {
   pointer-events: none;
 }
 

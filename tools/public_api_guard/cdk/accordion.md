@@ -4,7 +4,6 @@
 
 ```ts
 
-import { BooleanInput } from '@angular/cdk/coercion';
 import { ChangeDetectorRef } from '@angular/core';
 import { EventEmitter } from '@angular/core';
 import * as i0 from '@angular/core';
@@ -16,11 +15,15 @@ import { Subject } from 'rxjs';
 import { UniqueSelectionDispatcher } from '@angular/cdk/collections';
 
 // @public
+export const CDK_ACCORDION: InjectionToken<CdkAccordion>;
+
+// @public
 export class CdkAccordion implements OnDestroy, OnChanges {
     closeAll(): void;
     readonly id: string;
-    get multi(): boolean;
-    set multi(multi: BooleanInput);
+    multi: boolean;
+    // (undocumented)
+    static ngAcceptInputType_multi: unknown;
     // (undocumented)
     ngOnChanges(changes: SimpleChanges): void;
     // (undocumented)
@@ -29,7 +32,7 @@ export class CdkAccordion implements OnDestroy, OnChanges {
     readonly _openCloseAllActions: Subject<boolean>;
     readonly _stateChanges: Subject<SimpleChanges>;
     // (undocumented)
-    static ɵdir: i0.ɵɵDirectiveDeclaration<CdkAccordion, "cdk-accordion, [cdkAccordion]", ["cdkAccordion"], { "multi": { "alias": "multi"; "required": false; }; }, {}, never, never, false, never>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<CdkAccordion, "cdk-accordion, [cdkAccordion]", ["cdkAccordion"], { "multi": { "alias": "multi"; "required": false; }; }, {}, never, never, true, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<CdkAccordion, never>;
 }
@@ -42,20 +45,23 @@ export class CdkAccordionItem implements OnDestroy {
     close(): void;
     readonly closed: EventEmitter<void>;
     readonly destroyed: EventEmitter<void>;
-    get disabled(): boolean;
-    set disabled(disabled: BooleanInput);
+    disabled: boolean;
     get expanded(): boolean;
-    set expanded(expanded: BooleanInput);
+    set expanded(expanded: boolean);
     readonly expandedChange: EventEmitter<boolean>;
     // (undocumented)
     protected _expansionDispatcher: UniqueSelectionDispatcher;
     readonly id: string;
+    // (undocumented)
+    static ngAcceptInputType_disabled: unknown;
+    // (undocumented)
+    static ngAcceptInputType_expanded: unknown;
     ngOnDestroy(): void;
     open(): void;
     readonly opened: EventEmitter<void>;
     toggle(): void;
     // (undocumented)
-    static ɵdir: i0.ɵɵDirectiveDeclaration<CdkAccordionItem, "cdk-accordion-item, [cdkAccordionItem]", ["cdkAccordionItem"], { "expanded": { "alias": "expanded"; "required": false; }; "disabled": { "alias": "disabled"; "required": false; }; }, { "closed": "closed"; "opened": "opened"; "destroyed": "destroyed"; "expandedChange": "expandedChange"; }, never, never, false, never>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<CdkAccordionItem, "cdk-accordion-item, [cdkAccordionItem]", ["cdkAccordionItem"], { "expanded": { "alias": "expanded"; "required": false; }; "disabled": { "alias": "disabled"; "required": false; }; }, { "closed": "closed"; "opened": "opened"; "destroyed": "destroyed"; "expandedChange": "expandedChange"; }, never, never, true, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<CdkAccordionItem, [{ optional: true; skipSelf: true; }, null, null]>;
 }
@@ -67,7 +73,7 @@ export class CdkAccordionModule {
     // (undocumented)
     static ɵinj: i0.ɵɵInjectorDeclaration<CdkAccordionModule>;
     // (undocumented)
-    static ɵmod: i0.ɵɵNgModuleDeclaration<CdkAccordionModule, [typeof i1.CdkAccordion, typeof i2.CdkAccordionItem], never, [typeof i1.CdkAccordion, typeof i2.CdkAccordionItem]>;
+    static ɵmod: i0.ɵɵNgModuleDeclaration<CdkAccordionModule, never, [typeof i1.CdkAccordion, typeof i2.CdkAccordionItem], [typeof i1.CdkAccordion, typeof i2.CdkAccordionItem]>;
 }
 
 // (No @packageDocumentation comment for this package)

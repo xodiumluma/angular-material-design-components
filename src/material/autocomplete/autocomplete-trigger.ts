@@ -9,11 +9,13 @@
 import {addAriaReferencedId, removeAriaReferencedId} from '@angular/cdk/a11y';
 import {
   AfterViewInit,
+  booleanAttribute,
   ChangeDetectorRef,
   Directive,
   ElementRef,
   forwardRef,
   Host,
+  inject,
   Inject,
   InjectionToken,
   Input,
@@ -26,7 +28,6 @@ import {
 } from '@angular/core';
 import {DOCUMENT} from '@angular/common';
 import {Directionality} from '@angular/cdk/bidi';
-import {BooleanInput, coerceBooleanProperty} from '@angular/cdk/coercion';
 import {DOWN_ARROW, ENTER, ESCAPE, TAB, UP_ARROW, hasModifierKey} from '@angular/cdk/keycodes';
 import {_getEventTarget} from '@angular/cdk/platform';
 import {TemplatePortal} from '@angular/cdk/portal';
@@ -45,16 +46,16 @@ import {
   MatOptionSelectionChange,
   _countGroupLabelsBeforeOption,
   _getOptionScrollPosition,
-  _MatOptionBase,
+  MatOption,
 } from '@angular/material/core';
 import {MAT_FORM_FIELD, MatFormField} from '@angular/material/form-field';
 import {defer, fromEvent, merge, Observable, of as observableOf, Subject, Subscription} from 'rxjs';
 import {delay, filter, map, switchMap, take, tap, startWith} from 'rxjs/operators';
-import {_MatAutocompleteOriginBase} from './autocomplete-origin';
+import {MatAutocompleteOrigin} from './autocomplete-origin';
 import {
   MatAutocompleteDefaultOptions,
   MAT_AUTOCOMPLETE_DEFAULT_OPTIONS,
-  _MatAutocompleteBase,
+  MatAutocomplete,
 } from './autocomplete';
 
 /**
@@ -82,6 +83,13 @@ export function getMatAutocompleteMissingPanelError(): Error {
 /** Injection token that determines the scroll handling while the autocomplete panel is open. */
 export const MAT_AUTOCOMPLETE_SCROLL_STRATEGY = new InjectionToken<() => ScrollStrategy>(
   'mat-autocomplete-scroll-strategy',
+  {
+    providedIn: 'root',
+    factory: () => {
+      const overlay = inject(Overlay);
+      return () => overlay.scrollStrategies.reposition();
+    },
+  },
 );
 
 /** @docs-private */
@@ -97,18 +105,44 @@ export const MAT_AUTOCOMPLETE_SCROLL_STRATEGY_FACTORY_PROVIDER = {
 };
 
 /** Base class with all of the `MatAutocompleteTrigger` functionality. */
-@Directive()
-export abstract class _MatAutocompleteTriggerBase
+@Directive({
+  selector: `input[matAutocomplete], textarea[matAutocomplete]`,
+  host: {
+    'class': 'mat-mdc-autocomplete-trigger',
+    '[attr.autocomplete]': 'autocompleteAttribute',
+    '[attr.role]': 'autocompleteDisabled ? null : "combobox"',
+    '[attr.aria-autocomplete]': 'autocompleteDisabled ? null : "list"',
+    '[attr.aria-activedescendant]': '(panelOpen && activeOption) ? activeOption.id : null',
+    '[attr.aria-expanded]': 'autocompleteDisabled ? null : panelOpen.toString()',
+    '[attr.aria-controls]': '(autocompleteDisabled || !panelOpen) ? null : autocomplete?.id',
+    '[attr.aria-haspopup]': 'autocompleteDisabled ? null : "listbox"',
+    // Note: we use `focusin`, as opposed to `focus`, in order to open the panel
+    // a little earlier. This avoids issues where IE delays the focusing of the input.
+    '(focusin)': '_handleFocus()',
+    '(blur)': '_onTouched()',
+    '(input)': '_handleInput($event)',
+    '(keydown)': '_handleKeydown($event)',
+    '(click)': '_handleClick()',
+  },
+  exportAs: 'matAutocompleteTrigger',
+  providers: [MAT_AUTOCOMPLETE_VALUE_ACCESSOR],
+  standalone: true,
+})
+export class MatAutocompleteTrigger
   implements ControlValueAccessor, AfterViewInit, OnChanges, OnDestroy
 {
   private _overlayRef: OverlayRef | null;
   private _portal: TemplatePortal;
   private _componentDestroyed = false;
-  private _autocompleteDisabled = false;
   private _scrollStrategy: () => ScrollStrategy;
+  private _keydownSubscription: Subscription | null;
+  private _outsideClickSubscription: Subscription | null;
 
   /** Old value of the native input. Used to work around issues with the `input` event on IE. */
   private _previousValue: string | number | null;
+
+  /** Value of the input element when the panel was attached (even if there are no options). */
+  private _valueOnAttach: string | number | null;
 
   /** Strategy that is used to position the panel. */
   private _positionStrategy: FlexibleConnectedPositionStrategy;
@@ -136,7 +170,7 @@ export abstract class _MatAutocompleteTriggerBase
    * Current option that we have auto-selected as the user is navigating,
    * but which hasn't been propagated to the model value yet.
    */
-  private _pendingAutoselectedOption: _MatOptionBase | null;
+  private _pendingAutoselectedOption: MatOption | null;
 
   /** Stream of keyboard events that can close the panel. */
   private readonly _closeKeyEventStream = new Subject<void>();
@@ -160,7 +194,7 @@ export abstract class _MatAutocompleteTriggerBase
   _onTouched = () => {};
 
   /** The autocomplete panel to be attached to this trigger. */
-  @Input('matAutocomplete') autocomplete: _MatAutocompleteBase;
+  @Input('matAutocomplete') autocomplete: MatAutocomplete;
 
   /**
    * Position of the autocomplete panel relative to the trigger element. A position of `auto`
@@ -175,7 +209,7 @@ export abstract class _MatAutocompleteTriggerBase
    * Reference relative to which to position the autocomplete panel.
    * Defaults to the autocomplete trigger element.
    */
-  @Input('matAutocompleteConnectedTo') connectedTo: _MatAutocompleteOriginBase;
+  @Input('matAutocompleteConnectedTo') connectedTo: MatAutocompleteOrigin;
 
   /**
    * `autocomplete` attribute to be set on the input element.
@@ -187,13 +221,8 @@ export abstract class _MatAutocompleteTriggerBase
    * Whether the autocomplete is disabled. When disabled, the element will
    * act as a regular input and the user won't be able to open the panel.
    */
-  @Input('matAutocompleteDisabled')
-  get autocompleteDisabled(): boolean {
-    return this._autocompleteDisabled;
-  }
-  set autocompleteDisabled(value: BooleanInput) {
-    this._autocompleteDisabled = coerceBooleanProperty(value);
-  }
+  @Input({alias: 'matAutocompleteDisabled', transform: booleanAttribute})
+  autocompleteDisabled: boolean;
 
   constructor(
     private _element: ElementRef<HTMLInputElement>,
@@ -214,7 +243,7 @@ export abstract class _MatAutocompleteTriggerBase
   }
 
   /** Class to apply to the panel when it's above the input. */
-  protected abstract _aboveClass: string;
+  private _aboveClass = 'mat-mdc-autocomplete-panel-above';
 
   ngAfterViewInit() {
     const window = this._getWindow();
@@ -258,6 +287,11 @@ export abstract class _MatAutocompleteTriggerBase
   openPanel(): void {
     this._attachOverlay();
     this._floatLabel();
+    // Add aria-owns attribute when the autocomplete becomes visible.
+    if (this._trackedModal) {
+      const panelId = this.autocomplete.id;
+      addAriaReferencedId(this._trackedModal, 'aria-owns', panelId);
+    }
   }
 
   /** Closes the autocomplete suggestion panel. */
@@ -286,6 +320,8 @@ export abstract class _MatAutocompleteTriggerBase
       this._closingActionsSubscription.unsubscribe();
     }
 
+    this._updatePanelState();
+
     // Note that in some cases this can end up being called after the component is destroyed.
     // Add a check to ensure that we don't try to run change detection on a destroyed view.
     if (!this._componentDestroyed) {
@@ -294,6 +330,12 @@ export abstract class _MatAutocompleteTriggerBase
       // This ensures that the label is reset when the
       // user clicks outside.
       this._changeDetectorRef.detectChanges();
+    }
+
+    // Remove aria-owns attribute when the autocomplete is no longer visible.
+    if (this._trackedModal) {
+      const panelId = this.autocomplete.id;
+      removeAriaReferencedId(this._trackedModal, 'aria-owns', panelId);
     }
   }
 
@@ -346,7 +388,7 @@ export abstract class _MatAutocompleteTriggerBase
   }) as Observable<MatOptionSelectionChange>;
 
   /** The currently active option, coerced to MatOption type. */
-  get activeOption(): _MatOptionBase | null {
+  get activeOption(): MatOption | null {
     if (this.autocomplete && this.autocomplete._keyManager) {
       return this.autocomplete._keyManager.activeItem;
     }
@@ -365,7 +407,9 @@ export abstract class _MatAutocompleteTriggerBase
         // If we're in the Shadow DOM, the event target will be the shadow root, so we have to
         // fall back to check the first element in the path of the click event.
         const clickTarget = _getEventTarget<HTMLElement>(event)!;
-        const formField = this._formField ? this._formField._elementRef.nativeElement : null;
+        const formField = this._formField
+          ? this._formField.getConnectedOverlayOrigin().nativeElement
+          : null;
         const customOrigin = this.connectedTo ? this.connectedTo.elementRef.nativeElement : null;
 
         return (
@@ -463,7 +507,29 @@ export abstract class _MatAutocompleteTriggerBase
     if (this._previousValue !== value) {
       this._previousValue = value;
       this._pendingAutoselectedOption = null;
-      this._onChange(value);
+
+      // If selection is required we don't write to the CVA while the user is typing.
+      // At the end of the selection either the user will have picked something
+      // or we'll reset the value back to null.
+      if (!this.autocomplete || !this.autocomplete.requireSelection) {
+        this._onChange(value);
+      }
+
+      if (!value) {
+        this._clearPreviousSelectedOption(null, false);
+      } else if (this.panelOpen && !this.autocomplete.requireSelection) {
+        // Note that we don't reset this when `requireSelection` is enabled,
+        // because the option will be reset when the panel is closed.
+        const selectedOption = this.autocomplete.options?.find(option => option.selected);
+
+        if (selectedOption) {
+          const display = this.autocomplete.displayWith?.(selectedOption) ?? selectedOption.value;
+
+          if (value !== display) {
+            selectedOption.deselect(false);
+          }
+        }
+      }
 
       if (this._canOpen() && this._document.activeElement === event.target) {
         this.openPanel();
@@ -541,7 +607,7 @@ export abstract class _MatAutocompleteTriggerBase
             this._zone.run(() => {
               const wasOpen = this.panelOpen;
               this._resetActiveItem();
-              this.autocomplete._setVisibility();
+              this._updatePanelState();
               this._changeDetectorRef.detectChanges();
 
               if (this.panelOpen) {
@@ -557,7 +623,7 @@ export abstract class _MatAutocompleteTriggerBase
                 //   of the available options,
                 // - if a valid string is entered after an invalid one.
                 if (this.panelOpen) {
-                  this.autocomplete.opened.emit();
+                  this._emitOpened();
                 } else {
                   this.autocomplete.closed.emit();
                 }
@@ -574,6 +640,14 @@ export abstract class _MatAutocompleteTriggerBase
     );
   }
 
+  /**
+   * Emits the opened event once it's known that the panel will be shown and stores
+   * the state of the trigger right before the opening sequence was finished.
+   */
+  private _emitOpened() {
+    this.autocomplete.opened.emit();
+  }
+
   /** Destroys the autocomplete suggestion panel. */
   private _destroyPanel(): void {
     if (this._overlayRef) {
@@ -588,6 +662,10 @@ export abstract class _MatAutocompleteTriggerBase
       this.autocomplete && this.autocomplete.displayWith
         ? this.autocomplete.displayWith(value)
         : value;
+
+    if (value == null) {
+      this._clearPreviousSelectedOption(null, false);
+    }
 
     // Simply falling back to an empty string if the display value is falsy does not work properly.
     // The display value can also be the number zero and shouldn't fall back to an empty string.
@@ -612,14 +690,31 @@ export abstract class _MatAutocompleteTriggerBase
    * stemmed from the user.
    */
   private _setValueAndClose(event: MatOptionSelectionChange | null): void {
+    const panel = this.autocomplete;
     const toSelect = event ? event.source : this._pendingAutoselectedOption;
 
     if (toSelect) {
       this._clearPreviousSelectedOption(toSelect);
       this._assignOptionValue(toSelect.value);
+      // TODO(crisbeto): this should wait until the animation is done, otherwise the value
+      // gets reset while the panel is still animating which looks glitchy. It'll likely break
+      // some tests to change it at this point.
       this._onChange(toSelect.value);
-      this.autocomplete._emitSelectEvent(toSelect);
+      panel._emitSelectEvent(toSelect);
       this._element.nativeElement.focus();
+    } else if (
+      panel.requireSelection &&
+      this._element.nativeElement.value !== this._valueOnAttach
+    ) {
+      this._clearPreviousSelectedOption(null);
+      this._assignOptionValue(null);
+      // Wait for the animation to finish before clearing the form control value, otherwise
+      // the options might change while the animation is running which looks glitchy.
+      if (panel._animationDone) {
+        panel._animationDone.pipe(take(1)).subscribe(() => this._onChange(null));
+      } else {
+        this._onChange(null);
+      }
     }
 
     this.closePanel();
@@ -628,10 +723,12 @@ export abstract class _MatAutocompleteTriggerBase
   /**
    * Clear any previous selected option and emit a selection change event for this option
    */
-  private _clearPreviousSelectedOption(skip: _MatOptionBase) {
-    this.autocomplete.options.forEach(option => {
+  private _clearPreviousSelectedOption(skip: MatOption | null, emitEvent?: boolean) {
+    // Null checks are necessary here, because the autocomplete
+    // or its options may not have been assigned yet.
+    this.autocomplete?.options?.forEach(option => {
       if (option !== skip && option.selected) {
-        option.deselect();
+        option.deselect(emitEvent);
       }
     });
   }
@@ -649,7 +746,6 @@ export abstract class _MatAutocompleteTriggerBase
       });
       overlayRef = this._overlay.create(this._getOverlayConfig());
       this._overlayRef = overlayRef;
-      this._handleOverlayEvents(overlayRef);
       this._viewportSubscription = this._viewportRuler.change().subscribe(() => {
         if (this.panelOpen && overlayRef) {
           overlayRef.updateSize({width: this._getPanelWidth()});
@@ -663,21 +759,73 @@ export abstract class _MatAutocompleteTriggerBase
 
     if (overlayRef && !overlayRef.hasAttached()) {
       overlayRef.attach(this._portal);
+      this._valueOnAttach = this._element.nativeElement.value;
       this._closingActionsSubscription = this._subscribeToClosingActions();
     }
 
     const wasOpen = this.panelOpen;
 
-    this.autocomplete._setVisibility();
     this.autocomplete._isOpen = this._overlayAttached = true;
     this.autocomplete._setColor(this._formField?.color);
-
+    this._updatePanelState();
     this._applyModalPanelOwnership();
 
     // We need to do an extra `panelOpen` check in here, because the
     // autocomplete won't be shown if there are no options.
     if (this.panelOpen && wasOpen !== this.panelOpen) {
-      this.autocomplete.opened.emit();
+      this._emitOpened();
+    }
+  }
+
+  /** Handles keyboard events coming from the overlay panel. */
+  private _handlePanelKeydown = (event: KeyboardEvent) => {
+    // Close when pressing ESCAPE or ALT + UP_ARROW, based on the a11y guidelines.
+    // See: https://www.w3.org/TR/wai-aria-practices-1.1/#textbox-keyboard-interaction
+    if (
+      (event.keyCode === ESCAPE && !hasModifierKey(event)) ||
+      (event.keyCode === UP_ARROW && hasModifierKey(event, 'altKey'))
+    ) {
+      // If the user had typed something in before we autoselected an option, and they decided
+      // to cancel the selection, restore the input value to the one they had typed in.
+      if (this._pendingAutoselectedOption) {
+        this._updateNativeInputValue(this._valueBeforeAutoSelection ?? '');
+        this._pendingAutoselectedOption = null;
+      }
+      this._closeKeyEventStream.next();
+      this._resetActiveItem();
+      // We need to stop propagation, otherwise the event will eventually
+      // reach the input itself and cause the overlay to be reopened.
+      event.stopPropagation();
+      event.preventDefault();
+    }
+  };
+
+  /** Updates the panel's visibility state and any trigger state tied to id. */
+  private _updatePanelState() {
+    this.autocomplete._setVisibility();
+
+    // Note that here we subscribe and unsubscribe based on the panel's visiblity state,
+    // because the act of subscribing will prevent events from reaching other overlays and
+    // we don't want to block the events if there are no options.
+    if (this.panelOpen) {
+      const overlayRef = this._overlayRef!;
+
+      if (!this._keydownSubscription) {
+        // Use the `keydownEvents` in order to take advantage of
+        // the overlay event targeting provided by the CDK overlay.
+        this._keydownSubscription = overlayRef.keydownEvents().subscribe(this._handlePanelKeydown);
+      }
+
+      if (!this._outsideClickSubscription) {
+        // Subscribe to the pointer events stream so that it doesn't get picked up by other overlays.
+        // TODO(crisbeto): we should switch `_getOutsideClickStream` eventually to use this stream,
+        // but the behvior isn't exactly the same and it ends up breaking some internal tests.
+        this._outsideClickSubscription = overlayRef.outsidePointerEvents().subscribe();
+      }
+    } else {
+      this._keydownSubscription?.unsubscribe();
+      this._outsideClickSubscription?.unsubscribe();
+      this._keydownSubscription = this._outsideClickSubscription = null;
     }
   }
 
@@ -783,7 +931,7 @@ export abstract class _MatAutocompleteTriggerBase
   /** Determines whether the panel can be opened. */
   private _canOpen(): boolean {
     const element = this._element.nativeElement;
-    return !element.readOnly && !element.disabled && !this._autocompleteDisabled;
+    return !element.readOnly && !element.disabled && !this.autocompleteDisabled;
   }
 
   /** Use defaultView of injected document if available or fallback to global window reference */
@@ -827,40 +975,6 @@ export abstract class _MatAutocompleteTriggerBase
         autocomplete._setScrollTop(newScrollPosition);
       }
     }
-  }
-
-  /** Handles keyboard events coming from the overlay panel. */
-  private _handleOverlayEvents(overlayRef: OverlayRef) {
-    // Use the `keydownEvents` in order to take advantage of
-    // the overlay event targeting provided by the CDK overlay.
-    overlayRef.keydownEvents().subscribe(event => {
-      // Close when pressing ESCAPE or ALT + UP_ARROW, based on the a11y guidelines.
-      // See: https://www.w3.org/TR/wai-aria-practices-1.1/#textbox-keyboard-interaction
-      if (
-        (event.keyCode === ESCAPE && !hasModifierKey(event)) ||
-        (event.keyCode === UP_ARROW && hasModifierKey(event, 'altKey'))
-      ) {
-        // If the user had typed something in before we autoselected an option, and they decided
-        // to cancel the selection, restore the input value to the one they had typed in.
-        if (this._pendingAutoselectedOption) {
-          this._updateNativeInputValue(this._valueBeforeAutoSelection ?? '');
-          this._pendingAutoselectedOption = null;
-        }
-
-        this._closeKeyEventStream.next();
-        this._resetActiveItem();
-
-        // We need to stop propagation, otherwise the event will eventually
-        // reach the input itself and cause the overlay to be reopened.
-        event.stopPropagation();
-        event.preventDefault();
-      }
-    });
-
-    // Subscribe to the pointer events stream so that it doesn't get picked up by other overlays.
-    // TODO(crisbeto): we should switch `_getOutsideClickStream` eventually to use this stream,
-    // but the behvior isn't exactly the same and it ends up breaking some internal tests.
-    overlayRef.outsidePointerEvents().subscribe();
   }
 
   /**
@@ -924,30 +1038,4 @@ export abstract class _MatAutocompleteTriggerBase
       this._trackedModal = null;
     }
   }
-}
-
-@Directive({
-  selector: `input[matAutocomplete], textarea[matAutocomplete]`,
-  host: {
-    'class': 'mat-mdc-autocomplete-trigger',
-    '[attr.autocomplete]': 'autocompleteAttribute',
-    '[attr.role]': 'autocompleteDisabled ? null : "combobox"',
-    '[attr.aria-autocomplete]': 'autocompleteDisabled ? null : "list"',
-    '[attr.aria-activedescendant]': '(panelOpen && activeOption) ? activeOption.id : null',
-    '[attr.aria-expanded]': 'autocompleteDisabled ? null : panelOpen.toString()',
-    '[attr.aria-controls]': '(autocompleteDisabled || !panelOpen) ? null : autocomplete?.id',
-    '[attr.aria-haspopup]': 'autocompleteDisabled ? null : "listbox"',
-    // Note: we use `focusin`, as opposed to `focus`, in order to open the panel
-    // a little earlier. This avoids issues where IE delays the focusing of the input.
-    '(focusin)': '_handleFocus()',
-    '(blur)': '_onTouched()',
-    '(input)': '_handleInput($event)',
-    '(keydown)': '_handleKeydown($event)',
-    '(click)': '_handleClick()',
-  },
-  exportAs: 'matAutocompleteTrigger',
-  providers: [MAT_AUTOCOMPLETE_VALUE_ACCESSOR],
-})
-export class MatAutocompleteTrigger extends _MatAutocompleteTriggerBase {
-  protected _aboveClass = 'mat-mdc-autocomplete-panel-above';
 }

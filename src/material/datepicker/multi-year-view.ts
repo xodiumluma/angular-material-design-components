@@ -58,6 +58,8 @@ export const yearsPerRow = 4;
   exportAs: 'matMultiYearView',
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [MatCalendarBody],
 })
 export class MatMultiYearView<D> implements AfterContentInit, OnDestroy {
   private _rerenderSubscription = Subscription.EMPTY;
@@ -212,7 +214,7 @@ export class MatMultiYearView<D> implements AfterContentInit, OnDestroy {
   }
 
   /**
-   * Takes the index of a calendar body cell wrapped in in an event as argument. For the date that
+   * Takes the index of a calendar body cell wrapped in an event as argument. For the date that
    * corresponds to the given cell, set `activeDate` to that date and fire `activeDateChange` with
    * that date.
    *

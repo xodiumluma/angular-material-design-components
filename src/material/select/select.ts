@@ -13,12 +13,6 @@ import {
   removeAriaReferencedId,
 } from '@angular/cdk/a11y';
 import {Directionality} from '@angular/cdk/bidi';
-import {
-  BooleanInput,
-  coerceBooleanProperty,
-  coerceNumberProperty,
-  NumberInput,
-} from '@angular/cdk/coercion';
 import {SelectionModel} from '@angular/cdk/collections';
 import {
   A,
@@ -64,6 +58,9 @@ import {
   SimpleChanges,
   ViewChild,
   ViewEncapsulation,
+  booleanAttribute,
+  inject,
+  numberAttribute,
 } from '@angular/core';
 import {
   AbstractControl,
@@ -74,23 +71,15 @@ import {
   Validators,
 } from '@angular/forms';
 import {
-  CanDisable,
-  CanDisableRipple,
-  CanUpdateErrorState,
+  _ErrorStateTracker,
   ErrorStateMatcher,
-  HasTabIndex,
   MatOptgroup,
   MatOption,
   MatOptionSelectionChange,
   MAT_OPTGROUP,
   MAT_OPTION_PARENT_COMPONENT,
-  mixinDisabled,
-  mixinDisableRipple,
-  mixinErrorState,
-  mixinTabIndex,
   _countGroupLabelsBeforeOption,
   _getOptionScrollPosition,
-  _MatOptionBase,
 } from '@angular/material/core';
 import {MatFormField, MatFormFieldControl, MAT_FORM_FIELD} from '@angular/material/form-field';
 import {defer, merge, Observable, Subject} from 'rxjs';
@@ -109,12 +98,20 @@ import {
   getMatSelectNonArrayValueError,
   getMatSelectNonFunctionValueError,
 } from './select-errors';
+import {NgClass} from '@angular/common';
 
 let nextUniqueId = 0;
 
 /** Injection token that determines the scroll handling while a select is open. */
 export const MAT_SELECT_SCROLL_STRATEGY = new InjectionToken<() => ScrollStrategy>(
   'mat-select-scroll-strategy',
+  {
+    providedIn: 'root',
+    factory: () => {
+      const overlay = inject(Overlay);
+      return () => overlay.scrollStrategies.reposition();
+    },
+  },
 );
 
 /** @docs-private */
@@ -172,42 +169,45 @@ export class MatSelectChange {
   ) {}
 }
 
-// Boilerplate for applying mixins to MatSelect.
-/** @docs-private */
-const _MatSelectMixinBase = mixinDisableRipple(
-  mixinTabIndex(
-    mixinDisabled(
-      mixinErrorState(
-        class {
-          /**
-           * Emits whenever the component state changes and should cause the parent
-           * form-field to update. Implemented as part of `MatFormFieldControl`.
-           * @docs-private
-           */
-          readonly stateChanges = new Subject<void>();
-
-          constructor(
-            public _elementRef: ElementRef,
-            public _defaultErrorStateMatcher: ErrorStateMatcher,
-            public _parentForm: NgForm,
-            public _parentFormGroup: FormGroupDirective,
-            /**
-             * Form control bound to the component.
-             * Implemented as part of `MatFormFieldControl`.
-             * @docs-private
-             */
-            public ngControl: NgControl,
-          ) {}
-        },
-      ),
-    ),
-  ),
-);
-
-/** Base class with all of the `MatSelect` functionality. */
-@Directive()
-export abstract class _MatSelectBase<C>
-  extends _MatSelectMixinBase
+@Component({
+  selector: 'mat-select',
+  exportAs: 'matSelect',
+  templateUrl: 'select.html',
+  styleUrls: ['select.css'],
+  encapsulation: ViewEncapsulation.None,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    'role': 'combobox',
+    'aria-autocomplete': 'none',
+    'aria-haspopup': 'listbox',
+    'class': 'mat-mdc-select',
+    '[attr.id]': 'id',
+    '[attr.tabindex]': 'disabled ? -1 : tabIndex',
+    '[attr.aria-controls]': 'panelOpen ? id + "-panel" : null',
+    '[attr.aria-expanded]': 'panelOpen',
+    '[attr.aria-label]': 'ariaLabel || null',
+    '[attr.aria-required]': 'required.toString()',
+    '[attr.aria-disabled]': 'disabled.toString()',
+    '[attr.aria-invalid]': 'errorState',
+    '[attr.aria-activedescendant]': '_getAriaActiveDescendant()',
+    '[class.mat-mdc-select-disabled]': 'disabled',
+    '[class.mat-mdc-select-invalid]': 'errorState',
+    '[class.mat-mdc-select-required]': 'required',
+    '[class.mat-mdc-select-empty]': 'empty',
+    '[class.mat-mdc-select-multiple]': 'multiple',
+    '(keydown)': '_handleKeydown($event)',
+    '(focus)': '_onFocus()',
+    '(blur)': '_onBlur()',
+  },
+  animations: [matSelectAnimations.transformPanel],
+  providers: [
+    {provide: MatFormFieldControl, useExisting: MatSelect},
+    {provide: MAT_OPTION_PARENT_COMPONENT, useExisting: MatSelect},
+  ],
+  standalone: true,
+  imports: [CdkOverlayOrigin, CdkConnectedOverlay, NgClass],
+})
+export class MatSelect
   implements
     AfterContentInit,
     OnChanges,
@@ -215,22 +215,18 @@ export abstract class _MatSelectBase<C>
     OnInit,
     DoCheck,
     ControlValueAccessor,
-    CanDisable,
-    HasTabIndex,
-    MatFormFieldControl<any>,
-    CanUpdateErrorState,
-    CanDisableRipple
+    MatFormFieldControl<any>
 {
   /** All of the defined select options. */
-  abstract options: QueryList<_MatOptionBase>;
+  @ContentChildren(MatOption, {descendants: true}) options: QueryList<MatOption>;
 
   // TODO(crisbeto): this is only necessary for the non-MDC select, but it's technically a
   // public API so we have to keep it. It should be deprecated and removed eventually.
   /** All of the defined groups of options. */
-  abstract optionGroups: QueryList<MatOptgroup>;
+  @ContentChildren(MAT_OPTGROUP, {descendants: true}) optionGroups: QueryList<MatOptgroup>;
 
   /** User-supplied override of the trigger element. */
-  abstract customTrigger: {};
+  @ContentChild(MAT_SELECT_TRIGGER) customTrigger: MatSelectTrigger;
 
   /**
    * This position config ensures that the top "start" corner of the overlay
@@ -238,16 +234,69 @@ export abstract class _MatSelectBase<C>
    * the trigger completely). If the panel cannot fit below the trigger, it
    * will fall back to a position above the trigger.
    */
-  abstract _positions: ConnectedPosition[];
+  _positions: ConnectedPosition[] = [
+    {
+      originX: 'start',
+      originY: 'bottom',
+      overlayX: 'start',
+      overlayY: 'top',
+    },
+    {
+      originX: 'end',
+      originY: 'bottom',
+      overlayX: 'end',
+      overlayY: 'top',
+    },
+    {
+      originX: 'start',
+      originY: 'top',
+      overlayX: 'start',
+      overlayY: 'bottom',
+      panelClass: 'mat-mdc-select-panel-above',
+    },
+    {
+      originX: 'end',
+      originY: 'top',
+      overlayX: 'end',
+      overlayY: 'bottom',
+      panelClass: 'mat-mdc-select-panel-above',
+    },
+  ];
 
   /** Scrolls a particular option into the view. */
-  protected abstract _scrollOptionIntoView(index: number): void;
+  _scrollOptionIntoView(index: number): void {
+    const option = this.options.toArray()[index];
+
+    if (option) {
+      const panel: HTMLElement = this.panel.nativeElement;
+      const labelCount = _countGroupLabelsBeforeOption(index, this.options, this.optionGroups);
+      const element = option._getHostElement();
+
+      if (index === 0 && labelCount === 1) {
+        // If we've got one group label before the option and we're at the top option,
+        // scroll the list to the top. This is better UX than scrolling the list to the
+        // top of the option, because it allows the user to read the top group's label.
+        panel.scrollTop = 0;
+      } else {
+        panel.scrollTop = _getOptionScrollPosition(
+          element.offsetTop,
+          element.offsetHeight,
+          panel.scrollTop,
+          panel.offsetHeight,
+        );
+      }
+    }
+  }
 
   /** Called when the panel has been opened and the overlay has settled on its final position. */
-  protected abstract _positioningSettled(): void;
+  private _positioningSettled() {
+    this._scrollOptionIntoView(this._keyManager.activeItemIndex || 0);
+  }
 
   /** Creates a change event object that should be emitted by the select. */
-  protected abstract _getChangeEvent(value: any): C;
+  private _getChangeEvent(value: any) {
+    return new MatSelectChange(this, value);
+  }
 
   /** Factory function used to create a scroll strategy for this select. */
   private _scrollStrategyFactory: () => ScrollStrategy;
@@ -273,6 +322,16 @@ export abstract class _MatSelectBase<C>
   /** Emits whenever the component is destroyed. */
   protected readonly _destroy = new Subject<void>();
 
+  /** Tracks the error state of the select. */
+  private _errorStateTracker: _ErrorStateTracker;
+
+  /**
+   * Emits whenever the component state changes and should cause the parent
+   * form-field to update. Implemented as part of `MatFormFieldControl`.
+   * @docs-private
+   */
+  readonly stateChanges = new Subject<void>();
+
   /**
    * Implemented as part of MatFormFieldControl.
    * @docs-private
@@ -284,6 +343,12 @@ export abstract class _MatSelectBase<C>
 
   /** Manages keyboard events for options in the panel. */
   _keyManager: ActiveDescendantKeyManager<MatOption>;
+
+  /** Ideal origin for the overlay panel. */
+  _preferredOverlayOrigin: CdkOverlayOrigin | ElementRef | undefined;
+
+  /** Width of the overlay panel. */
+  _overlayWidth: string | number;
 
   /** `View -> model callback called when value changes` */
   _onChange: (value: any) => void = () => {};
@@ -324,6 +389,32 @@ export abstract class _MatSelectBase<C>
   /** Classes to be passed to the select panel. Supports the same syntax as `ngClass`. */
   @Input() panelClass: string | string[] | Set<string> | {[key: string]: any};
 
+  /** Whether the select is disabled. */
+  @Input({transform: booleanAttribute})
+  disabled: boolean = false;
+
+  /** Whether ripples in the select are disabled. */
+  @Input({transform: booleanAttribute})
+  disableRipple: boolean = false;
+
+  /** Tab index of the select. */
+  @Input({
+    transform: (value: unknown) => (value == null ? 0 : numberAttribute(value)),
+  })
+  tabIndex: number = 0;
+
+  /** Whether checkmark indicator for single-selection options is hidden. */
+  @Input({transform: booleanAttribute})
+  get hideSingleSelectionIndicator(): boolean {
+    return this._hideSingleSelectionIndicator;
+  }
+  set hideSingleSelectionIndicator(value: boolean) {
+    this._hideSingleSelectionIndicator = value;
+    this._syncParentProperties();
+  }
+  private _hideSingleSelectionIndicator: boolean =
+    this._defaultOptions?.hideSingleSelectionIndicator ?? false;
+
   /** Placeholder to be shown if no value has been selected. */
   @Input()
   get placeholder(): string {
@@ -336,39 +427,33 @@ export abstract class _MatSelectBase<C>
   private _placeholder: string;
 
   /** Whether the component is required. */
-  @Input()
+  @Input({transform: booleanAttribute})
   get required(): boolean {
     return this._required ?? this.ngControl?.control?.hasValidator(Validators.required) ?? false;
   }
-  set required(value: BooleanInput) {
-    this._required = coerceBooleanProperty(value);
+  set required(value: boolean) {
+    this._required = value;
     this.stateChanges.next();
   }
   private _required: boolean | undefined;
 
   /** Whether the user should be allowed to select multiple options. */
-  @Input()
+  @Input({transform: booleanAttribute})
   get multiple(): boolean {
     return this._multiple;
   }
-  set multiple(value: BooleanInput) {
+  set multiple(value: boolean) {
     if (this._selectionModel && (typeof ngDevMode === 'undefined' || ngDevMode)) {
       throw getMatSelectDynamicMultipleError();
     }
 
-    this._multiple = coerceBooleanProperty(value);
+    this._multiple = value;
   }
   private _multiple: boolean = false;
 
   /** Whether to center the active option over the trigger. */
-  @Input()
-  get disableOptionCentering(): boolean {
-    return this._disableOptionCentering;
-  }
-  set disableOptionCentering(value: BooleanInput) {
-    this._disableOptionCentering = coerceBooleanProperty(value);
-  }
-  private _disableOptionCentering = this._defaultOptions?.disableOptionCentering ?? false;
+  @Input({transform: booleanAttribute})
+  disableOptionCentering = this._defaultOptions?.disableOptionCentering ?? false;
 
   /**
    * Function to compare the option values with the selected values. The first argument
@@ -411,17 +496,17 @@ export abstract class _MatSelectBase<C>
   @Input('aria-labelledby') ariaLabelledby: string;
 
   /** Object used to control when error messages are shown. */
-  @Input() override errorStateMatcher: ErrorStateMatcher;
+  @Input()
+  get errorStateMatcher() {
+    return this._errorStateTracker.matcher;
+  }
+  set errorStateMatcher(value: ErrorStateMatcher) {
+    this._errorStateTracker.matcher = value;
+  }
 
   /** Time to wait in milliseconds after the last keystroke before moving focus to an item. */
-  @Input()
-  get typeaheadDebounceInterval(): number {
-    return this._typeaheadDebounceInterval;
-  }
-  set typeaheadDebounceInterval(value: NumberInput) {
-    this._typeaheadDebounceInterval = coerceNumberProperty(value);
-  }
-  private _typeaheadDebounceInterval: number;
+  @Input({transform: numberAttribute})
+  typeaheadDebounceInterval: number;
 
   /**
    * Function used to sort the values in a select in multiple mode.
@@ -439,6 +524,23 @@ export abstract class _MatSelectBase<C>
     this.stateChanges.next();
   }
   private _id: string;
+
+  /** Whether the select is in an error state. */
+  get errorState() {
+    return this._errorStateTracker.errorState;
+  }
+  set errorState(value: boolean) {
+    this._errorStateTracker.errorState = value;
+  }
+
+  /**
+   * Width of the panel. If set to `auto`, the panel will match the trigger width.
+   * If set to null or an empty string, the panel will grow to match the longest option's text.
+   */
+  @Input() panelWidth: string | number | null =
+    this._defaultOptions && typeof this._defaultOptions.panelWidth !== 'undefined'
+      ? this._defaultOptions.panelWidth
+      : 'auto';
 
   /** Combined stream of all of the child options' change events. */
   readonly optionSelectionChanges: Observable<MatOptionSelectionChange> = defer(() => {
@@ -473,7 +575,7 @@ export abstract class _MatSelectBase<C>
   );
 
   /** Event emitted when the selected value has been changed by the user. */
-  @Output() readonly selectionChange: EventEmitter<C> = new EventEmitter<C>();
+  @Output() readonly selectionChange = new EventEmitter<MatSelectChange>();
 
   /**
    * Event that emits whenever the raw value of the select changes. This is here primarily
@@ -486,20 +588,18 @@ export abstract class _MatSelectBase<C>
     protected _viewportRuler: ViewportRuler,
     protected _changeDetectorRef: ChangeDetectorRef,
     protected _ngZone: NgZone,
-    _defaultErrorStateMatcher: ErrorStateMatcher,
-    elementRef: ElementRef,
+    defaultErrorStateMatcher: ErrorStateMatcher,
+    readonly _elementRef: ElementRef,
     @Optional() private _dir: Directionality,
-    @Optional() _parentForm: NgForm,
-    @Optional() _parentFormGroup: FormGroupDirective,
+    @Optional() parentForm: NgForm,
+    @Optional() parentFormGroup: FormGroupDirective,
     @Optional() @Inject(MAT_FORM_FIELD) protected _parentFormField: MatFormField,
-    @Self() @Optional() ngControl: NgControl,
+    @Self() @Optional() public ngControl: NgControl,
     @Attribute('tabindex') tabIndex: string,
     @Inject(MAT_SELECT_SCROLL_STRATEGY) scrollStrategyFactory: any,
     private _liveAnnouncer: LiveAnnouncer,
     @Optional() @Inject(MAT_SELECT_CONFIG) protected _defaultOptions?: MatSelectConfig,
   ) {
-    super(elementRef, _defaultErrorStateMatcher, _parentForm, _parentFormGroup, ngControl);
-
     if (this.ngControl) {
       // Note: we provide the value accessor through here, instead of
       // the `providers` to avoid running into a circular import.
@@ -509,9 +609,16 @@ export abstract class _MatSelectBase<C>
     // Note that we only want to set this when the defaults pass it in, otherwise it should
     // stay as `undefined` so that it falls back to the default in the key manager.
     if (_defaultOptions?.typeaheadDebounceInterval != null) {
-      this._typeaheadDebounceInterval = _defaultOptions.typeaheadDebounceInterval;
+      this.typeaheadDebounceInterval = _defaultOptions.typeaheadDebounceInterval;
     }
 
+    this._errorStateTracker = new _ErrorStateTracker(
+      defaultErrorStateMatcher,
+      ngControl,
+      parentFormGroup,
+      parentForm,
+      this.stateChanges,
+    );
     this._scrollStrategyFactory = scrollStrategyFactory;
     this._scrollStrategy = this._scrollStrategyFactory();
     this.tabIndex = parseInt(tabIndex) || 0;
@@ -530,6 +637,16 @@ export abstract class _MatSelectBase<C>
     this._panelDoneAnimatingStream
       .pipe(distinctUntilChanged(), takeUntil(this._destroy))
       .subscribe(() => this._panelDoneAnimating(this.panelOpen));
+
+    this._viewportRuler
+      .change()
+      .pipe(takeUntil(this._destroy))
+      .subscribe(() => {
+        if (this.panelOpen) {
+          this._overlayWidth = this._getOverlayWidth(this._preferredOverlayOrigin);
+          this._changeDetectorRef.detectChanges();
+        }
+      });
   }
 
   ngAfterContentInit() {
@@ -582,14 +699,14 @@ export abstract class _MatSelectBase<C>
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    // Updating the disabled state is handled by `mixinDisabled`, but we need to additionally let
+    // Updating the disabled state is handled by the input, but we need to additionally let
     // the parent form field know to run change detection when the disabled state changes.
     if (changes['disabled'] || changes['userAriaDescribedBy']) {
       this.stateChanges.next();
     }
 
     if (changes['typeaheadDebounceInterval'] && this._keyManager) {
-      this._keyManager.withTypeAhead(this._typeaheadDebounceInterval);
+      this._keyManager.withTypeAhead(this.typeaheadDebounceInterval);
     }
   }
 
@@ -608,14 +725,26 @@ export abstract class _MatSelectBase<C>
 
   /** Opens the overlay panel. */
   open(): void {
-    if (this._canOpen()) {
-      this._applyModalPanelOwnership();
-
-      this._panelOpen = true;
-      this._keyManager.withHorizontalOrientation(null);
-      this._highlightCorrectOption();
-      this._changeDetectorRef.markForCheck();
+    if (!this._canOpen()) {
+      return;
     }
+
+    // It's important that we read this as late as possible, because doing so earlier will
+    // return a different element since it's based on queries in the form field which may
+    // not have run yet. Also this needs to be assigned before we measure the overlay width.
+    if (this._parentFormField) {
+      this._preferredOverlayOrigin = this._parentFormField.getConnectedOverlayOrigin();
+    }
+
+    this._overlayWidth = this._getOverlayWidth(this._preferredOverlayOrigin);
+    this._applyModalPanelOwnership();
+    this._panelOpen = true;
+    this._keyManager.withHorizontalOrientation(null);
+    this._highlightCorrectOption();
+    this._changeDetectorRef.markForCheck();
+
+    // Required for the MDC form field to pick up when the overlay has been opened.
+    this.stateChanges.next();
   }
 
   /**
@@ -690,6 +819,8 @@ export abstract class _MatSelectBase<C>
       this._keyManager.withHorizontalOrientation(this._isRtl() ? 'rtl' : 'ltr');
       this._changeDetectorRef.markForCheck();
       this._onTouched();
+      // Required for the MDC form field to pick up when the overlay has been closed.
+      this.stateChanges.next();
     }
   }
 
@@ -765,6 +896,11 @@ export abstract class _MatSelectBase<C>
     }
 
     return this._selectionModel.selected[0].viewValue;
+  }
+
+  /** Refreshes the error state of the select. */
+  updateErrorState() {
+    this._errorStateTracker.updateErrorState();
   }
 
   /** Whether the element is in RTL mode. */
@@ -990,14 +1126,59 @@ export abstract class _MatSelectBase<C>
     return false;
   }
 
-  protected _skipPredicate(item: MatOption): boolean {
-    return item.disabled;
+  // `skipPredicate` determines if key manager should avoid putting a given option in the tab
+  // order. Allow disabled list items to receive focus via keyboard to align with WAI ARIA
+  // recommendation.
+  //
+  // Normally WAI ARIA's instructions are to exclude disabled items from the tab order, but it
+  // makes a few exceptions for compound widgets.
+  //
+  // From [Developing a Keyboard Interface](
+  // https://www.w3.org/WAI/ARIA/apg/practices/keyboard-interface/):
+  //   "For the following composite widget elements, keep them focusable when disabled: Options in a
+  //   Listbox..."
+  //
+  // The user can focus disabled options using the keyboard, but the user cannot click disabled
+  // options.
+  private _skipPredicate = (option: MatOption) => {
+    if (this.panelOpen) {
+      // Support keyboard focusing disabled options in an ARIA listbox.
+      return false;
+    }
+
+    // When the panel is closed, skip over disabled options. Support options via the UP/DOWN arrow
+    // keys on a closed select. ARIA listbox interaction pattern is less relevant when the panel is
+    // closed.
+    return option.disabled;
+  };
+
+  /** Gets how wide the overlay panel should be. */
+  private _getOverlayWidth(
+    preferredOrigin: ElementRef<ElementRef> | CdkOverlayOrigin | undefined,
+  ): string | number {
+    if (this.panelWidth === 'auto') {
+      const refToMeasure =
+        preferredOrigin instanceof CdkOverlayOrigin
+          ? preferredOrigin.elementRef
+          : preferredOrigin || this._elementRef;
+      return refToMeasure.nativeElement.getBoundingClientRect().width;
+    }
+
+    return this.panelWidth === null ? '' : this.panelWidth;
+  }
+  /** Syncs the parent state with the individual options. */
+  _syncParentProperties(): void {
+    if (this.options) {
+      for (const option of this.options) {
+        option._changeDetectorRef.markForCheck();
+      }
+    }
   }
 
   /** Sets up a key manager to listen to keyboard events on the overlay panel. */
   private _initKeyManager() {
     this._keyManager = new ActiveDescendantKeyManager<MatOption>(this.options)
-      .withTypeAhead(this._typeaheadDebounceInterval)
+      .withTypeAhead(this.typeaheadDebounceInterval)
       .withVerticalOrientation()
       .withHorizontalOrientation(this._isRtl() ? 'rtl' : 'ltr')
       .withHomeAndEnd()
@@ -1113,7 +1294,7 @@ export abstract class _MatSelectBase<C>
 
   /** Emits change event to set the model value. */
   private _propagateChanges(fallbackValue?: any): void {
-    let valueToEmit: any = null;
+    let valueToEmit: any;
 
     if (this.multiple) {
       valueToEmit = (this.selected as MatOption[]).map(option => option.value);
@@ -1231,7 +1412,9 @@ export abstract class _MatSelectBase<C>
    * @docs-private
    */
   get shouldLabelFloat(): boolean {
-    return this._panelOpen || !this.empty || (this._focused && !!this._placeholder);
+    // Since the panel doesn't overlap the trigger, we
+    // want the label to only float when there's a value.
+    return this.panelOpen || !this.empty || (this.focused && !!this.placeholder);
   }
 }
 
@@ -1241,228 +1424,6 @@ export abstract class _MatSelectBase<C>
 @Directive({
   selector: 'mat-select-trigger',
   providers: [{provide: MAT_SELECT_TRIGGER, useExisting: MatSelectTrigger}],
+  standalone: true,
 })
 export class MatSelectTrigger {}
-
-@Component({
-  selector: 'mat-select',
-  exportAs: 'matSelect',
-  templateUrl: 'select.html',
-  styleUrls: ['select.css'],
-  inputs: ['disabled', 'disableRipple', 'tabIndex'],
-  encapsulation: ViewEncapsulation.None,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  host: {
-    'role': 'combobox',
-    'aria-autocomplete': 'none',
-    'aria-haspopup': 'listbox',
-    'class': 'mat-mdc-select',
-    '[attr.id]': 'id',
-    '[attr.tabindex]': 'tabIndex',
-    '[attr.aria-controls]': 'panelOpen ? id + "-panel" : null',
-    '[attr.aria-expanded]': 'panelOpen',
-    '[attr.aria-label]': 'ariaLabel || null',
-    '[attr.aria-required]': 'required.toString()',
-    '[attr.aria-disabled]': 'disabled.toString()',
-    '[attr.aria-invalid]': 'errorState',
-    '[attr.aria-activedescendant]': '_getAriaActiveDescendant()',
-    'ngSkipHydration': '',
-    '[class.mat-mdc-select-disabled]': 'disabled',
-    '[class.mat-mdc-select-invalid]': 'errorState',
-    '[class.mat-mdc-select-required]': 'required',
-    '[class.mat-mdc-select-empty]': 'empty',
-    '[class.mat-mdc-select-multiple]': 'multiple',
-    '(keydown)': '_handleKeydown($event)',
-    '(focus)': '_onFocus()',
-    '(blur)': '_onBlur()',
-  },
-  animations: [matSelectAnimations.transformPanel],
-  providers: [
-    {provide: MatFormFieldControl, useExisting: MatSelect},
-    {provide: MAT_OPTION_PARENT_COMPONENT, useExisting: MatSelect},
-  ],
-})
-export class MatSelect extends _MatSelectBase<MatSelectChange> implements OnInit {
-  @ContentChildren(MatOption, {descendants: true}) options: QueryList<MatOption>;
-  @ContentChildren(MAT_OPTGROUP, {descendants: true}) optionGroups: QueryList<MatOptgroup>;
-  @ContentChild(MAT_SELECT_TRIGGER) customTrigger: MatSelectTrigger;
-
-  /**
-   * Width of the panel. If set to `auto`, the panel will match the trigger width.
-   * If set to null or an empty string, the panel will grow to match the longest option's text.
-   */
-  @Input() panelWidth: string | number | null =
-    this._defaultOptions && typeof this._defaultOptions.panelWidth !== 'undefined'
-      ? this._defaultOptions.panelWidth
-      : 'auto';
-
-  _positions: ConnectedPosition[] = [
-    {
-      originX: 'start',
-      originY: 'bottom',
-      overlayX: 'start',
-      overlayY: 'top',
-    },
-    {
-      originX: 'end',
-      originY: 'bottom',
-      overlayX: 'end',
-      overlayY: 'top',
-    },
-    {
-      originX: 'start',
-      originY: 'top',
-      overlayX: 'start',
-      overlayY: 'bottom',
-      panelClass: 'mat-mdc-select-panel-above',
-    },
-    {
-      originX: 'end',
-      originY: 'top',
-      overlayX: 'end',
-      overlayY: 'bottom',
-      panelClass: 'mat-mdc-select-panel-above',
-    },
-  ];
-
-  /** Ideal origin for the overlay panel. */
-  _preferredOverlayOrigin: CdkOverlayOrigin | ElementRef | undefined;
-
-  /** Width of the overlay panel. */
-  _overlayWidth: string | number;
-
-  override get shouldLabelFloat(): boolean {
-    // Since the panel doesn't overlap the trigger, we
-    // want the label to only float when there's a value.
-    return this.panelOpen || !this.empty || (this.focused && !!this.placeholder);
-  }
-
-  override ngOnInit() {
-    super.ngOnInit();
-    this._viewportRuler
-      .change()
-      .pipe(takeUntil(this._destroy))
-      .subscribe(() => {
-        if (this.panelOpen) {
-          this._overlayWidth = this._getOverlayWidth(this._preferredOverlayOrigin);
-          this._changeDetectorRef.detectChanges();
-        }
-      });
-  }
-
-  override open() {
-    // It's important that we read this as late as possible, because doing so earlier will
-    // return a different element since it's based on queries in the form field which may
-    // not have run yet. Also this needs to be assigned before we measure the overlay width.
-    if (this._parentFormField) {
-      this._preferredOverlayOrigin = this._parentFormField.getConnectedOverlayOrigin();
-    }
-
-    this._overlayWidth = this._getOverlayWidth(this._preferredOverlayOrigin);
-    super.open();
-
-    // Required for the MDC form field to pick up when the overlay has been opened.
-    this.stateChanges.next();
-  }
-
-  override close() {
-    super.close();
-    // Required for the MDC form field to pick up when the overlay has been closed.
-    this.stateChanges.next();
-  }
-
-  /** Scrolls the active option into view. */
-  protected _scrollOptionIntoView(index: number): void {
-    const option = this.options.toArray()[index];
-
-    if (option) {
-      const panel: HTMLElement = this.panel.nativeElement;
-      const labelCount = _countGroupLabelsBeforeOption(index, this.options, this.optionGroups);
-      const element = option._getHostElement();
-
-      if (index === 0 && labelCount === 1) {
-        // If we've got one group label before the option and we're at the top option,
-        // scroll the list to the top. This is better UX than scrolling the list to the
-        // top of the option, because it allows the user to read the top group's label.
-        panel.scrollTop = 0;
-      } else {
-        panel.scrollTop = _getOptionScrollPosition(
-          element.offsetTop,
-          element.offsetHeight,
-          panel.scrollTop,
-          panel.offsetHeight,
-        );
-      }
-    }
-  }
-
-  protected _positioningSettled() {
-    this._scrollOptionIntoView(this._keyManager.activeItemIndex || 0);
-  }
-
-  protected _getChangeEvent(value: any) {
-    return new MatSelectChange(this, value);
-  }
-
-  /** Gets how wide the overlay panel should be. */
-  private _getOverlayWidth(
-    preferredOrigin: ElementRef<ElementRef> | CdkOverlayOrigin | undefined,
-  ): string | number {
-    if (this.panelWidth === 'auto') {
-      const refToMeasure =
-        preferredOrigin instanceof CdkOverlayOrigin
-          ? preferredOrigin.elementRef
-          : preferredOrigin || this._elementRef;
-      return refToMeasure.nativeElement.getBoundingClientRect().width;
-    }
-
-    return this.panelWidth === null ? '' : this.panelWidth;
-  }
-
-  /** Whether checkmark indicator for single-selection options is hidden. */
-  @Input()
-  get hideSingleSelectionIndicator(): boolean {
-    return this._hideSingleSelectionIndicator;
-  }
-  set hideSingleSelectionIndicator(value: BooleanInput) {
-    this._hideSingleSelectionIndicator = coerceBooleanProperty(value);
-    this._syncParentProperties();
-  }
-  private _hideSingleSelectionIndicator: boolean =
-    this._defaultOptions?.hideSingleSelectionIndicator ?? false;
-
-  /** Syncs the parent state with the individual options. */
-  _syncParentProperties(): void {
-    if (this.options) {
-      for (const option of this.options) {
-        option._changeDetectorRef.markForCheck();
-      }
-    }
-  }
-
-  // `skipPredicate` determines if key manager should avoid putting a given option in the tab
-  // order. Allow disabled list items to receive focus via keyboard to align with WAI ARIA
-  // recommendation.
-  //
-  // Normally WAI ARIA's instructions are to exclude disabled items from the tab order, but it
-  // makes a few exceptions for compound widgets.
-  //
-  // From [Developing a Keyboard Interface](
-  // https://www.w3.org/WAI/ARIA/apg/practices/keyboard-interface/):
-  //   "For the following composite widget elements, keep them focusable when disabled: Options in a
-  //   Listbox..."
-  //
-  // The user can focus disabled options using the keyboard, but the user cannot click disabled
-  // options.
-  protected override _skipPredicate = (option: MatOption) => {
-    if (this.panelOpen) {
-      // Support keyboard focusing disabled options in an ARIA listbox.
-      return false;
-    }
-
-    // When the panel is closed, skip over disabled options. Support options via the UP/DOWN arrow
-    // keys on a closed select. ARIA listbox interaction pattern is less relevant when the panel is
-    // closed.
-    return option.disabled;
-  };
-}

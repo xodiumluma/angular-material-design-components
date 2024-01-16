@@ -19,11 +19,10 @@ import { DomPortal } from '@angular/cdk/portal';
 import { ElementRef } from '@angular/core';
 import { EmbeddedViewRef } from '@angular/core';
 import * as i0 from '@angular/core';
-import * as i4 from '@angular/cdk/overlay';
-import * as i5 from '@angular/cdk/portal';
-import * as i6 from '@angular/common';
-import * as i7 from '@angular/material/button';
-import * as i8 from '@angular/material/core';
+import * as i1 from '@angular/cdk/overlay';
+import * as i2 from '@angular/cdk/portal';
+import * as i3 from '@angular/material/button';
+import * as i4 from '@angular/material/core';
 import { InjectionToken } from '@angular/core';
 import { Injector } from '@angular/core';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
@@ -36,7 +35,6 @@ import { Platform } from '@angular/cdk/platform';
 import { Subject } from 'rxjs';
 import { TemplatePortal } from '@angular/cdk/portal';
 import { TemplateRef } from '@angular/core';
-import { Type } from '@angular/core';
 import { ViewContainerRef } from '@angular/core';
 
 // @public
@@ -49,14 +47,19 @@ export const MAT_SNACK_BAR_DEFAULT_OPTIONS: InjectionToken<MatSnackBarConfig<any
 export function MAT_SNACK_BAR_DEFAULT_OPTIONS_FACTORY(): MatSnackBarConfig;
 
 // @public
-export class MatSnackBar extends _MatSnackBarBase {
-    constructor(overlay: Overlay, live: LiveAnnouncer, injector: Injector, breakpointObserver: BreakpointObserver, parentSnackBar: MatSnackBar, defaultConfig: MatSnackBarConfig);
+export class MatSnackBar implements OnDestroy {
+    constructor(_overlay: Overlay, _live: LiveAnnouncer, _injector: Injector, _breakpointObserver: BreakpointObserver, _parentSnackBar: MatSnackBar, _defaultConfig: MatSnackBarConfig);
+    dismiss(): void;
+    handsetCssClass: string;
     // (undocumented)
-    protected handsetCssClass: string;
-    // (undocumented)
-    protected simpleSnackBarComponent: typeof SimpleSnackBar;
-    // (undocumented)
-    protected snackBarContainerComponent: typeof MatSnackBarContainer;
+    ngOnDestroy(): void;
+    open(message: string, action?: string, config?: MatSnackBarConfig): MatSnackBarRef<TextOnlySnackBar>;
+    get _openedSnackBarRef(): MatSnackBarRef<any> | null;
+    set _openedSnackBarRef(value: MatSnackBarRef<any> | null);
+    openFromComponent<T, D = any>(component: ComponentType<T>, config?: MatSnackBarConfig<D>): MatSnackBarRef<T>;
+    openFromTemplate(template: TemplateRef<any>, config?: MatSnackBarConfig): MatSnackBarRef<EmbeddedViewRef<any>>;
+    simpleSnackBarComponent: typeof SimpleSnackBar;
+    snackBarContainerComponent: typeof MatSnackBarContainer;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatSnackBar, [null, null, null, null, { optional: true; skipSelf: true; }, null]>;
     // (undocumented)
@@ -66,7 +69,7 @@ export class MatSnackBar extends _MatSnackBarBase {
 // @public
 export class MatSnackBarAction {
     // (undocumented)
-    static ɵdir: i0.ɵɵDirectiveDeclaration<MatSnackBarAction, "[matSnackBarAction]", never, {}, {}, never, never, false, never>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<MatSnackBarAction, "[matSnackBarAction]", never, {}, {}, never, never, true, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatSnackBarAction, never>;
 }
@@ -74,7 +77,7 @@ export class MatSnackBarAction {
 // @public
 export class MatSnackBarActions {
     // (undocumented)
-    static ɵdir: i0.ɵɵDirectiveDeclaration<MatSnackBarActions, "[matSnackBarActions]", never, {}, {}, never, never, false, never>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<MatSnackBarActions, "[matSnackBarActions]", never, {}, {}, never, never, true, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatSnackBarActions, never>;
 }
@@ -83,26 +86,6 @@ export class MatSnackBarActions {
 export const matSnackBarAnimations: {
     readonly snackBarState: AnimationTriggerMetadata;
 };
-
-// @public (undocumented)
-export abstract class _MatSnackBarBase implements OnDestroy {
-    constructor(_overlay: Overlay, _live: LiveAnnouncer, _injector: Injector, _breakpointObserver: BreakpointObserver, _parentSnackBar: _MatSnackBarBase, _defaultConfig: MatSnackBarConfig);
-    dismiss(): void;
-    protected abstract handsetCssClass: string;
-    // (undocumented)
-    ngOnDestroy(): void;
-    open(message: string, action?: string, config?: MatSnackBarConfig): MatSnackBarRef<TextOnlySnackBar>;
-    get _openedSnackBarRef(): MatSnackBarRef<any> | null;
-    set _openedSnackBarRef(value: MatSnackBarRef<any> | null);
-    openFromComponent<T, D = any>(component: ComponentType<T>, config?: MatSnackBarConfig<D>): MatSnackBarRef<T>;
-    openFromTemplate(template: TemplateRef<any>, config?: MatSnackBarConfig): MatSnackBarRef<EmbeddedViewRef<any>>;
-    protected abstract simpleSnackBarComponent: Type<TextOnlySnackBar>;
-    protected abstract snackBarContainerComponent: Type<_MatSnackBarContainerBase>;
-    // (undocumented)
-    static ɵfac: i0.ɵɵFactoryDeclaration<_MatSnackBarBase, [null, null, null, null, { optional: true; skipSelf: true; }, null]>;
-    // (undocumented)
-    static ɵprov: i0.ɵɵInjectableDeclaration<_MatSnackBarBase>;
-}
 
 // @public
 export class MatSnackBarConfig<D = any> {
@@ -118,29 +101,17 @@ export class MatSnackBarConfig<D = any> {
 }
 
 // @public
-export class MatSnackBarContainer extends _MatSnackBarContainerBase {
-    protected _afterPortalAttached(): void;
-    _label: ElementRef;
-    // (undocumented)
-    static ɵcmp: i0.ɵɵComponentDeclaration<MatSnackBarContainer, "mat-snack-bar-container", never, {}, {}, never, never, false, never>;
-    // (undocumented)
-    static ɵfac: i0.ɵɵFactoryDeclaration<MatSnackBarContainer, never>;
-}
-
-// @public
-export abstract class _MatSnackBarContainerBase extends BasePortalOutlet implements OnDestroy {
+export class MatSnackBarContainer extends BasePortalOutlet implements OnDestroy {
     constructor(_ngZone: NgZone, _elementRef: ElementRef<HTMLElement>, _changeDetectorRef: ChangeDetectorRef, _platform: Platform,
     snackBarConfig: MatSnackBarConfig);
-    protected _afterPortalAttached(): void;
     _animationState: string;
     attachComponentPortal<T>(portal: ComponentPortal<T>): ComponentRef<T>;
     // @deprecated
     attachDomPortal: (portal: DomPortal) => void;
     attachTemplatePortal<C>(portal: TemplatePortal<C>): EmbeddedViewRef<C>;
-    // (undocumented)
-    protected _elementRef: ElementRef<HTMLElement>;
     enter(): void;
     exit(): Observable<void>;
+    _label: ElementRef;
     _live: AriaLivePoliteness;
     readonly _liveElementId: string;
     ngOnDestroy(): void;
@@ -152,9 +123,9 @@ export abstract class _MatSnackBarContainerBase extends BasePortalOutlet impleme
     _role?: 'status' | 'alert';
     snackBarConfig: MatSnackBarConfig;
     // (undocumented)
-    static ɵdir: i0.ɵɵDirectiveDeclaration<_MatSnackBarContainerBase, never, never, {}, {}, never, never, false, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<MatSnackBarContainer, "mat-snack-bar-container", never, {}, {}, never, never, true, never>;
     // (undocumented)
-    static ɵfac: i0.ɵɵFactoryDeclaration<_MatSnackBarContainerBase, never>;
+    static ɵfac: i0.ɵɵFactoryDeclaration<MatSnackBarContainer, never>;
 }
 
 // @public
@@ -168,7 +139,7 @@ export type MatSnackBarHorizontalPosition = 'start' | 'center' | 'end' | 'left' 
 // @public
 export class MatSnackBarLabel {
     // (undocumented)
-    static ɵdir: i0.ɵɵDirectiveDeclaration<MatSnackBarLabel, "[matSnackBarLabel]", never, {}, {}, never, never, false, never>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<MatSnackBarLabel, "[matSnackBarLabel]", never, {}, {}, never, never, true, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatSnackBarLabel, never>;
 }
@@ -180,17 +151,17 @@ export class MatSnackBarModule {
     // (undocumented)
     static ɵinj: i0.ɵɵInjectorDeclaration<MatSnackBarModule>;
     // (undocumented)
-    static ɵmod: i0.ɵɵNgModuleDeclaration<MatSnackBarModule, [typeof i1.SimpleSnackBar, typeof i2.MatSnackBarContainer, typeof i3.MatSnackBarLabel, typeof i3.MatSnackBarActions, typeof i3.MatSnackBarAction], [typeof i4.OverlayModule, typeof i5.PortalModule, typeof i6.CommonModule, typeof i7.MatButtonModule, typeof i8.MatCommonModule], [typeof i8.MatCommonModule, typeof i2.MatSnackBarContainer, typeof i3.MatSnackBarLabel, typeof i3.MatSnackBarActions, typeof i3.MatSnackBarAction]>;
+    static ɵmod: i0.ɵɵNgModuleDeclaration<MatSnackBarModule, never, [typeof i1.OverlayModule, typeof i2.PortalModule, typeof i3.MatButtonModule, typeof i4.MatCommonModule, typeof i5.SimpleSnackBar, typeof i6.MatSnackBarContainer, typeof i7.MatSnackBarLabel, typeof i7.MatSnackBarActions, typeof i7.MatSnackBarAction], [typeof i4.MatCommonModule, typeof i6.MatSnackBarContainer, typeof i7.MatSnackBarLabel, typeof i7.MatSnackBarActions, typeof i7.MatSnackBarAction]>;
 }
 
 // @public
 export class MatSnackBarRef<T> {
-    constructor(containerInstance: _MatSnackBarContainerBase, _overlayRef: OverlayRef);
+    constructor(containerInstance: MatSnackBarContainer, _overlayRef: OverlayRef);
     afterDismissed(): Observable<MatSnackBarDismiss>;
     afterOpened(): Observable<void>;
     // @deprecated
     closeWithAction(): void;
-    containerInstance: _MatSnackBarContainerBase;
+    containerInstance: MatSnackBarContainer;
     dismiss(): void;
     _dismissAfter(duration: number): void;
     dismissWithAction(): void;
@@ -218,7 +189,7 @@ export class SimpleSnackBar implements TextOnlySnackBar {
     // (undocumented)
     snackBarRef: MatSnackBarRef<SimpleSnackBar>;
     // (undocumented)
-    static ɵcmp: i0.ɵɵComponentDeclaration<SimpleSnackBar, "simple-snack-bar", ["matSnackBar"], {}, {}, never, never, false, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<SimpleSnackBar, "simple-snack-bar", ["matSnackBar"], {}, {}, never, never, true, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<SimpleSnackBar, never>;
 }

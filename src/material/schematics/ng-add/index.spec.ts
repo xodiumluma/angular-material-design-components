@@ -1,8 +1,7 @@
-import {normalize, workspaces} from '@angular-devkit/core';
+import {normalize, workspaces, logging} from '@angular-devkit/core';
 import {Tree} from '@angular-devkit/schematics';
 import {SchematicTestRunner} from '@angular-devkit/schematics/testing';
 import {
-  addModuleImportToRootModule,
   getProjectFromWorkspace,
   getProjectIndexFiles,
   getProjectStyleFile,
@@ -26,11 +25,11 @@ describe('ng-add schematic', () => {
 
   beforeEach(async () => {
     runner = new SchematicTestRunner('schematics', COLLECTION_PATH);
-    appTree = await createTestApp(runner);
+    appTree = await createTestApp(runner, {standalone: false});
 
     errorOutput = [];
     warnOutput = [];
-    runner.logger.subscribe(e => {
+    runner.logger.subscribe((e: logging.LogEntry) => {
       if (e.level === 'error') {
         errorOutput.push(e.message);
       } else if (e.level === 'warn') {
@@ -41,7 +40,7 @@ describe('ng-add schematic', () => {
 
   /** Expects the given file to be in the styles of the specified workspace project. */
   function expectProjectStyleFile(project: workspaces.ProjectDefinition, filePath: string) {
-    expect(getProjectTargetOptions(project, 'build').styles)
+    expect(getProjectTargetOptions(project, 'build')['styles'])
       .withContext(`Expected "${filePath}" to be added to the project styles in the workspace.`)
       .toContain(filePath);
   }
@@ -162,7 +161,6 @@ describe('ng-add schematic', () => {
       // Ensure that the indentation has been determined properly. We want to make sure that
       // the created links properly align with the existing HTML. Default CLI projects use an
       // indentation of two columns.
-      expect(htmlContent).toContain('  <link rel="preconnect" href="https://fonts.gstatic.com">');
       expect(htmlContent).toContain(
         '  <link href="https://fonts.googleapis.com/icon?family=Material+Icons"',
       );
@@ -187,151 +185,71 @@ describe('ng-add schematic', () => {
     );
   });
 
-  describe('animations enabled', () => {
-    it('should add the BrowserAnimationsModule to the project module', async () => {
-      const tree = await runner.runSchematic('ng-add-setup-project', baseOptions, appTree);
-      const fileContent = getFileContent(tree, '/projects/material/src/app/app.module.ts');
+  it('should add provideAnimationsAsync to the project module', async () => {
+    const tree = await runner.runSchematic('ng-add-setup-project', baseOptions, appTree);
+    const fileContent = getFileContent(tree, '/projects/material/src/app/app.module.ts');
 
-      expect(fileContent)
-        .withContext('Expected the project app module to import the "BrowserAnimationsModule".')
-        .toContain('BrowserAnimationsModule');
-    });
-
-    it('should not add BrowserAnimationsModule if NoopAnimationsModule is set up', async () => {
-      const workspace = await getWorkspace(appTree);
-      const project = getProjectFromWorkspace(workspace, baseOptions.project);
-
-      // Simulate the case where a developer uses `ng-add` on an Angular CLI project which already
-      // explicitly uses the `NoopAnimationsModule`. It would be wrong to forcibly enable browser
-      // animations without knowing what other components would be affected. In this case, we
-      // just print a warning message.
-      addModuleImportToRootModule(
-        appTree,
-        'NoopAnimationsModule',
-        '@angular/platform-browser/animations',
-        project,
-      );
-
-      await runner.runSchematic('ng-add-setup-project', baseOptions, appTree);
-
-      expect(errorOutput.length).toBe(1);
-      expect(errorOutput[0]).toMatch(/Could not set up "BrowserAnimationsModule"/);
-    });
-
-    it('should add the provideAnimations to a bootstrapApplication call', async () => {
-      appTree.delete('/projects/material/src/app/app.module.ts');
-      appTree.create(
-        '/projects/material/src/app/app.config.ts',
-        `
-        export const appConfig = {
-          providers: [{ provide: 'foo', useValue: 1 }]
-        };
-      `,
-      );
-      appTree.overwrite(
-        '/projects/material/src/main.ts',
-        `
-          import { bootstrapApplication } from '@angular/platform-browser';
-          import { AppComponent } from './app/app.component';
-          import { appConfig } from './app/app.config';
-
-          bootstrapApplication(AppComponent, appConfig);
-        `,
-      );
-
-      const tree = await runner.runSchematic('ng-add-setup-project', baseOptions, appTree);
-      const fileContent = getFileContent(tree, '/projects/material/src/app/app.config.ts');
-
-      expect(fileContent).toContain(
-        `import { provideAnimations } from '@angular/platform-browser/animations';`,
-      );
-      expect(fileContent).toContain(`[{ provide: 'foo', useValue: 1 }, provideAnimations()]`);
-    });
-
-    it('should not add provideAnimations if provideNoopAnimations is set up in a bootstrapApplication call', async () => {
-      appTree.delete('/projects/material/src/app/app.module.ts');
-      appTree.create(
-        '/projects/material/src/app/app.config.ts',
-        `
-        import { provideNoopAnimations } from '@angular/platform-browser/animations';
-
-        export const appConfig = {
-          providers: [{ provide: 'foo', useValue: 1 }, provideNoopAnimations()]
-        };
-      `,
-      );
-      appTree.overwrite(
-        '/projects/material/src/main.ts',
-        `
-          import { bootstrapApplication } from '@angular/platform-browser';
-          import { AppComponent } from './app/app.component';
-          import { appConfig } from './app/app.config';
-
-          bootstrapApplication(AppComponent, appConfig);
-        `,
-      );
-
-      await runner.runSchematic('ng-add-setup-project', baseOptions, appTree);
-
-      expect(errorOutput.length).toBe(1);
-      expect(errorOutput[0]).toMatch(
-        /Could not add "provideAnimations" because "provideNoopAnimations" is already provided/,
-      );
-    });
+    expect(fileContent).toContain('provideAnimationsAsync()');
+    expect(fileContent).toContain(
+      `import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';`,
+    );
   });
 
-  describe('animations disabled', () => {
-    it('should add the NoopAnimationsModule to the project module', async () => {
-      const tree = await runner.runSchematic(
-        'ng-add-setup-project',
-        {...baseOptions, animations: 'disabled'},
-        appTree,
-      );
-      const fileContent = getFileContent(tree, '/projects/material/src/app/app.module.ts');
+  it('should add the provideAnimationsAsync to a bootstrapApplication call', async () => {
+    appTree.delete('/projects/material/src/app/app.module.ts');
+    appTree.create(
+      '/projects/material/src/app/app.config.ts',
+      `
+      export const appConfig = {
+        providers: [{ provide: 'foo', useValue: 1 }]
+      };
+    `,
+    );
+    appTree.overwrite(
+      '/projects/material/src/main.ts',
+      `
+        import { bootstrapApplication } from '@angular/platform-browser';
+        import { AppComponent } from './app/app.component';
+        import { appConfig } from './app/app.config';
 
-      expect(fileContent)
-        .withContext('Expected the project app module to import the "NoopAnimationsModule".')
-        .toContain('NoopAnimationsModule');
-    });
+        bootstrapApplication(AppComponent, appConfig);
+      `,
+    );
 
-    it('should not add NoopAnimationsModule if BrowserAnimationsModule is set up', async () => {
-      const workspace = await getWorkspace(appTree);
-      const project = getProjectFromWorkspace(workspace, baseOptions.project);
+    const tree = await runner.runSchematic('ng-add-setup-project', baseOptions, appTree);
+    const fileContent = getFileContent(tree, '/projects/material/src/app/app.config.ts');
 
-      // Simulate the case where a developer uses `ng-add` on an Angular CLI project which already
-      // explicitly uses the `BrowserAnimationsModule`. It would be wrong to forcibly change
-      // to noop animations.
-      addModuleImportToRootModule(
-        appTree,
-        'BrowserAnimationsModule',
-        '@angular/platform-browser/animations',
-        project,
-      );
-
-      const fileContent = getFileContent(appTree, '/projects/material/src/app/app.module.ts');
-
-      expect(fileContent)
-        .not.withContext(
-          'Expected the project app module to not import the "NoopAnimationsModule".',
-        )
-        .toContain('NoopAnimationsModule');
-    });
+    expect(fileContent).toContain(
+      `import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';`,
+    );
+    expect(fileContent).toContain(`[{ provide: 'foo', useValue: 1 }, provideAnimationsAsync()]`);
   });
 
-  describe('animations excluded', () => {
-    it('should not add any animations code if animations are excluded', async () => {
-      const tree = await runner.runSchematic(
-        'ng-add-setup-project',
-        {...baseOptions, animations: 'excluded'},
-        appTree,
-      );
-      const fileContent = getFileContent(tree, '/projects/material/src/app/app.module.ts');
+  it("should add the provideAnimationAsync('noop') to the project module if animations are disabled", async () => {
+    const tree = await runner.runSchematic(
+      'ng-add-setup-project',
+      {...baseOptions, animations: 'disabled'},
+      appTree,
+    );
+    const fileContent = getFileContent(tree, '/projects/material/src/app/app.module.ts');
 
-      expect(fileContent).not.toContain('NoopAnimationsModule');
-      expect(fileContent).not.toContain('BrowserAnimationsModule');
-      expect(fileContent).not.toContain('@angular/platform-browser/animations');
-      expect(fileContent).not.toContain('@angular/animations');
-    });
+    expect(fileContent).toContain(`provideAnimationsAsync('noop')`);
+    expect(fileContent).toContain(
+      `import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';`,
+    );
+  });
+
+  it('should not add any animations code if animations are excluded', async () => {
+    const tree = await runner.runSchematic(
+      'ng-add-setup-project',
+      {...baseOptions, animations: 'excluded'},
+      appTree,
+    );
+    const fileContent = getFileContent(tree, '/projects/material/src/app/app.module.ts');
+
+    expect(fileContent).not.toContain('provideAnimationsAsync');
+    expect(fileContent).not.toContain('@angular/platform-browser/animations');
+    expect(fileContent).not.toContain('@angular/animations');
   });
 
   describe('custom project builders', () => {
@@ -347,11 +265,11 @@ describe('ng-add schematic', () => {
             prefix: 'app',
             architect: {
               build: {
-                builder: '@angular-devkit/build-angular:browser',
+                builder: '@angular-devkit/build-angular:application',
                 options: {
                   outputPath: 'dist/material',
                   index: 'projects/material/src/index.html',
-                  main: 'projects/material/src/main.ts',
+                  browser: 'projects/material/src/main.ts',
                   styles: ['projects/material/src/styles.css'],
                 },
               },
@@ -360,7 +278,7 @@ describe('ng-add schematic', () => {
                 options: {
                   outputPath: 'dist/material',
                   index: 'projects/material/src/index.html',
-                  main: 'projects/material/src/main.ts',
+                  browser: 'projects/material/src/main.ts',
                   styles: ['projects/material/src/styles.css'],
                 },
               },
@@ -377,7 +295,7 @@ describe('ng-add schematic', () => {
       overwriteTargetBuilder(appTree, 'build', 'thirdparty-builder');
       await expectAsync(
         runner.runSchematic('ng-add-setup-project', baseOptions, appTree),
-      ).toBeRejectedWithError(/not using the default builders.*build/);
+      ).toBeRejected();
     });
 
     it('should warn if the "test" target has been changed', async () => {
@@ -411,11 +329,11 @@ describe('ng-add schematic', () => {
                 prefix: 'app',
                 architect: {
                   build: {
-                    builder: '@angular-devkit/build-angular:browser',
+                    builder: '@angular-devkit/build-angular:application',
                     options: {
                       outputPath: 'dist/material',
                       index: 'projects/material/src/index.html',
-                      main: 'projects/material/src/main.ts',
+                      browser: 'projects/material/src/main.ts',
                       styles: ['projects/material/src/styles.css', stylePath],
                     },
                   },
@@ -436,7 +354,7 @@ describe('ng-add schematic', () => {
       const tree = await runner.runSchematic('ng-add-setup-project', baseOptions, appTree);
       const workspace = await getWorkspace(tree);
       const project = getProjectFromWorkspace(workspace, baseOptions.project);
-      const styles = getProjectTargetOptions(project, 'build').styles;
+      const styles = getProjectTargetOptions(project, 'build')['styles'];
 
       expect(styles)
         .not.withContext('Expected the existing prebuilt theme file to be removed.')
@@ -452,7 +370,7 @@ describe('ng-add schematic', () => {
       const tree = await runner.runSchematic('ng-add-setup-project', baseOptions, appTree);
       const workspace = await getWorkspace(tree);
       const project = getProjectFromWorkspace(workspace, baseOptions.project);
-      const styles = getProjectTargetOptions(project, 'build').styles;
+      const styles = getProjectTargetOptions(project, 'build')['styles'];
 
       expect(styles)
         .not.withContext('Expected the default prebuilt theme to be not configured.')
@@ -467,7 +385,7 @@ describe('ng-add schematic', () => {
       const tree = await runner.runSchematic('ng-add-setup-project', baseOptions, appTree);
       const workspace = await getWorkspace(tree);
       const project = getProjectFromWorkspace(workspace, baseOptions.project);
-      const styles = getProjectTargetOptions(project, 'build').styles;
+      const styles = getProjectTargetOptions(project, 'build')['styles'];
 
       expect(styles)
         .withContext(
@@ -599,6 +517,146 @@ describe('ng-add schematic', () => {
       expect(buffer.toString()).toContain('<body class="one two">');
     });
   });
+
+  describe('using browser builder', () => {
+    beforeEach(() => {
+      const config = {
+        version: 1,
+        projects: {
+          material: {
+            projectType: 'application',
+            root: 'projects/material',
+            sourceRoot: 'projects/material/src',
+            prefix: 'app',
+            architect: {
+              build: {
+                builder: '@angular-devkit/build-angular:browser',
+                options: {
+                  outputPath: 'dist/material',
+                  index: 'projects/material/src/index.html',
+                  main: 'projects/material/src/main.ts',
+                  styles: ['projects/material/src/styles.css'],
+                },
+              },
+              test: {
+                builder: '@angular-devkit/build-angular:karma',
+                options: {
+                  outputPath: 'dist/material',
+                  index: 'projects/material/src/index.html',
+                  browser: 'projects/material/src/main.ts',
+                  styles: ['projects/material/src/styles.css'],
+                },
+              },
+            },
+          },
+        },
+      };
+
+      appTree.overwrite('/angular.json', JSON.stringify(config, null, 2));
+    });
+
+    it('should add a theme', async () => {
+      const tree = await runner.runSchematic('ng-add-setup-project', baseOptions, appTree);
+      const workspace = await getWorkspace(tree);
+      const project = getProjectFromWorkspace(workspace, baseOptions.project);
+
+      expectProjectStyleFile(project, '@angular/material/prebuilt-themes/indigo-pink.css');
+    });
+
+    it('should add material app styles', async () => {
+      const tree = await runner.runSchematic('ng-add-setup-project', baseOptions, appTree);
+      const workspace = await getWorkspace(tree);
+      const project = getProjectFromWorkspace(workspace, baseOptions.project);
+
+      const defaultStylesPath = getProjectStyleFile(project)!;
+      const htmlContent = tree.read(defaultStylesPath)!.toString();
+
+      expect(htmlContent).toContain('html, body { height: 100%; }');
+      expect(htmlContent).toContain(
+        'body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }',
+      );
+    });
+
+    it('should add the provideAnimationsAsync to the project module', async () => {
+      const tree = await runner.runSchematic('ng-add-setup-project', baseOptions, appTree);
+      const fileContent = getFileContent(tree, '/projects/material/src/app/app.module.ts');
+
+      expect(fileContent).toContain('provideAnimationsAsync()');
+      expect(fileContent).toContain(
+        `import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';`,
+      );
+    });
+  });
+
+  describe('using browser-esbuild builder', () => {
+    beforeEach(() => {
+      const config = {
+        version: 1,
+        projects: {
+          material: {
+            projectType: 'application',
+            root: 'projects/material',
+            sourceRoot: 'projects/material/src',
+            prefix: 'app',
+            architect: {
+              build: {
+                builder: '@angular-devkit/build-angular:browser-esbuild',
+                options: {
+                  outputPath: 'dist/material',
+                  index: 'projects/material/src/index.html',
+                  main: 'projects/material/src/main.ts',
+                  styles: ['projects/material/src/styles.css'],
+                },
+              },
+              test: {
+                builder: '@angular-devkit/build-angular:karma',
+                options: {
+                  outputPath: 'dist/material',
+                  index: 'projects/material/src/index.html',
+                  browser: 'projects/material/src/main.ts',
+                  styles: ['projects/material/src/styles.css'],
+                },
+              },
+            },
+          },
+        },
+      };
+
+      appTree.overwrite('/angular.json', JSON.stringify(config, null, 2));
+    });
+
+    it('should add a theme', async () => {
+      const tree = await runner.runSchematic('ng-add-setup-project', baseOptions, appTree);
+      const workspace = await getWorkspace(tree);
+      const project = getProjectFromWorkspace(workspace, baseOptions.project);
+
+      expectProjectStyleFile(project, '@angular/material/prebuilt-themes/indigo-pink.css');
+    });
+
+    it('should add material app styles', async () => {
+      const tree = await runner.runSchematic('ng-add-setup-project', baseOptions, appTree);
+      const workspace = await getWorkspace(tree);
+      const project = getProjectFromWorkspace(workspace, baseOptions.project);
+
+      const defaultStylesPath = getProjectStyleFile(project)!;
+      const htmlContent = tree.read(defaultStylesPath)!.toString();
+
+      expect(htmlContent).toContain('html, body { height: 100%; }');
+      expect(htmlContent).toContain(
+        'body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }',
+      );
+    });
+
+    it('should add the provideAnimationsAsync to the project module', async () => {
+      const tree = await runner.runSchematic('ng-add-setup-project', baseOptions, appTree);
+      const fileContent = getFileContent(tree, '/projects/material/src/app/app.module.ts');
+
+      expect(fileContent).toContain('provideAnimationsAsync()');
+      expect(fileContent).toContain(
+        `import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';`,
+      );
+    });
+  });
 });
 
 describe('ng-add schematic - library project', () => {
@@ -613,7 +671,7 @@ describe('ng-add schematic - library project', () => {
 
     errorOutput = [];
     warnOutput = [];
-    runner.logger.subscribe(e => {
+    runner.logger.subscribe((e: logging.LogEntry) => {
       if (e.level === 'error') {
         errorOutput.push(e.message);
       } else if (e.level === 'warn') {

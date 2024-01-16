@@ -1,7 +1,6 @@
 @use 'sass:map';
 @use '@material/radio/radio' as mdc-radio;
 @use '@material/radio/radio-theme' as mdc-radio-theme;
-@use '@material/form-field' as mdc-form-field;
 @use '@material/touch-target' as mdc-touch-target;
 @use '@material/ripple' as mdc-ripple;
 @use '@material/theme/custom-properties' as mdc-custom-properties;
@@ -14,12 +13,8 @@
 
 @include mdc-custom-properties.configure($emit-fallback-values: false, $emit-fallback-vars: false) {
   @include mdc-radio.static-styles($query: mdc-helpers.$mdc-base-styles-query);
-  @include mdc-form-field.core-styles($query: mdc-helpers.$mdc-base-styles-query);
 
   .mat-mdc-radio-button {
-    @include token-utils.create-token-values(
-      tokens-mat-radio.$prefix, tokens-mat-radio.get-unthemable-tokens());
-    @include mdc-radio-theme.theme(tokens-mdc-radio.get-unthemable-tokens());
     -webkit-tap-highlight-color: transparent;
 
     .mdc-radio {
@@ -112,6 +107,10 @@
     @include mdc-touch-target.touch-target(
       $set-width: true,
       $query: mdc-helpers.$mdc-base-styles-query);
+
+    @include token-utils.use-tokens(tokens-mat-radio.$prefix,tokens-mat-radio.get-token-slots()) {
+      @include token-utils.create-token-slot(display, touch-target-display);
+    }
 
     [dir='rtl'] & {
       left: 0;

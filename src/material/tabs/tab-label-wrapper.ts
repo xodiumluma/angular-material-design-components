@@ -6,21 +6,36 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {Directive, ElementRef} from '@angular/core';
-import {MatInkBarItem, mixinInkBarItem} from './ink-bar';
-import {CanDisable, mixinDisabled} from '@angular/material/core';
+import {Directive, ElementRef, Input, booleanAttribute} from '@angular/core';
+import {mixinInkBarItem} from './ink-bar';
 
 // Boilerplate for applying mixins to MatTabLabelWrapper.
 /** @docs-private */
-const _MatTabLabelWrapperMixinBase = mixinDisabled(class {});
+const _MatTabLabelWrapperMixinBase = mixinInkBarItem(
+  class {
+    elementRef: ElementRef;
+  },
+);
 
 /**
  * Used in the `mat-tab-group` view to display tab labels.
  * @docs-private
  */
-@Directive()
-export class _MatTabLabelWrapperBase extends _MatTabLabelWrapperMixinBase implements CanDisable {
-  constructor(public elementRef: ElementRef) {
+@Directive({
+  selector: '[matTabLabelWrapper]',
+  inputs: ['fitInkBarToContent'],
+  host: {
+    '[class.mat-mdc-tab-disabled]': 'disabled',
+    '[attr.aria-disabled]': '!!disabled',
+  },
+  standalone: true,
+})
+export class MatTabLabelWrapper extends _MatTabLabelWrapperMixinBase {
+  /** Whether the tab is disabled. */
+  @Input({transform: booleanAttribute})
+  disabled: boolean = false;
+
+  constructor(override elementRef: ElementRef) {
     super();
   }
 
@@ -37,21 +52,3 @@ export class _MatTabLabelWrapperBase extends _MatTabLabelWrapperMixinBase implem
     return this.elementRef.nativeElement.offsetWidth;
   }
 }
-
-const _MatTabLabelWrapperBaseWithInkBarItem = mixinInkBarItem(_MatTabLabelWrapperBase);
-
-/**
- * Used in the `mat-tab-group` view to display tab labels.
- * @docs-private
- */
-@Directive({
-  selector: '[matTabLabelWrapper]',
-  inputs: ['disabled', 'fitInkBarToContent'],
-  host: {
-    '[class.mat-mdc-tab-disabled]': 'disabled',
-    '[attr.aria-disabled]': '!!disabled',
-  },
-})
-export class MatTabLabelWrapper
-  extends _MatTabLabelWrapperBaseWithInkBarItem
-  implements MatInkBarItem {}

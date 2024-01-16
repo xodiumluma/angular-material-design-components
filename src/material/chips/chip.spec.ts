@@ -1,7 +1,6 @@
 import {Directionality} from '@angular/cdk/bidi';
 import {Component, DebugElement, ViewChild} from '@angular/core';
 import {waitForAsync, ComponentFixture, TestBed} from '@angular/core/testing';
-import {MatRipple} from '@angular/material/core';
 import {By} from '@angular/platform-browser';
 import {Subject} from 'rxjs';
 import {MatChip, MatChipEvent, MatChipSet, MatChipsModule} from './index';
@@ -11,15 +10,13 @@ describe('MDC-based MatChip', () => {
   let chipDebugElement: DebugElement;
   let chipNativeElement: HTMLElement;
   let chipInstance: MatChip;
-  let chipRippleDebugElement: DebugElement;
-  let chipRippleInstance: MatRipple;
 
   let dir = 'ltr';
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [MatChipsModule],
-      declarations: [
+      imports: [
+        MatChipsModule,
         BasicChip,
         SingleChip,
         BasicChipWithStaticTabindex,
@@ -74,9 +71,8 @@ describe('MDC-based MatChip', () => {
       fixture = TestBed.createComponent(BasicChip);
       fixture.detectChanges();
       chipDebugElement = fixture.debugElement.query(By.directive(MatChip))!;
-      chipRippleDebugElement = chipDebugElement.query(By.directive(MatRipple))!;
-      chipRippleInstance = chipRippleDebugElement.injector.get<MatRipple>(MatRipple);
-      expect(chipRippleInstance.disabled)
+      chipInstance = chipDebugElement.injector.get<MatChip>(MatChip);
+      expect(chipInstance.ripple.disabled)
         .withContext('Expected basic chip ripples to be disabled.')
         .toBe(true);
     });
@@ -93,8 +89,6 @@ describe('MDC-based MatChip', () => {
       chipDebugElement = fixture.debugElement.query(By.directive(MatChip))!;
       chipNativeElement = chipDebugElement.nativeElement;
       chipInstance = chipDebugElement.injector.get<MatChip>(MatChip);
-      chipRippleDebugElement = chipDebugElement.query(By.directive(MatRipple))!;
-      chipRippleInstance = chipRippleDebugElement.injector.get<MatRipple>(MatRipple);
       testComponent = fixture.debugElement.componentInstance;
       primaryAction = chipNativeElement.querySelector('.mdc-evolution-chip__action--primary')!;
     });
@@ -137,27 +131,27 @@ describe('MDC-based MatChip', () => {
     });
 
     it('should be able to disable ripples with the `[rippleDisabled]` input', () => {
-      expect(chipRippleInstance.disabled)
+      expect(chipInstance.ripple.disabled)
         .withContext('Expected chip ripples to be enabled.')
         .toBe(false);
 
       testComponent.rippleDisabled = true;
       fixture.detectChanges();
 
-      expect(chipRippleInstance.disabled)
+      expect(chipInstance.ripple.disabled)
         .withContext('Expected chip ripples to be disabled.')
         .toBe(true);
     });
 
     it('should disable ripples when the chip is disabled', () => {
-      expect(chipRippleInstance.disabled)
+      expect(chipInstance.ripple.disabled)
         .withContext('Expected chip ripples to be enabled.')
         .toBe(false);
 
       testComponent.disabled = true;
       fixture.detectChanges();
 
-      expect(chipRippleInstance.disabled)
+      expect(chipInstance.ripple.disabled)
         .withContext('Expected chip ripples to be disabled.')
         .toBe(true);
     });
@@ -191,15 +185,19 @@ describe('MDC-based MatChip', () => {
 @Component({
   template: `
     <mat-chip-set>
-      <div *ngIf="shouldShow">
-        <mat-chip [removable]="removable"
-                 [color]="color" [disabled]="disabled"
-                 (destroyed)="chipDestroy($event)"
-                 (removed)="chipRemove($event)" [value]="value" [disableRipple]="rippleDisabled">
-          {{name}}
-        </mat-chip>
-      </div>
+      @if (shouldShow) {
+        <div>
+          <mat-chip [removable]="removable"
+                  [color]="color" [disabled]="disabled"
+                  (destroyed)="chipDestroy($event)"
+                  (removed)="chipRemove($event)" [value]="value" [disableRipple]="rippleDisabled">
+            {{name}}
+          </mat-chip>
+        </div>
+      }
     </mat-chip-set>`,
+  standalone: true,
+  imports: [MatChipsModule],
 })
 class SingleChip {
   @ViewChild(MatChipSet) chipList: MatChipSet;
@@ -217,16 +215,22 @@ class SingleChip {
 
 @Component({
   template: `<mat-basic-chip>Hello</mat-basic-chip>`,
+  standalone: true,
+  imports: [MatChipsModule],
 })
 class BasicChip {}
 
 @Component({
   template: `<mat-basic-chip role="button" tabindex="3">Hello</mat-basic-chip>`,
+  standalone: true,
+  imports: [MatChipsModule],
 })
 class BasicChipWithStaticTabindex {}
 
 @Component({
   template: `<mat-basic-chip role="button" [tabIndex]="tabindex">Hello</mat-basic-chip>`,
+  standalone: true,
+  imports: [MatChipsModule],
 })
 class BasicChipWithBoundTabindex {
   tabindex = 12;

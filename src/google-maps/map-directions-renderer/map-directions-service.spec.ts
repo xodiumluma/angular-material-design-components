@@ -1,6 +1,5 @@
 import {TestBed} from '@angular/core/testing';
 import {MapDirectionsResponse, MapDirectionsService} from './map-directions-service';
-import {GoogleMapsModule} from '../google-maps-module';
 import {
   createDirectionsServiceConstructorSpy,
   createDirectionsServiceSpy,
@@ -12,13 +11,8 @@ describe('MapDirectionsService', () => {
   let directionsServiceSpy: jasmine.SpyObj<google.maps.DirectionsService>;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({
-      imports: [GoogleMapsModule],
-    });
-
     directionsServiceSpy = createDirectionsServiceSpy();
-    directionsServiceConstructorSpy =
-      createDirectionsServiceConstructorSpy(directionsServiceSpy).and.callThrough();
+    directionsServiceConstructorSpy = createDirectionsServiceConstructorSpy(directionsServiceSpy);
     mapDirectionsService = TestBed.inject(MapDirectionsService);
   });
 
@@ -43,7 +37,14 @@ describe('MapDirectionsService', () => {
   });
 
   it('calls route on inputs', () => {
-    const result: google.maps.DirectionsResult = {routes: []};
+    const result: google.maps.DirectionsResult = {
+      routes: [],
+      request: {
+        origin: 'foo',
+        destination: 'bar',
+        travelMode: 'BICYCLING' as google.maps.TravelMode,
+      },
+    };
     const status = 'OK' as google.maps.DirectionsStatus;
     directionsServiceSpy.route.and.callFake((_request, callback) => {
       callback?.(result, status);

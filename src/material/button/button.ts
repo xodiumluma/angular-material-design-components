@@ -18,14 +18,7 @@ import {
 } from '@angular/core';
 import {ANIMATION_MODULE_TYPE} from '@angular/platform-browser/animations';
 
-import {
-  MAT_ANCHOR_HOST,
-  MAT_ANCHOR_INPUTS,
-  MAT_BUTTON_HOST,
-  MAT_BUTTON_INPUTS,
-  MatAnchorBase,
-  MatButtonBase,
-} from './button-base';
+import {MAT_ANCHOR_HOST, MAT_BUTTON_HOST, MatAnchorBase, MatButtonBase} from './button-base';
 
 /**
  * Material Design button component. Users interact with a button to perform an action.
@@ -43,11 +36,11 @@ import {
   `,
   templateUrl: 'button.html',
   styleUrls: ['button.css', 'button-high-contrast.css'],
-  inputs: MAT_BUTTON_INPUTS,
   host: MAT_BUTTON_HOST,
   exportAs: 'matButton',
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
 })
 export class MatButton extends MatButtonBase {
   constructor(
@@ -74,11 +67,11 @@ export class MatButton extends MatButtonBase {
   selector: `a[mat-button], a[mat-raised-button], a[mat-flat-button], a[mat-stroked-button]`,
   exportAs: 'matButton, matAnchor',
   host: MAT_ANCHOR_HOST,
-  inputs: MAT_ANCHOR_INPUTS,
   templateUrl: 'button.html',
   styleUrls: ['button.css', 'button-high-contrast.css'],
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
 })
 export class MatAnchor extends MatAnchorBase {
   constructor(

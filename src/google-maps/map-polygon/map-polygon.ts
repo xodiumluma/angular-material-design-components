@@ -9,7 +9,16 @@
 // Workaround for: https://github.com/bazelbuild/rules_nodejs/issues/1265
 /// <reference types="google.maps" />
 
-import {Directive, Input, OnDestroy, OnInit, Output, NgZone, inject} from '@angular/core';
+import {
+  Directive,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+  NgZone,
+  inject,
+  EventEmitter,
+} from '@angular/core';
 import {BehaviorSubject, combineLatest, Observable, Subject} from 'rxjs';
 import {map, take, takeUntil} from 'rxjs/operators';
 
@@ -24,6 +33,7 @@ import {MapEventManager} from '../map-event-manager';
 @Directive({
   selector: 'map-polygon',
   exportAs: 'mapPolygon',
+  standalone: true,
 })
 export class MapPolygon implements OnInit, OnDestroy {
   private _eventManager = new MapEventManager(inject(NgZone));
@@ -127,36 +137,59 @@ export class MapPolygon implements OnInit, OnDestroy {
   @Output() readonly polygonRightclick: Observable<google.maps.PolyMouseEvent> =
     this._eventManager.getLazyEmitter<google.maps.PolyMouseEvent>('rightclick');
 
-  constructor(private readonly _map: GoogleMap, private readonly _ngZone: NgZone) {}
+  /** Event emitted when the polygon is initialized. */
+  @Output() readonly polygonInitialized: EventEmitter<google.maps.Polygon> =
+    new EventEmitter<google.maps.Polygon>();
+
+  constructor(
+    private readonly _map: GoogleMap,
+    private readonly _ngZone: NgZone,
+  ) {}
 
   ngOnInit() {
     if (this._map._isBrowser) {
       this._combineOptions()
         .pipe(take(1))
         .subscribe(options => {
-          // Create the object outside the zone so its events don't trigger change detection.
-          // We'll bring it back in inside the `MapEventManager` only for the events that the
-          // user has subscribed to.
-          this._ngZone.runOutsideAngular(() => {
-            this.polygon = new google.maps.Polygon(options);
-          });
-          this._assertInitialized();
-          this.polygon.setMap(this._map.googleMap!);
-          this._eventManager.setTarget(this.polygon);
+          if (google.maps.Polygon && this._map.googleMap) {
+            this._initialize(this._map.googleMap, google.maps.Polygon, options);
+          } else {
+            this._ngZone.runOutsideAngular(() => {
+              Promise.all([this._map._resolveMap(), google.maps.importLibrary('maps')]).then(
+                ([map, lib]) => {
+                  this._initialize(map, (lib as google.maps.MapsLibrary).Polygon, options);
+                },
+              );
+            });
+          }
         });
+    }
+  }
 
+  private _initialize(
+    map: google.maps.Map,
+    polygonConstructor: typeof google.maps.Polygon,
+    options: google.maps.PolygonOptions,
+  ) {
+    // Create the object outside the zone so its events don't trigger change detection.
+    // We'll bring it back in inside the `MapEventManager` only for the events that the
+    // user has subscribed to.
+    this._ngZone.runOutsideAngular(() => {
+      this.polygon = new polygonConstructor(options);
+      this._assertInitialized();
+      this.polygon.setMap(map);
+      this._eventManager.setTarget(this.polygon);
+      this.polygonInitialized.emit(this.polygon);
       this._watchForOptionsChanges();
       this._watchForPathChanges();
-    }
+    });
   }
 
   ngOnDestroy() {
     this._eventManager.destroy();
     this._destroyed.next();
     this._destroyed.complete();
-    if (this.polygon) {
-      this.polygon.setMap(null);
-    }
+    this.polygon?.setMap(null);
   }
 
   /**
@@ -230,12 +263,6 @@ export class MapPolygon implements OnInit, OnDestroy {
 
   private _assertInitialized(): asserts this is {polygon: google.maps.Polygon} {
     if (typeof ngDevMode === 'undefined' || ngDevMode) {
-      if (!this._map.googleMap) {
-        throw Error(
-          'Cannot access Google Map information before the API has been initialized. ' +
-            'Please wait for the API to load before trying to interact with it.',
-        );
-      }
       if (!this.polygon) {
         throw Error(
           'Cannot interact with a Google Map Polygon before it has been ' +

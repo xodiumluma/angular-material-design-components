@@ -9,6 +9,7 @@ import {
 import {
   ChangeDetectionStrategy,
   Component,
+  ComponentRef,
   Directive,
   inject,
   Inject,
@@ -46,8 +47,8 @@ describe('Dialog', () => {
 
   beforeEach(fakeAsync(() => {
     TestBed.configureTestingModule({
-      imports: [DialogModule],
-      declarations: [
+      imports: [
+        DialogModule,
         ComponentWithChildViewContainer,
         ComponentWithTemplateRef,
         PizzaMsg,
@@ -89,6 +90,7 @@ describe('Dialog', () => {
 
     expect(overlayContainerElement.textContent).toContain('Pizza');
     expect(dialogRef.componentInstance instanceof PizzaMsg).toBe(true);
+    expect(dialogRef.componentRef instanceof ComponentRef).toBe(true);
     expect(dialogRef.componentInstance!.dialogRef).toBe(dialogRef);
 
     viewContainerFixture.detectChanges();
@@ -1114,8 +1116,7 @@ describe('Dialog with a parent Dialog', () => {
 
   beforeEach(fakeAsync(() => {
     TestBed.configureTestingModule({
-      imports: [DialogModule],
-      declarations: [ComponentThatProvidesMatDialog],
+      imports: [DialogModule, ComponentThatProvidesMatDialog],
       providers: [
         {
           provide: OverlayContainer,
@@ -1204,7 +1205,10 @@ describe('Dialog with a parent Dialog', () => {
   }));
 });
 
-@Directive({selector: 'dir-with-view-container'})
+@Directive({
+  selector: 'dir-with-view-container',
+  standalone: true,
+})
 class DirectiveWithViewContainer {
   constructor(public viewContainerRef: ViewContainerRef) {}
 }
@@ -1220,6 +1224,8 @@ class ComponentWithOnPushViewContainer {
 @Component({
   selector: 'arbitrary-component',
   template: `<dir-with-view-container></dir-with-view-container>`,
+  standalone: true,
+  imports: [DirectiveWithViewContainer],
 })
 class ComponentWithChildViewContainer {
   @ViewChild(DirectiveWithViewContainer) childWithViewContainer: DirectiveWithViewContainer;
@@ -1233,6 +1239,8 @@ class ComponentWithChildViewContainer {
   selector: 'arbitrary-component-with-template-ref',
   template: `<ng-template let-data let-dialogRef="dialogRef">
       Cheese {{localValue}} {{data?.value}}{{setDialogRef(dialogRef)}}</ng-template>`,
+  standalone: true,
+  imports: [DialogModule],
 })
 class ComponentWithTemplateRef {
   localValue: string;
@@ -1247,7 +1255,11 @@ class ComponentWithTemplateRef {
 }
 
 /** Simple component for testing ComponentPortal. */
-@Component({template: '<p>Pizza</p> <input> <button>Close</button>'})
+@Component({
+  template: '<p>Pizza</p> <input> <button>Close</button>',
+  standalone: true,
+  imports: [DialogModule],
+})
 class PizzaMsg {
   constructor(
     public dialogRef: DialogRef<PizzaMsg>,
@@ -1260,6 +1272,8 @@ class PizzaMsg {
   template: `
     <h1>This is the title</h1>
   `,
+  standalone: true,
+  imports: [DialogModule],
 })
 class ContentElementDialog {
   closeButtonAriaLabel: string;
@@ -1268,18 +1282,28 @@ class ContentElementDialog {
 @Component({
   template: '',
   providers: [Dialog],
+  standalone: true,
+  imports: [DialogModule],
 })
 class ComponentThatProvidesMatDialog {
   constructor(public dialog: Dialog) {}
 }
 
 /** Simple component for testing ComponentPortal. */
-@Component({template: ''})
+@Component({
+  template: '',
+  standalone: true,
+  imports: [DialogModule],
+})
 class DialogWithInjectedData {
   constructor(@Inject(DIALOG_DATA) public data: any) {}
 }
 
-@Component({template: '<p>Pasta</p>'})
+@Component({
+  template: '<p>Pasta</p>',
+  standalone: true,
+  imports: [DialogModule],
+})
 class DialogWithoutFocusableElements {}
 
 @Component({
@@ -1290,6 +1314,17 @@ class ShadowDomComponent {}
 
 const TEMPLATE_INJECTOR_TEST_TOKEN = new InjectionToken<string>('TEMPLATE_INJECTOR_TEST_TOKEN');
 
+@Directive({
+  selector: 'template-injector-inner',
+  standalone: true,
+})
+class TemplateInjectorInnerDirective {
+  constructor() {
+    const parent = inject(TemplateInjectorParentComponent);
+    parent.innerComponentValue = inject(TEMPLATE_INJECTOR_TEST_TOKEN);
+  }
+}
+
 @Component({
   template: `<ng-template><template-injector-inner></template-injector-inner></ng-template>`,
   providers: [
@@ -1298,17 +1333,10 @@ const TEMPLATE_INJECTOR_TEST_TOKEN = new InjectionToken<string>('TEMPLATE_INJECT
       useValue: 'hello from parent component',
     },
   ],
+  standalone: true,
+  imports: [TemplateInjectorInnerDirective],
 })
 class TemplateInjectorParentComponent {
   @ViewChild(TemplateRef) templateRef: TemplateRef<any>;
   innerComponentValue = '';
-}
-
-@Directive({
-  selector: 'template-injector-inner',
-})
-class TemplateInjectorInnerDirective {
-  constructor(parent: TemplateInjectorParentComponent) {
-    parent.innerComponentValue = inject(TEMPLATE_INJECTOR_TEST_TOKEN);
-  }
 }

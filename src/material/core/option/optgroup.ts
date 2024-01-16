@@ -14,9 +14,8 @@ import {
   Inject,
   Optional,
   InjectionToken,
-  Directive,
+  booleanAttribute,
 } from '@angular/core';
-import {CanDisable, mixinDisabled} from '../common-behaviors/disabled';
 import {MatOptionParentComponent, MAT_OPTION_PARENT_COMPONENT} from './option-parent';
 
 // Notes on the accessibility pattern used for `mat-optgroup`.
@@ -39,29 +38,8 @@ import {MatOptionParentComponent, MAT_OPTION_PARENT_COMPONENT} from './option-pa
 // 3. `<mat-option aria-labelledby="optionLabel groupLabel"` - This works on Chrome, but Safari
 //     doesn't read out the text at all. Furthermore, on
 
-// Boilerplate for applying mixins to MatOptgroup.
-/** @docs-private */
-const _MatOptgroupMixinBase = mixinDisabled(class {});
-
 // Counter for unique group ids.
 let _uniqueOptgroupIdCounter = 0;
-
-@Directive()
-export class _MatOptgroupBase extends _MatOptgroupMixinBase implements CanDisable {
-  /** Label for the option group. */
-  @Input() label: string;
-
-  /** Unique id for the underlying label. */
-  _labelId: string = `mat-optgroup-label-${_uniqueOptgroupIdCounter++}`;
-
-  /** Whether the group is in inert a11y mode. */
-  _inert: boolean;
-
-  constructor(@Inject(MAT_OPTION_PARENT_COMPONENT) @Optional() parent?: MatOptionParentComponent) {
-    super();
-    this._inert = parent?.inertGroups ?? false;
-  }
-}
 
 /**
  * Injection token that can be used to reference instances of `MatOptgroup`. It serves as
@@ -79,7 +57,6 @@ export const MAT_OPTGROUP = new InjectionToken<MatOptgroup>('MatOptgroup');
   templateUrl: 'optgroup.html',
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  inputs: ['disabled'],
   styleUrls: ['optgroup.css'],
   host: {
     'class': 'mat-mdc-optgroup',
@@ -88,5 +65,22 @@ export const MAT_OPTGROUP = new InjectionToken<MatOptgroup>('MatOptgroup');
     '[attr.aria-labelledby]': '_inert ? null : _labelId',
   },
   providers: [{provide: MAT_OPTGROUP, useExisting: MatOptgroup}],
+  standalone: true,
 })
-export class MatOptgroup extends _MatOptgroupBase {}
+export class MatOptgroup {
+  /** Label for the option group. */
+  @Input() label: string;
+
+  /** whether the option group is disabled. */
+  @Input({transform: booleanAttribute}) disabled: boolean = false;
+
+  /** Unique id for the underlying label. */
+  _labelId: string = `mat-optgroup-label-${_uniqueOptgroupIdCounter++}`;
+
+  /** Whether the group is in inert a11y mode. */
+  _inert: boolean;
+
+  constructor(@Inject(MAT_OPTION_PARENT_COMPONENT) @Optional() parent?: MatOptionParentComponent) {
+    this._inert = parent?.inertGroups ?? false;
+  }
+}

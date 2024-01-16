@@ -6,7 +6,8 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {Directive, ElementRef, inject, NgZone, OnDestroy} from '@angular/core';
+import {ChangeDetectorRef, Directive, ElementRef, inject, NgZone, OnDestroy} from '@angular/core';
+import {InputModalityDetector} from '@angular/cdk/a11y';
 import {Directionality} from '@angular/cdk/bidi';
 import {
   ConnectedPosition,
@@ -26,13 +27,13 @@ import {
   UP_ARROW,
 } from '@angular/cdk/keycodes';
 import {_getEventTarget} from '@angular/cdk/platform';
-import {InputModalityDetector} from '@angular/cdk/a11y';
 import {fromEvent} from 'rxjs';
 import {filter, takeUntil} from 'rxjs/operators';
 import {CDK_MENU, Menu} from './menu-interface';
 import {PARENT_OR_NEW_MENU_STACK_PROVIDER} from './menu-stack';
 import {MENU_AIM} from './menu-aim';
 import {CdkMenuTriggerBase, MENU_TRIGGER} from './menu-trigger-base';
+import {eventDispatchesNativeClick} from './event-detection';
 
 /**
  * A directive that turns its host element into a trigger for a popup menu.
@@ -69,8 +70,9 @@ export class CdkMenuTrigger extends CdkMenuTriggerBase implements OnDestroy {
   private readonly _elementRef: ElementRef<HTMLElement> = inject(ElementRef);
   private readonly _overlay = inject(Overlay);
   private readonly _ngZone = inject(NgZone);
-  private readonly _directionality = inject(Directionality, {optional: true});
+  private readonly _changeDetectorRef = inject(ChangeDetectorRef);
   private readonly _inputModalityDetector = inject(InputModalityDetector);
+  private readonly _directionality = inject(Directionality, {optional: true});
 
   /** The parent menu this trigger belongs to. */
   private readonly _parentMenu = inject(CDK_MENU, {optional: true});
@@ -100,6 +102,7 @@ export class CdkMenuTrigger extends CdkMenuTriggerBase implements OnDestroy {
 
       this.overlayRef = this.overlayRef || this._overlay.create(this._getOverlayConfig());
       this.overlayRef.attach(this.getMenuContentPortal());
+      this._changeDetectorRef.markForCheck();
       this._subscribeToOutsideClicks();
     }
   }
@@ -110,6 +113,7 @@ export class CdkMenuTrigger extends CdkMenuTriggerBase implements OnDestroy {
       this.closed.next();
 
       this.overlayRef!.detach();
+      this._changeDetectorRef.markForCheck();
     }
     this._closeSiblingTriggers();
   }
@@ -130,7 +134,8 @@ export class CdkMenuTrigger extends CdkMenuTriggerBase implements OnDestroy {
     switch (event.keyCode) {
       case SPACE:
       case ENTER:
-        if (!hasModifierKey(event)) {
+        // Skip events that will trigger clicks so the handler doesn't get triggered twice.
+        if (!hasModifierKey(event) && !eventDispatchesNativeClick(this._elementRef, event)) {
           this.toggle();
           this.childMenu?.focusFirstItem('keyboard');
         }
@@ -173,12 +178,8 @@ export class CdkMenuTrigger extends CdkMenuTriggerBase implements OnDestroy {
 
   /** Handles clicks on the menu trigger. */
   _handleClick() {
-    // Don't handle clicks originating from the keyboard since we
-    // already do the same on `keydown` events for enter and space.
-    if (this._inputModalityDetector.mostRecentModality !== 'keyboard') {
-      this.toggle();
-      this.childMenu?.focusFirstItem('mouse');
-    }
+    this.toggle();
+    this.childMenu?.focusFirstItem('mouse');
   }
 
   /**
@@ -199,7 +200,14 @@ export class CdkMenuTrigger extends CdkMenuTriggerBase implements OnDestroy {
     this._ngZone.runOutsideAngular(() => {
       fromEvent(this._elementRef.nativeElement, 'mouseenter')
         .pipe(
-          filter(() => !this.menuStack.isEmpty() && !this.isOpen()),
+          filter(() => {
+            return (
+              // Skip fake `mouseenter` events dispatched by touch devices.
+              this._inputModalityDetector.mostRecentModality !== 'touch' &&
+              !this.menuStack.isEmpty() &&
+              !this.isOpen()
+            );
+          }),
           takeUntil(this.destroyed),
         )
         .subscribe(() => {

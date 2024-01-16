@@ -9,6 +9,7 @@ import {
   Type,
   ViewChild,
   AfterViewInit,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import {ComponentFixture, fakeAsync, flush, flushMicrotasks, TestBed} from '@angular/core/testing';
 import {BehaviorSubject, combineLatest, Observable, of as observableOf} from 'rxjs';
@@ -534,6 +535,27 @@ describe('CdkTable', () => {
       ['a_2', 'b_2', 'c_2'],
       ['a_3', 'b_3', 'c_3'],
     ]);
+  });
+
+  it('defaults to table role in native HTML table', () => {
+    const fixture = createComponent(NativeHtmlTableApp);
+    const tableElement = fixture.nativeElement.querySelector('table');
+    fixture.detectChanges();
+    expect(tableElement.getAttribute('role')).toBe('table');
+
+    expect(getHeaderRows(tableElement)[0].getAttribute('role')).toBe('row');
+    const header = getHeaderRows(tableElement)[0];
+    getHeaderCells(header).forEach(cell => {
+      expect(cell.getAttribute('role')).toBe('columnheader');
+    });
+
+    getRows(tableElement).forEach(row => {
+      expect(row.getAttribute('role')).toBe('row');
+      getCells(row).forEach(cell => {
+        // Native role of TD elements is row.
+        expect(cell.getAttribute('role')).toBe(null);
+      });
+    });
   });
 
   it('should be able to nest tables', () => {
@@ -1913,6 +1935,20 @@ describe('CdkTable', () => {
     expect(cellElement.classList.contains('custom-cell-class-even')).toBe(true);
     expect(cellElement.classList.contains('custom-cell-class-odd')).toBe(false);
   });
+
+  it('should be able to show a message when no data is being displayed in the strategy ChangeDetectionOnPush', () => {
+    setupTableTestApp(WrapNativeHtmlTableAppOnPush, [NativeHtmlTableAppOnPush]);
+
+    expect(tableElement.querySelector('.cdk-no-data-row')).toBeFalsy();
+
+    component.dataSource.data = [];
+
+    fixture.detectChanges();
+
+    const noDataRow = tableElement.querySelector('.cdk-no-data-row')!;
+    expect(noDataRow).toBeTruthy();
+    expect(noDataRow.getAttribute('colspan')).toEqual('3');
+  });
 });
 
 interface TestData {
@@ -2404,13 +2440,15 @@ class StickyPositioningListenerTest implements StickyPositioningListener {
 @Component({
   template: `
     <cdk-table [dataSource]="dataSource" [dir]="dir">
-      <ng-container [cdkColumnDef]="column" *ngFor="let column of columns"
-                    [sticky]="isStuck(stickyStartColumns, column)"
-                    [stickyEnd]="isStuck(stickyEndColumns, column)">
-        <cdk-header-cell *cdkHeaderCellDef> Header {{column}} </cdk-header-cell>
-        <cdk-cell *cdkCellDef>{{column}}</cdk-cell>
-        <cdk-footer-cell *cdkFooterCellDef> Footer {{column}} </cdk-footer-cell>
-      </ng-container>
+      @for (column of columns; track column) {
+        <ng-container [cdkColumnDef]="column"
+                      [sticky]="isStuck(stickyStartColumns, column)"
+                      [stickyEnd]="isStuck(stickyEndColumns, column)">
+          <cdk-header-cell *cdkHeaderCellDef> Header {{column}} </cdk-header-cell>
+          <cdk-cell *cdkCellDef>{{column}}</cdk-cell>
+          <cdk-footer-cell *cdkFooterCellDef> Footer {{column}} </cdk-footer-cell>
+        </ng-container>
+      }
 
       <cdk-header-row *cdkHeaderRowDef="columns; sticky: isStuck(stickyHeaders, 'header-1')">
       </cdk-header-row>
@@ -2462,13 +2500,15 @@ class StickyFlexLayoutCdkTableApp extends StickyPositioningListenerTest {
 @Component({
   template: `
     <table cdk-table [dataSource]="dataSource">
-      <ng-container [cdkColumnDef]="column" *ngFor="let column of columns"
-                    [sticky]="isStuck(stickyStartColumns, column)"
-                    [stickyEnd]="isStuck(stickyEndColumns, column)">
-        <th cdk-header-cell *cdkHeaderCellDef> Header {{column}} </th>
-        <td cdk-cell *cdkCellDef="let row"> {{column}} </td>
-        <td cdk-footer-cell *cdkFooterCellDef> Footer {{column}} </td>
-      </ng-container>
+      @for (column of columns; track column) {
+        <ng-container [cdkColumnDef]="column"
+                      [sticky]="isStuck(stickyStartColumns, column)"
+                      [stickyEnd]="isStuck(stickyEndColumns, column)">
+          <th cdk-header-cell *cdkHeaderCellDef> Header {{column}} </th>
+          <td cdk-cell *cdkCellDef="let row"> {{column}} </td>
+          <td cdk-footer-cell *cdkFooterCellDef> Footer {{column}} </td>
+        </ng-container>
+      }
 
       <tr cdk-header-row *cdkHeaderRowDef="columns; sticky: isStuck(stickyHeaders, 'header-1')">
       </tr>
@@ -2517,10 +2557,12 @@ class StickyNativeLayoutCdkTableApp extends StickyPositioningListenerTest {
 @Component({
   template: `
     <cdk-table [dataSource]="dataSource">
-      <ng-container [cdkColumnDef]="column" *ngFor="let column of dynamicColumns">
-        <cdk-header-cell *cdkHeaderCellDef> {{column}} </cdk-header-cell>
-        <cdk-cell *cdkCellDef="let row"> {{column}} </cdk-cell>
-      </ng-container>
+      @for (column of dynamicColumns; track column) {
+        <ng-container [cdkColumnDef]="column">
+          <cdk-header-cell *cdkHeaderCellDef> {{column}} </cdk-header-cell>
+          <cdk-cell *cdkCellDef="let row"> {{column}} </cdk-cell>
+        </ng-container>
+      }
 
       <cdk-header-row *cdkHeaderRowDef="dynamicColumns"></cdk-header-row>
       <cdk-row *cdkRowDef="let row; columns: dynamicColumns;"></cdk-row>
@@ -2992,15 +3034,15 @@ class NativeHtmlTableWithColgroupAndCol {
 }
 
 @Component({
-  // Note that we need the `ngSwitch` below in order to surface the issue we're testing for.
+  // Note that we need the `@if` below in order to surface the issue we're testing for.
   template: `
     <cdk-table [dataSource]="dataSource">
-      <ng-container [ngSwitch]="true">
+      @if (true) {
         <ng-container cdkColumnDef="column_a">
           <cdk-header-cell *cdkHeaderCellDef> Column A</cdk-header-cell>
           <cdk-cell *cdkCellDef="let row"> {{row.a}}</cdk-cell>
         </ng-container>
-      </ng-container>
+      }
 
       <cdk-header-row *cdkHeaderRowDef="['column_a']"></cdk-header-row>
       <cdk-row *cdkRowDef="let row; columns: ['column_a']"></cdk-row>
@@ -3009,6 +3051,48 @@ class NativeHtmlTableWithColgroupAndCol {
 })
 class TableWithIndirectDescendantDefs {
   dataSource = new FakeDataSource();
+}
+
+@Component({
+  selector: 'cdk-table-change-detection-on-push',
+  template: `
+    <table cdk-table [dataSource]="dataSource">
+      <ng-container cdkColumnDef="column_a">
+        <th cdk-header-cell *cdkHeaderCellDef> Column A</th>
+        <td cdk-cell *cdkCellDef="let row"> {{row.a}}</td>
+      </ng-container>
+
+      <ng-container cdkColumnDef="column_b">
+        <th cdk-header-cell *cdkHeaderCellDef> Column B</th>
+        <td cdk-cell *cdkCellDef="let row"> {{row.b}}</td>
+      </ng-container>
+
+      <ng-container cdkColumnDef="column_c">
+        <th cdk-header-cell *cdkHeaderCellDef> Column C</th>
+        <td cdk-cell *cdkCellDef="let row"> {{row.c}}</td>
+      </ng-container>
+
+      <tr cdk-header-row *cdkHeaderRowDef="columnsToRender"></tr>
+      <tr cdk-row *cdkRowDef="let row; columns: columnsToRender" class="customRowClass"></tr>
+      <tr *cdkNoDataRow [attr.colspan]="columnsToRender.length">
+        <td>No data</td>
+      </tr>
+    </table>
+  `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+class NativeHtmlTableAppOnPush {
+  @Input() dataSource: Observable<TestData[]> | null = null;
+  columnsToRender = ['column_a', 'column_b', 'column_c'];
+}
+
+@Component({
+  template: `
+    <cdk-table-change-detection-on-push [dataSource]="dataSource"></cdk-table-change-detection-on-push>
+  `,
+})
+class WrapNativeHtmlTableAppOnPush {
+  dataSource: FakeDataSource = new FakeDataSource();
 }
 
 function getElements(element: Element, query: string): HTMLElement[] {

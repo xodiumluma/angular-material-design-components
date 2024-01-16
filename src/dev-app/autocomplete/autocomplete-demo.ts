@@ -14,10 +14,8 @@ import {MatButtonModule} from '@angular/material/button';
 import {MatCardModule} from '@angular/material/card';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatInputModule} from '@angular/material/input';
-import {Observable} from 'rxjs';
-import {map, startWith} from 'rxjs/operators';
 import {ThemePalette} from '@angular/material/core';
-import {MatDialog, MatDialogModule, MatDialogRef} from '@angular/material/dialog';
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 
 export interface State {
   code: string;
@@ -44,22 +42,20 @@ type DisableStateOption = 'none' | 'first-middle-last' | 'all';
     MatButtonModule,
     MatCardModule,
     MatCheckboxModule,
-    MatDialogModule,
     MatInputModule,
     ReactiveFormsModule,
   ],
 })
 export class AutocompleteDemo {
-  stateCtrl = new FormControl({code: 'CA', name: 'California'});
+  stateCtrl = new FormControl();
   currentState = '';
   currentGroupedState = '';
   topHeightCtrl = new FormControl(0);
 
-  reactiveStates: Observable<State[]>;
+  reactiveStates: State[];
   tdStates: State[];
 
   tdDisabled = false;
-  hideSingleSelectionIndicators = false;
   reactiveStatesTheme: ThemePalette = 'primary';
   templateStatesTheme: ThemePalette = 'primary';
 
@@ -68,6 +64,9 @@ export class AutocompleteDemo {
     {value: 'accent', name: 'Accent'},
     {value: 'warn', name: 'Warn'},
   ];
+
+  reactiveRequireSelection = false;
+  templateRequireSelection = false;
 
   reactiveHideSingleSelectionIndicator = false;
   templateHideSingleSelectionIndicator = false;
@@ -136,12 +135,8 @@ export class AutocompleteDemo {
   ].map((state, index) => ({...state, index}));
 
   constructor() {
-    this.tdStates = this.states;
-    this.reactiveStates = this.stateCtrl.valueChanges.pipe(
-      startWith(this.stateCtrl.value),
-      map(val => this.displayFn(val)),
-      map(name => this.filterStates(name)),
-    );
+    this.tdStates = this.states.slice();
+    this.reactiveStates = this.states.slice();
 
     this.filteredGroupedStates = this.groupedStates = this.states.reduce<StateGroup[]>(
       (groups, state) => {
@@ -191,6 +186,12 @@ export class AutocompleteDemo {
     return this._isStateDisabled(index, this.templateDisableStateOption);
   }
 
+  clearTemplateState() {
+    this.modelDir.reset();
+    this.currentState = '';
+    this.tdStates = this.states.slice();
+  }
+
   private _isStateDisabled(stateIndex: number, disableStateOption: DisableStateOption) {
     if (disableStateOption === 'all') {
       return true;
@@ -222,9 +223,9 @@ export class AutocompleteDemo {
         <mat-label>T-Shirt Size</mat-label>
         <input matInput [matAutocomplete]="tdAuto" [(ngModel)]="currentSize" name="size">
         <mat-autocomplete #tdAuto="matAutocomplete">
-          <mat-option *ngFor="let size of sizes" [value]="size">
-            {{size}}
-          </mat-option>
+          @for (size of sizes; track size) {
+            <mat-option [value]="size">{{size}}</mat-option>
+          }
         </mat-autocomplete>
       </mat-form-field>
 
@@ -246,14 +247,7 @@ export class AutocompleteDemo {
   `,
   ],
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    MatAutocompleteModule,
-    MatButtonModule,
-    MatDialogModule,
-    MatInputModule,
-  ],
+  imports: [CommonModule, FormsModule, MatAutocompleteModule, MatButtonModule, MatInputModule],
 })
 export class AutocompleteDemoExampleDialog {
   constructor(public dialogRef: MatDialogRef<AutocompleteDemoExampleDialog>) {}

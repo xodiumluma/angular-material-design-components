@@ -12,7 +12,6 @@ import {
   ChangeDetectorRef,
   Component,
   ContentChildren,
-  Directive,
   ElementRef,
   EventEmitter,
   Inject,
@@ -24,23 +23,22 @@ import {
   TemplateRef,
   ViewChild,
   ViewEncapsulation,
+  booleanAttribute,
 } from '@angular/core';
+import {AnimationEvent} from '@angular/animations';
 import {
   MAT_OPTGROUP,
   MAT_OPTION_PARENT_COMPONENT,
   MatOptgroup,
   MatOption,
-  mixinDisableRipple,
-  CanDisableRipple,
-  _MatOptionBase,
-  _MatOptgroupBase,
   ThemePalette,
 } from '@angular/material/core';
 import {ActiveDescendantKeyManager} from '@angular/cdk/a11y';
-import {BooleanInput, coerceBooleanProperty, coerceStringArray} from '@angular/cdk/coercion';
+import {coerceStringArray} from '@angular/cdk/coercion';
 import {Platform} from '@angular/cdk/platform';
 import {panelAnimation} from './animations';
 import {Subscription} from 'rxjs';
+import {NgClass} from '@angular/common';
 
 /**
  * Autocomplete IDs need to be unique across components, so this counter exists outside of
@@ -52,24 +50,20 @@ let _uniqueAutocompleteIdCounter = 0;
 export class MatAutocompleteSelectedEvent {
   constructor(
     /** Reference to the autocomplete panel that emitted the event. */
-    public source: _MatAutocompleteBase,
+    public source: MatAutocomplete,
     /** Option that was selected. */
-    public option: _MatOptionBase,
+    public option: MatOption,
   ) {}
 }
 
 /** Event object that is emitted when an autocomplete option is activated. */
 export interface MatAutocompleteActivatedEvent {
   /** Reference to the autocomplete panel that emitted the event. */
-  source: _MatAutocompleteBase;
+  source: MatAutocomplete;
 
   /** Option that was selected. */
-  option: _MatOptionBase | null;
+  option: MatOption | null;
 }
-
-// Boilerplate for applying mixins to MatAutocomplete.
-/** @docs-private */
-const _MatAutocompleteMixinBase = mixinDisableRipple(class {});
 
 /** Default `mat-autocomplete` options that can be overridden. */
 export interface MatAutocompleteDefaultOptions {
@@ -78,6 +72,12 @@ export interface MatAutocompleteDefaultOptions {
 
   /** Whether the active option should be selected as the user is navigating. */
   autoSelectActiveOption?: boolean;
+
+  /**
+   * Whether the user is required to make a selection when
+   * they're interacting with the autocomplete.
+   */
+  requireSelection?: boolean;
 
   /** Class or list of classes to be applied to the autocomplete's overlay panel. */
   overlayPanelClass?: string | string[];
@@ -101,25 +101,40 @@ export function MAT_AUTOCOMPLETE_DEFAULT_OPTIONS_FACTORY(): MatAutocompleteDefau
     autoActiveFirstOption: false,
     autoSelectActiveOption: false,
     hideSingleSelectionIndicator: false,
+    requireSelection: false,
   };
 }
 
-/** Base class with all of the `MatAutocomplete` functionality. */
-@Directive()
-export abstract class _MatAutocompleteBase
-  extends _MatAutocompleteMixinBase
-  implements AfterContentInit, CanDisableRipple, OnDestroy
-{
+/** Autocomplete component. */
+@Component({
+  selector: 'mat-autocomplete',
+  templateUrl: 'autocomplete.html',
+  styleUrls: ['autocomplete.css'],
+  encapsulation: ViewEncapsulation.None,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  exportAs: 'matAutocomplete',
+  host: {
+    'class': 'mat-mdc-autocomplete',
+  },
+  providers: [{provide: MAT_OPTION_PARENT_COMPONENT, useExisting: MatAutocomplete}],
+  animations: [panelAnimation],
+  standalone: true,
+  imports: [NgClass],
+})
+export class MatAutocomplete implements AfterContentInit, OnDestroy {
   private _activeOptionChanges = Subscription.EMPTY;
 
   /** Class to apply to the panel when it's visible. */
-  protected abstract _visibleClass: string;
+  private _visibleClass = 'mat-mdc-autocomplete-visible';
 
   /** Class to apply to the panel when it's hidden. */
-  protected abstract _hiddenClass: string;
+  private _hiddenClass = 'mat-mdc-autocomplete-hidden';
+
+  /** Emits when the panel animation is done. Null if the panel doesn't animate. */
+  _animationDone = new EventEmitter<AnimationEvent>();
 
   /** Manages active item in option list based on key events. */
-  _keyManager: ActiveDescendantKeyManager<_MatOptionBase>;
+  _keyManager: ActiveDescendantKeyManager<MatOption>;
 
   /** Whether the autocomplete panel should be visible, depending on option length. */
   showPanel: boolean = false;
@@ -149,10 +164,10 @@ export abstract class _MatAutocompleteBase
   @ViewChild('panel') panel: ElementRef;
 
   /** Reference to all options within the autocomplete. */
-  abstract options: QueryList<_MatOptionBase>;
+  @ContentChildren(MatOption, {descendants: true}) options: QueryList<MatOption>;
 
   /** Reference to all option groups within the autocomplete. */
-  abstract optionGroups: QueryList<_MatOptgroupBase>;
+  @ContentChildren(MAT_OPTGROUP, {descendants: true}) optionGroups: QueryList<MatOptgroup>;
 
   /** Aria label of the autocomplete. */
   @Input('aria-label') ariaLabel: string;
@@ -167,30 +182,27 @@ export abstract class _MatAutocompleteBase
    * Whether the first option should be highlighted when the autocomplete panel is opened.
    * Can be configured globally through the `MAT_AUTOCOMPLETE_DEFAULT_OPTIONS` token.
    */
-  @Input()
-  get autoActiveFirstOption(): boolean {
-    return this._autoActiveFirstOption;
-  }
-  set autoActiveFirstOption(value: BooleanInput) {
-    this._autoActiveFirstOption = coerceBooleanProperty(value);
-  }
-  private _autoActiveFirstOption: boolean;
+  @Input({transform: booleanAttribute}) autoActiveFirstOption: boolean;
 
   /** Whether the active option should be selected as the user is navigating. */
-  @Input()
-  get autoSelectActiveOption(): boolean {
-    return this._autoSelectActiveOption;
-  }
-  set autoSelectActiveOption(value: BooleanInput) {
-    this._autoSelectActiveOption = coerceBooleanProperty(value);
-  }
-  private _autoSelectActiveOption: boolean;
+  @Input({transform: booleanAttribute}) autoSelectActiveOption: boolean;
+
+  /**
+   * Whether the user is required to make a selection when they're interacting with the
+   * autocomplete. If the user moves away from the autocomplete without selecting an option from
+   * the list, the value will be reset. If the user opens the panel and closes it without
+   * interacting or selecting a value, the initial value will be kept.
+   */
+  @Input({transform: booleanAttribute}) requireSelection: boolean;
 
   /**
    * Specify the width of the autocomplete panel.  Can be any CSS sizing value, otherwise it will
    * match the width of its host.
    */
   @Input() panelWidth: string | number;
+
+  /** Whether ripples are disabled within the autocomplete panel. */
+  @Input({transform: booleanAttribute}) disableRipple: boolean;
 
   /** Event that is emitted whenever an option from the list is selected. */
   @Output() readonly optionSelected: EventEmitter<MatAutocompleteSelectedEvent> =
@@ -213,10 +225,13 @@ export abstract class _MatAutocompleteBase
   @Input('class')
   set classList(value: string | string[]) {
     if (value && value.length) {
-      this._classList = coerceStringArray(value).reduce((classList, className) => {
-        classList[className] = true;
-        return classList;
-      }, {} as {[key: string]: boolean});
+      this._classList = coerceStringArray(value).reduce(
+        (classList, className) => {
+          classList[className] = true;
+          return classList;
+        },
+        {} as {[key: string]: boolean},
+      );
     } else {
       this._classList = {};
     }
@@ -226,6 +241,26 @@ export abstract class _MatAutocompleteBase
     this._elementRef.nativeElement.className = '';
   }
   _classList: {[key: string]: boolean} = {};
+
+  /** Whether checkmark indicator for single-selection options is hidden. */
+  @Input({transform: booleanAttribute})
+  get hideSingleSelectionIndicator(): boolean {
+    return this._hideSingleSelectionIndicator;
+  }
+  set hideSingleSelectionIndicator(value: boolean) {
+    this._hideSingleSelectionIndicator = value;
+    this._syncParentProperties();
+  }
+  private _hideSingleSelectionIndicator: boolean;
+
+  /** Syncs the parent state with the individual options. */
+  _syncParentProperties(): void {
+    if (this.options) {
+      for (const option of this.options) {
+        option._changeDetectorRef.markForCheck();
+      }
+    }
+  }
 
   /** Unique ID to be used by autocomplete trigger's "aria-owns" property. */
   id: string = `mat-autocomplete-${_uniqueAutocompleteIdCounter++}`;
@@ -242,19 +277,19 @@ export abstract class _MatAutocompleteBase
     @Inject(MAT_AUTOCOMPLETE_DEFAULT_OPTIONS) protected _defaults: MatAutocompleteDefaultOptions,
     platform?: Platform,
   ) {
-    super();
-
     // TODO(crisbeto): the problem that the `inertGroups` option resolves is only present on
     // Safari using VoiceOver. We should occasionally check back to see whether the bug
     // wasn't resolved in VoiceOver, and if it has, we can remove this and the `inertGroups`
     // option altogether.
     this.inertGroups = platform?.SAFARI || false;
-    this._autoActiveFirstOption = !!_defaults.autoActiveFirstOption;
-    this._autoSelectActiveOption = !!_defaults.autoSelectActiveOption;
+    this.autoActiveFirstOption = !!_defaults.autoActiveFirstOption;
+    this.autoSelectActiveOption = !!_defaults.autoSelectActiveOption;
+    this.requireSelection = !!_defaults.requireSelection;
+    this._hideSingleSelectionIndicator = this._defaults.hideSingleSelectionIndicator ?? false;
   }
 
   ngAfterContentInit() {
-    this._keyManager = new ActiveDescendantKeyManager<_MatOptionBase>(this.options)
+    this._keyManager = new ActiveDescendantKeyManager<MatOption>(this.options)
       .withWrap()
       .skipPredicate(this._skipPredicate);
     this._activeOptionChanges = this._keyManager.change.subscribe(index => {
@@ -270,6 +305,7 @@ export abstract class _MatAutocompleteBase
   ngOnDestroy() {
     this._keyManager?.destroy();
     this._activeOptionChanges.unsubscribe();
+    this._animationDone.complete();
   }
 
   /**
@@ -295,7 +331,7 @@ export abstract class _MatAutocompleteBase
   }
 
   /** Emits the `select` event. */
-  _emitSelectEvent(option: _MatOptionBase): void {
+  _emitSelectEvent(option: MatOption): void {
     const event = new MatAutocompleteSelectedEvent(this, option);
     this.optionSelected.emit(event);
   }
@@ -323,55 +359,6 @@ export abstract class _MatAutocompleteBase
     classList['mat-accent'] = this._color === 'accent';
   }
 
-  protected _skipPredicate(option: _MatOptionBase) {
-    return option.disabled;
-  }
-}
-
-@Component({
-  selector: 'mat-autocomplete',
-  templateUrl: 'autocomplete.html',
-  styleUrls: ['autocomplete.css'],
-  encapsulation: ViewEncapsulation.None,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  exportAs: 'matAutocomplete',
-  inputs: ['disableRipple'],
-  host: {
-    'class': 'mat-mdc-autocomplete',
-    'ngSkipHydration': '',
-  },
-  providers: [{provide: MAT_OPTION_PARENT_COMPONENT, useExisting: MatAutocomplete}],
-  animations: [panelAnimation],
-})
-export class MatAutocomplete extends _MatAutocompleteBase {
-  /** Reference to all option groups within the autocomplete. */
-  @ContentChildren(MAT_OPTGROUP, {descendants: true}) optionGroups: QueryList<MatOptgroup>;
-  /** Reference to all options within the autocomplete. */
-  @ContentChildren(MatOption, {descendants: true}) options: QueryList<MatOption>;
-  protected _visibleClass = 'mat-mdc-autocomplete-visible';
-  protected _hiddenClass = 'mat-mdc-autocomplete-hidden';
-
-  /** Whether checkmark indicator for single-selection options is hidden. */
-  @Input()
-  get hideSingleSelectionIndicator(): boolean {
-    return this._hideSingleSelectionIndicator;
-  }
-  set hideSingleSelectionIndicator(value: BooleanInput) {
-    this._hideSingleSelectionIndicator = coerceBooleanProperty(value);
-    this._syncParentProperties();
-  }
-  private _hideSingleSelectionIndicator: boolean =
-    this._defaults.hideSingleSelectionIndicator ?? false;
-
-  /** Syncs the parent state with the individual options. */
-  _syncParentProperties(): void {
-    if (this.options) {
-      for (const option of this.options) {
-        option._changeDetectorRef.markForCheck();
-      }
-    }
-  }
-
   // `skipPredicate` determines if key manager should avoid putting a given option in the tab
   // order. Allow disabled list items to receive focus via keyboard to align with WAI ARIA
   // recommendation.
@@ -386,7 +373,7 @@ export class MatAutocomplete extends _MatAutocompleteBase {
   //
   // The user can focus disabled options using the keyboard, but the user cannot click disabled
   // options.
-  protected override _skipPredicate(_option: _MatOptionBase) {
+  protected _skipPredicate() {
     return false;
   }
 }

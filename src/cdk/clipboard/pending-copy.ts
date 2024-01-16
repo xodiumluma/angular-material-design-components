@@ -22,7 +22,10 @@
 export class PendingCopy {
   private _textarea: HTMLTextAreaElement | undefined;
 
-  constructor(text: string, private readonly _document: Document) {
+  constructor(
+    text: string,
+    private readonly _document: Document,
+  ) {
     const textarea = (this._textarea = this._document.createElement('textarea'));
     const styles = textarea.style;
 
@@ -36,7 +39,9 @@ export class PendingCopy {
     textarea.value = text;
     // Making the textarea `readonly` prevents the screen from jumping on iOS Safari (see #25169).
     textarea.readOnly = true;
-    this._document.body.appendChild(textarea);
+    // The element needs to be inserted into the fullscreen container, if the page
+    // is in fullscreen mode, otherwise the browser won't execute the copy command.
+    (this._document.fullscreenElement || this._document.body).appendChild(textarea);
   }
 
   /** Finishes copying the text. */

@@ -12,7 +12,6 @@ import {
   Component,
   ContentChild,
   ContentChildren,
-  Directive,
   ElementRef,
   EventEmitter,
   Inject,
@@ -27,11 +26,11 @@ import {
   ViewEncapsulation,
   OnInit,
   ChangeDetectorRef,
+  booleanAttribute,
 } from '@angular/core';
 import {AnimationEvent} from '@angular/animations';
 import {FocusKeyManager, FocusOrigin} from '@angular/cdk/a11y';
 import {Direction} from '@angular/cdk/bidi';
-import {BooleanInput, coerceBooleanProperty} from '@angular/cdk/coercion';
 import {
   ESCAPE,
   LEFT_ARROW,
@@ -48,6 +47,7 @@ import {MenuPositionX, MenuPositionY} from './menu-positions';
 import {throwMatMenuInvalidPositionX, throwMatMenuInvalidPositionY} from './menu-errors';
 import {MatMenuContent, MAT_MENU_CONTENT} from './menu-content';
 import {matMenuAnimations} from './menu-animations';
+import {NgClass} from '@angular/common';
 
 let menuPanelUid = 0;
 
@@ -94,18 +94,31 @@ export function MAT_MENU_DEFAULT_OPTIONS_FACTORY(): MatMenuDefaultOptions {
   };
 }
 
-/** Base class with all of the `MatMenu` functionality. */
-@Directive()
-export class _MatMenuBase
-  implements AfterContentInit, MatMenuPanel<MatMenuItem>, OnInit, OnDestroy
-{
+@Component({
+  selector: 'mat-menu',
+  templateUrl: 'menu.html',
+  styleUrls: ['menu.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  encapsulation: ViewEncapsulation.None,
+  exportAs: 'matMenu',
+  host: {
+    '[attr.aria-label]': 'null',
+    '[attr.aria-labelledby]': 'null',
+    '[attr.aria-describedby]': 'null',
+  },
+  animations: [matMenuAnimations.transformMenu, matMenuAnimations.fadeInItems],
+  providers: [{provide: MAT_MENU_PANEL, useExisting: MatMenu}],
+  standalone: true,
+  imports: [NgClass],
+})
+export class MatMenu implements AfterContentInit, MatMenuPanel<MatMenuItem>, OnInit, OnDestroy {
   private _keyManager: FocusKeyManager<MatMenuItem>;
   private _xPosition: MenuPositionX;
   private _yPosition: MenuPositionY;
   private _firstItemFocusSubscription?: Subscription;
   private _previousElevation: string;
-  protected _elevationPrefix: string;
-  protected _baseElevation: number;
+  private _elevationPrefix = 'mat-elevation-z';
+  private _baseElevation = 8;
 
   /** All items inside the menu. Includes items nested inside another menu. */
   @ContentChildren(MatMenuItem, {descendants: true}) _allItems: QueryList<MatMenuItem>;
@@ -193,24 +206,11 @@ export class _MatMenuBase
   @ContentChild(MAT_MENU_CONTENT) lazyContent: MatMenuContent;
 
   /** Whether the menu should overlap its trigger. */
-  @Input()
-  get overlapTrigger(): boolean {
-    return this._overlapTrigger;
-  }
-  set overlapTrigger(value: BooleanInput) {
-    this._overlapTrigger = coerceBooleanProperty(value);
-  }
-  private _overlapTrigger: boolean;
+  @Input({transform: booleanAttribute}) overlapTrigger: boolean;
 
   /** Whether the menu has a backdrop. */
-  @Input()
-  get hasBackdrop(): boolean | undefined {
-    return this._hasBackdrop;
-  }
-  set hasBackdrop(value: BooleanInput) {
-    this._hasBackdrop = coerceBooleanProperty(value);
-  }
-  private _hasBackdrop: boolean | undefined;
+  @Input({transform: (value: any) => (value == null ? null : booleanAttribute(value))})
+  hasBackdrop?: boolean;
 
   /**
    * This method takes classes set on the host mat-menu element and applies them on the
@@ -296,8 +296,8 @@ export class _MatMenuBase
     this._xPosition = defaultOptions.xPosition;
     this._yPosition = defaultOptions.yPosition;
     this.backdropClass = defaultOptions.backdropClass;
-    this._overlapTrigger = defaultOptions.overlapTrigger;
-    this._hasBackdrop = defaultOptions.hasBackdrop;
+    this.overlapTrigger = defaultOptions.overlapTrigger;
+    this.hasBackdrop = defaultOptions.hasBackdrop;
   }
 
   ngOnInit() {
@@ -537,45 +537,5 @@ export class _MatMenuBase
         this._directDescendantItems.reset(items.filter(item => item._parentMenu === this));
         this._directDescendantItems.notifyOnChanges();
       });
-  }
-}
-
-@Component({
-  selector: 'mat-menu',
-  templateUrl: 'menu.html',
-  styleUrls: ['menu.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  encapsulation: ViewEncapsulation.None,
-  exportAs: 'matMenu',
-  host: {
-    '[attr.aria-label]': 'null',
-    '[attr.aria-labelledby]': 'null',
-    '[attr.aria-describedby]': 'null',
-    'ngSkipHydration': '',
-  },
-  animations: [matMenuAnimations.transformMenu, matMenuAnimations.fadeInItems],
-  providers: [{provide: MAT_MENU_PANEL, useExisting: MatMenu}],
-})
-export class MatMenu extends _MatMenuBase {
-  protected override _elevationPrefix = 'mat-elevation-z';
-  protected override _baseElevation = 8;
-
-  /*
-   * @deprecated `changeDetectorRef` parameter will become a required parameter.
-   * @breaking-change 15.0.0
-   */
-  constructor(
-    elementRef: ElementRef<HTMLElement>,
-    ngZone: NgZone,
-    defaultOptions: MatMenuDefaultOptions,
-  );
-
-  constructor(
-    _elementRef: ElementRef<HTMLElement>,
-    _ngZone: NgZone,
-    @Inject(MAT_MENU_DEFAULT_OPTIONS) _defaultOptions: MatMenuDefaultOptions,
-    changeDetectorRef?: ChangeDetectorRef,
-  ) {
-    super(_elementRef, _ngZone, _defaultOptions, changeDetectorRef);
   }
 }

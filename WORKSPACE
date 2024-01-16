@@ -1,3 +1,4 @@
+#Workspace for angular material
 workspace(
     name = "angular_material",
     managed_directories = {"@npm": ["node_modules"]},
@@ -8,17 +9,17 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 # Add NodeJS rules
 http_archive(
     name = "build_bazel_rules_nodejs",
-    sha256 = "5dd1e5dea1322174c57d3ca7b899da381d516220793d0adef3ba03b9d23baa8e",
-    urls = ["https://github.com/bazelbuild/rules_nodejs/releases/download/5.8.3/rules_nodejs-5.8.3.tar.gz"],
+    sha256 = "709cc0dcb51cf9028dd57c268066e5bc8f03a119ded410a13b5c3925d6e43c48",
+    urls = ["https://github.com/bazelbuild/rules_nodejs/releases/download/5.8.4/rules_nodejs-5.8.4.tar.gz"],
 )
 
 # Add sass rules
 http_archive(
     name = "io_bazel_rules_sass",
-    sha256 = "1ea0103fa6adcb7d43ff26373b5082efe1d4b2e09c4f34f8a8f8b351e9a8a9b0",
-    strip_prefix = "rules_sass-1.55.0",
+    sha256 = "1c89680ca9cbbba33cb9cd462eb328e5782e14c0aa1286b794c71b5333385407",
+    strip_prefix = "rules_sass-1.68.0",
     urls = [
-        "https://github.com/bazelbuild/rules_sass/archive/1.55.0.zip",
+        "https://github.com/bazelbuild/rules_sass/archive/1.68.0.zip",
     ],
 )
 
@@ -59,7 +60,7 @@ load("@rules_nodejs//nodejs:repositories.bzl", "nodejs_register_toolchains")
 
 nodejs_register_toolchains(
     name = "nodejs",
-    node_version = "16.14.0",
+    node_version = "18.17.0",
 )
 
 load("@build_bazel_rules_nodejs//:index.bzl", "yarn_install")

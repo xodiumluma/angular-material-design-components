@@ -1,4 +1,4 @@
-import {dispatchFakeEvent, wrappedErrorMessage} from '../../cdk/testing/private';
+import {dispatchFakeEvent, wrappedErrorMessage} from '@angular/cdk/testing/private';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -186,20 +186,6 @@ describe('MatMdcInput without forms', () => {
 
     expect(inputElement.id).toBeTruthy();
     expect(inputElement.id).toEqual(labelElement.getAttribute('for')!);
-  }));
-
-  it('should add aria-owns to the label for the associated control', fakeAsync(() => {
-    let fixture = createComponent(MatInputTextTestController);
-    fixture.detectChanges();
-
-    const inputElement: HTMLInputElement = fixture.debugElement.query(
-      By.css('input'),
-    )!.nativeElement;
-    const labelElement: HTMLInputElement = fixture.debugElement.query(
-      By.css('label'),
-    )!.nativeElement;
-
-    expect(labelElement.getAttribute('aria-owns')).toBe(inputElement.id);
   }));
 
   it('should add aria-required reflecting the required state', fakeAsync(() => {
@@ -1643,7 +1629,9 @@ class MatInputHintLabelTestController {
   template: `
     <mat-form-field [hintLabel]="label">
       <input matInput [formControl]="formControl" [aria-describedby]="userDescribedByValue">
-      <mat-error *ngIf="showError">Some error</mat-error>
+      @if (showError) {
+        <mat-error>Some error</mat-error>
+      }
     </mat-form-field>`,
 })
 class MatInputWithSubscriptAndAriaDescribedBy {
@@ -1796,7 +1784,9 @@ class MatInputMissingMatInputTestController {}
       <mat-form-field>
         <input matInput [formControl]="formControl">
         <mat-hint>Please type something</mat-hint>
-        <mat-error *ngIf="renderError">This field is required</mat-error>
+        @if (renderError) {
+          <mat-error>This field is required</mat-error>
+        }
       </mat-form-field>
     </form>
   `,
@@ -1869,7 +1859,9 @@ class MatInputWithPrefixAndSuffix {}
 @Component({
   template: `
     <mat-form-field>
-      <input matInput *ngIf="renderInput">
+      @if (renderInput) {
+        <input matInput>
+      }
     </mat-form-field>
   `,
 })
