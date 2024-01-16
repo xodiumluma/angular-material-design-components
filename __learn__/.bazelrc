@@ -36,7 +36,7 @@ test --test_output=errors
 
 # Stamp the version
 # https://docs.bazel.build/versions/master/user-manual.html#flag--workspace_status_command
-build:release --workspace status command="yarn -s ng-dev:stamp --mode=release"
+build:release --workspace_status_command="yarn -s ng-dev:stamp --mode=release"
 build:release --stamp
 
 build:snapshot-build --workspace_status_command="yarn -s ng-dev:stamp --mode=snapshot"
@@ -60,6 +60,10 @@ build:remote --define=EXECUTOR=remote
 # specify that we are using GCP k8-based containers - for host and target CPU
 build:remote --cpu=k8
 build:remote --host_cpu=k8
+
+# Bazel checks max number of jobs against host resources
+# We can increase this as we run remotely
+common:remote --jobs=200
 
 # configure remote build execution servers
 build:remote --remote_cache=remotebuildexecution.googleapis.com
@@ -97,7 +101,7 @@ build:remote --remote_accept_cached=true
 # --config=debug
 # --------------
 # Turn on debugging tests with this parameter
-test:debug --test_arg=--node_options=--inspect_brk --test_output=streamed --test_strategy=exclusive --test_timeout=9999 --nocache_test_results
+test:debug --test_arg=--node_options=--inspect-brk --test_output=streamed --test_strategy=exclusive --test_timeout=9999 --nocache_test_results
 
 # Local environment - needs to be the last statement
 # load user's settings - has to be the *last* line - the user configuration should be allowed to overwrite this file's flags
