@@ -8,6 +8,18 @@
 
 // TODO(mmalerba): Split up this file into smaller pieces.
 
+/// Maps the values in a map to new values using the given mapping function
+/// @param {Map} $map The maps whose values will be mapped to new values.
+/// @param {Function} $fn The value mapping function.
+/// @param {Map} A new map with its values updated using the mapping function.
+@function _map-values($map, $fn) {
+  $result: ();
+  @each $key, $value in $map {
+    $result: map.set($result, $key, meta.call($fn, $value));
+  }
+  @return $result;
+}
+
 /// Picks a submap containing only the given keys out the given map.
 /// @param {Map} $map The map to pick from.
 /// @param {List} $keys The map keys to pick.
@@ -169,7 +181,11 @@
 /// @param {Map} $all-tokens Map of all checkbox tokens, including hardcoded values.
 /// This is necessary in order to do opacity lookups.
 /// @return {Map} The given tokens, renamed to be compatible with MDC's token implementation.
-@function _fix-checkbox-tokens($tokens, $all-tokens) {
+@function _fix-checkbox-tokens($tokens) {
+  // Need to get the hardcoded values, because they include opacities that are used for the disabled
+  // state.
+  $hardcoded-tokens: mdc-tokens.md-comp-checkbox-values((), false);
+
   $rename-keys: (
     selected-icon-color: selected-checkmark-color,
     selected-disabled-icon-color: disabled-selected-checkmark-color,
@@ -188,9 +204,9 @@
   );
 
   $remapped-tokens: _rename-map-keys($tokens, $rename-keys);
-  $remapped-all-tokens: _rename-map-keys($all-tokens, $rename-keys);
+  $remapped-hardcoded-tokens: _rename-map-keys($hardcoded-tokens, $rename-keys);
 
-  @return _combine-color-tokens($remapped-tokens, $remapped-all-tokens, (
+  @return _combine-color-tokens($remapped-tokens, $remapped-hardcoded-tokens, (
     (
       color: disabled-selected-icon-color,
       opacity: disabled-selected-icon-opacity,
@@ -415,6 +431,26 @@
   );
 }
 
+/// Fixes inconsistent values in the icon button tokens so that they can produce valid styles.
+/// @param {Map} $initial-tokens Map of icon button tokens currently being generated.
+/// @param {Map} $all-tokens Map of all icon button tokens, including hardcoded values.
+/// @return {Map} The given tokens, with the invalid values replaced with valid ones.
+@function _fix-icon-button-tokens($tokens, $all-tokens) {
+  $rename-keys: (
+    unselected-icon-color: icon-color,
+  );
+
+  $remapped-tokens: _rename-map-keys($tokens, $rename-keys);
+  $remapped-all-tokens: _rename-map-keys($all-tokens, $rename-keys);
+
+  @return _combine-color-tokens($remapped-tokens, $remapped-all-tokens, (
+    (
+      color: disabled-icon-color,
+      opacity: disabled-icon-opacity,
+    ),
+  ));
+}
+
 /// Generates a set of namespaced tokens for all components.
 /// @param {Map} $systems The MDC system tokens
 /// @param {Boolean} $include-non-systemized Whether to include non-systemized tokens
@@ -454,11 +490,12 @@
     // Get the official MDC component tokens
     _namespace-tokens(
       (mdc, checkbox),
-      _fix-checkbox-tokens(
-        mdc-tokens.md-comp-checkbox-values($systems, $exclude-hardcoded),
-        // Need to pass in the hardcoded values, because they
-        // include opacities that are used for the disabled state.
-        mdc-tokens.md-comp-checkbox-values($systems, false)
+      (
+        _fix-checkbox-tokens(mdc-tokens.md-comp-checkbox-values($systems, $exclude-hardcoded)),
+        _map_values(
+            custom-tokens.mdc-checkbox-color-variants($systems, $exclude-hardcoded),
+            meta.get-function(_fix-checkbox-tokens)
+        )
       ),
       $token-slots
     ),
@@ -484,12 +521,28 @@
     ),
     _namespace-tokens(
       (mdc, fab),
-      mdc-tokens.md-comp-fab-primary-values($systems, $exclude-hardcoded),
+      (
+        mdc-tokens.md-comp-fab-primary-values($systems, $exclude-hardcoded),
+        (
+          // Color variants
+          primary: (), // Default, no overrides needed.
+          secondary: mdc-tokens.md-comp-fab-secondary-values($systems, $exclude-hardcoded),
+          tertiary: mdc-tokens.md-comp-fab-tertiary-values($systems, $exclude-hardcoded)
+        )
+      ),
       $token-slots
     ),
     _namespace-tokens(
       (mdc, extended-fab),
-      mdc-tokens.md-comp-extended-fab-primary-values($systems, $exclude-hardcoded),
+      (
+        mdc-tokens.md-comp-extended-fab-primary-values($systems, $exclude-hardcoded),
+        (
+          // Color variants
+          primary: (), // Default, no overrides needed.
+          secondary: mdc-tokens.md-comp-extended-fab-secondary-values($systems, $exclude-hardcoded),
+          tertiary: mdc-tokens.md-comp-extended-fab-tertiary-values($systems, $exclude-hardcoded)
+        ),
+      ),
       $token-slots
     ),
     _namespace-tokens(
@@ -509,7 +562,12 @@
     ),
     _namespace-tokens(
       (mdc, icon-button),
-      mdc-tokens.md-comp-icon-button-values($systems, $exclude-hardcoded),
+      _fix-icon-button-tokens(
+        mdc-tokens.md-comp-icon-button-values($systems, $exclude-hardcoded),
+        // Need to pass in the hardcoded values, because they
+        // include opacities that are used for the disabled state.
+        mdc-tokens.md-comp-icon-button-values($systems, false)
+      ),
       $token-slots
     ),
     _namespace-tokens(
@@ -590,7 +648,10 @@
     ),
     _namespace-tokens(
       (mdc, slider),
-      mdc-tokens.md-comp-slider-values($systems, $exclude-hardcoded),
+      (
+        mdc-tokens.md-comp-slider-values($systems, $exclude-hardcoded),
+        custom-tokens.mdc-slider-color-variants($systems, $exclude-hardcoded)
+      ),
       $token-slots
     ),
     _namespace-tokens(
@@ -611,6 +672,11 @@
 
     // Choose values for our made up tokens based on MDC system tokens or sensible hardcoded
     // values.
+    _namespace-tokens(
+      (mat, app),
+      custom-tokens.app($systems, $exclude-hardcoded),
+      $token-slots
+    ),
     _namespace-tokens(
       (mdc, tab-indicator),
       custom-tokens.tab-indicator($systems, $exclude-hardcoded),
