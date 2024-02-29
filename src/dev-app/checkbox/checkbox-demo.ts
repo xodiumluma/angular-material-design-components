@@ -6,9 +6,8 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {Component, Directive} from '@angular/core';
+import {Component, Directive, ANIMATION_MODULE_TYPE} from '@angular/core';
 import {MatCheckboxModule, MAT_CHECKBOX_DEFAULT_OPTIONS} from '@angular/material/checkbox';
-import {ANIMATION_MODULE_TYPE} from '@angular/platform-browser/animations';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatPseudoCheckboxModule, ThemePalette} from '@angular/material/core';
 import {MatInputModule} from '@angular/material/input';
@@ -44,13 +43,11 @@ export class AnimationsNoop {}
 
 @Component({
   selector: 'mat-checkbox-demo-nested-checklist',
-  styles: [
-    `
+  styles: `
     li {
       margin-bottom: 4px;
     }
   `,
-  ],
   templateUrl: 'nested-checklist.html',
   standalone: true,
   imports: [CommonModule, MatCheckboxModule, FormsModule],
@@ -102,7 +99,7 @@ export class MatCheckboxDemoNestedChecklist {
 @Component({
   selector: 'checkbox-demo',
   templateUrl: 'checkbox-demo.html',
-  styleUrls: ['checkbox-demo.css'],
+  styleUrl: 'checkbox-demo.css',
   standalone: true,
   imports: [
     CommonModule,

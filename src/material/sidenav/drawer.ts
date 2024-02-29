@@ -42,6 +42,7 @@ import {
   QueryList,
   ViewChild,
   ViewEncapsulation,
+  ANIMATION_MODULE_TYPE,
 } from '@angular/core';
 import {fromEvent, merge, Observable, Subject} from 'rxjs';
 import {
@@ -55,7 +56,6 @@ import {
   mapTo,
 } from 'rxjs/operators';
 import {matDrawerAnimations} from './drawer-animations';
-import {ANIMATION_MODULE_TYPE} from '@angular/platform-browser/animations';
 
 /**
  * Throws an exception when two MatDrawer are matching the same position.
@@ -642,7 +642,7 @@ export class MatDrawer implements AfterViewInit, AfterContentChecked, OnDestroy 
   selector: 'mat-drawer-container',
   exportAs: 'matDrawerContainer',
   templateUrl: 'drawer-container.html',
-  styleUrls: ['drawer.css'],
+  styleUrl: 'drawer.css',
   host: {
     'class': 'mat-drawer-container',
     '[class.mat-drawer-container-explicit-backdrop]': '_backdropOverride',

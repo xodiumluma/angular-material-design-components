@@ -3,6 +3,7 @@
 @use '@material/list/list-theme' as mdc-list-theme;
 @use '@material/theme/custom-properties' as mdc-custom-properties;
 @use '../core/style/layout-common';
+@use '../core/tokens/m2/mat/list' as m2-mat-list;
 @use '../core/tokens/m2/mdc/list' as m2-mdc-list;
 @use '../core/tokens/token-utils';
 @use './list-item-hcm-indicator';
@@ -73,6 +74,13 @@
     .mdc-list-item--with-leading-avatar .mat-mdc-list-item-avatar {
       @include token-utils.create-token-slot(border-radius, list-item-leading-avatar-shape);
       @include token-utils.create-token-slot(background-color, list-item-leading-avatar-color);
+    }
+
+    // Set font-size of leading icon to same value as its width and height. Ensure icon scales to
+    // "list-item-leading-icon-size" token. In Angular Material, the icon is on the same element as
+    // ".mdc-list-item__start", rather than a child of ".mdc-list-item__start".
+    .mat-mdc-list-item-icon {
+      @include token-utils.create-token-slot(font-size, list-item-leading-icon-size);
     }
   }
 }
@@ -185,13 +193,25 @@ mat-action-list button {
   font: inherit;
   outline: inherit;
   -webkit-tap-highlight-color: transparent;
-  text-align: left;
-
-  [dir='rtl'] & {
-    text-align: right;
-  }
+  text-align: start;
 
   &::-moz-focus-inner {
     border: 0;
+  }
+}
+
+@include token-utils.use-tokens(m2-mat-list.$prefix,
+  m2-mat-list.get-token-slots()) {
+  .mdc-list-item--with-leading-icon .mdc-list-item__start {
+    @include token-utils.create-token-slot(margin-inline-start, list-item-leading-icon-start-space);
+    @include token-utils.create-token-slot(margin-inline-end, list-item-leading-icon-end-space);
+  }
+
+  a.mdc-list-item.mdc-list-item--activated {
+    @include token-utils.create-token-slot(background-color, active-indicator-color);
+    // active-indicator-shape overrides list-item-container-shape
+    &.mdc-list-item {
+      @include token-utils.create-token-slot(border-radius, active-indicator-shape);
+    }
   }
 }

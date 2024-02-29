@@ -113,7 +113,7 @@ export class CdkOption<T = unknown> implements ListKeyManagerOption, Highlightab
    * The text used to locate this item during listbox typeahead. If not specified,
    * the `textContent` of the item will be used.
    */
-  @Input('cdkOptionTypeaheadLabel') typeaheadLabel: string;
+  @Input('cdkOptionTypeaheadLabel') typeaheadLabel: string | null;
 
   /** Whether this option is disabled. */
   @Input({alias: 'cdkOptionDisabled', transform: booleanAttribute})
@@ -831,6 +831,17 @@ export class CdkListbox<T = unknown> implements AfterContentInit, OnDestroy, Con
     }
 
     this.listKeyManager.change.subscribe(() => this._focusActiveOption());
+
+    this.options.changes.pipe(takeUntil(this.destroyed)).subscribe(() => {
+      const activeOption = this.listKeyManager.activeItem;
+
+      // If the active option was deleted, we need to reset
+      // the key manager so it can allow focus back in.
+      if (activeOption && !this.options.find(option => option === activeOption)) {
+        this.listKeyManager.setActiveItem(-1);
+        this.changeDetectorRef.markForCheck();
+      }
+    });
   }
 
   /** Focus the active option. */

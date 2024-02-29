@@ -1,6 +1,7 @@
 @use 'sass:map';
 @use '../core/theming/theming';
 @use '../core/theming/inspection';
+@use '../core/theming/validation';
 @use '../core/typography/typography';
 @use '../core/style/sass-utils';
 @use '../core/tokens/token-utils';
@@ -10,7 +11,12 @@
   @if inspection.get-theme-version($theme) == 1 {
     @include _theme-from-tokens(inspection.get-theme-tokens($theme, base));
   }
-  @else {}
+  @else {
+    @include sass-utils.current-selector-or-root() {
+      @include token-utils.create-token-values(tokens-mat-autocomplete.$prefix,
+        tokens-mat-autocomplete.get-unthemable-tokens());
+    }
+  }
 }
 
 @mixin color($theme) {
@@ -29,14 +35,24 @@
   @if inspection.get-theme-version($theme) == 1 {
     @include _theme-from-tokens(inspection.get-theme-tokens($theme, typography));
   }
-  @else {}
+  @else {
+    @include sass-utils.current-selector-or-root() {
+      @include token-utils.create-token-values(tokens-mat-autocomplete.$prefix,
+        tokens-mat-autocomplete.get-typography-tokens($theme));
+    }
+  }
 }
 
 @mixin density($theme) {
   @if inspection.get-theme-version($theme) == 1 {
     @include _theme-from-tokens(inspection.get-theme-tokens($theme, density));
   }
-  @else {}
+  @else {
+    @include sass-utils.current-selector-or-root() {
+      @include token-utils.create-token-values(tokens-mat-autocomplete.$prefix,
+        tokens-mat-autocomplete.get-density-tokens($theme));
+    }
+  }
 }
 
 @mixin theme($theme) {
@@ -60,6 +76,8 @@
 }
 
 @mixin _theme-from-tokens($tokens) {
+  @include validation.selector-defined(
+      'Calls to Angular Material theme mixins with an M3 theme must be wrapped in a selector');
   @if ($tokens != ()) {
     @include token-utils.create-token-values(
         tokens-mat-autocomplete.$prefix, map.get($tokens, tokens-mat-autocomplete.$prefix));

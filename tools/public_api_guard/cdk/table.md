@@ -5,6 +5,7 @@
 ```ts
 
 import { AfterContentChecked } from '@angular/core';
+import { AfterContentInit } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { ChangeDetectorRef } from '@angular/core';
 import { CollectionViewer } from '@angular/cdk/collections';
@@ -60,7 +61,6 @@ export abstract class BaseRowDef implements OnChanges {
 // @public
 export interface CanStick {
     hasStickyChanged(): boolean;
-    _hasStickyChanged: boolean;
     resetStickyChanged(): void;
     sticky: boolean;
 }
@@ -137,20 +137,26 @@ export interface CdkCellOutletRowContext<T> {
 }
 
 // @public
-export class CdkColumnDef extends _CdkColumnDefBase implements CanStick {
+export class CdkColumnDef implements CanStick {
     constructor(_table?: any);
     cell: CdkCellDef;
     _columnCssClassName: string[];
     cssClassFriendlyName: string;
     footerCell: CdkFooterCellDef;
+    hasStickyChanged(): boolean;
     headerCell: CdkHeaderCellDef;
     get name(): string;
     set name(name: string);
     // (undocumented)
     protected _name: string;
     // (undocumented)
+    static ngAcceptInputType_sticky: unknown;
+    // (undocumented)
     static ngAcceptInputType_stickyEnd: unknown;
+    resetStickyChanged(): void;
     protected _setNameInput(value: string): void;
+    get sticky(): boolean;
+    set sticky(value: boolean);
     get stickyEnd(): boolean;
     set stickyEnd(value: boolean);
     // (undocumented)
@@ -159,7 +165,7 @@ export class CdkColumnDef extends _CdkColumnDefBase implements CanStick {
     _table?: any;
     protected _updateColumnCssClassName(): void;
     // (undocumented)
-    static ɵdir: i0.ɵɵDirectiveDeclaration<CdkColumnDef, "[cdkColumnDef]", never, { "sticky": { "alias": "sticky"; "required": false; }; "name": { "alias": "cdkColumnDef"; "required": false; }; "stickyEnd": { "alias": "stickyEnd"; "required": false; }; }, {}, ["cell", "headerCell", "footerCell"], never, true, never>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<CdkColumnDef, "[cdkColumnDef]", never, { "name": { "alias": "cdkColumnDef"; "required": false; }; "sticky": { "alias": "sticky"; "required": false; }; "stickyEnd": { "alias": "stickyEnd"; "required": false; }; }, {}, ["cell", "headerCell", "footerCell"], never, true, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<CdkColumnDef, [{ optional: true; }]>;
 }
@@ -193,10 +199,16 @@ export class CdkFooterRow {
 }
 
 // @public
-export class CdkFooterRowDef extends _CdkFooterRowDefBase implements CanStick, OnChanges {
+export class CdkFooterRowDef extends BaseRowDef implements CanStick, OnChanges {
     constructor(template: TemplateRef<any>, _differs: IterableDiffers, _table?: any);
+    hasStickyChanged(): boolean;
+    // (undocumented)
+    static ngAcceptInputType_sticky: unknown;
     // (undocumented)
     ngOnChanges(changes: SimpleChanges): void;
+    resetStickyChanged(): void;
+    get sticky(): boolean;
+    set sticky(value: boolean);
     // (undocumented)
     _table?: any;
     // (undocumented)
@@ -234,10 +246,16 @@ export class CdkHeaderRow {
 }
 
 // @public
-export class CdkHeaderRowDef extends _CdkHeaderRowDefBase implements CanStick, OnChanges {
+export class CdkHeaderRowDef extends BaseRowDef implements CanStick, OnChanges {
     constructor(template: TemplateRef<any>, _differs: IterableDiffers, _table?: any);
+    hasStickyChanged(): boolean;
+    // (undocumented)
+    static ngAcceptInputType_sticky: unknown;
     // (undocumented)
     ngOnChanges(changes: SimpleChanges): void;
+    resetStickyChanged(): void;
+    get sticky(): boolean;
+    set sticky(value: boolean);
     // (undocumented)
     _table?: any;
     // (undocumented)
@@ -288,7 +306,7 @@ export class CdkRowDef<T> extends BaseRowDef {
 }
 
 // @public
-export class CdkTable<T> implements AfterContentChecked, CollectionViewer, OnDestroy, OnInit {
+export class CdkTable<T> implements AfterContentInit, AfterContentChecked, CollectionViewer, OnDestroy, OnInit {
     constructor(_differs: IterableDiffers, _changeDetectorRef: ChangeDetectorRef, _elementRef: ElementRef, role: string, _dir: Directionality, _document: any, _platform: Platform, _viewRepeater: _ViewRepeater<T, RenderRow<T>, RowContext<T>>, _coalescedStyleScheduler: _CoalescedStyleScheduler, _viewportRuler: ViewportRuler,
     _stickyPositioningListener: StickyPositioningListener,
     _ngZone?: NgZone | undefined);
@@ -336,6 +354,8 @@ export class CdkTable<T> implements AfterContentChecked, CollectionViewer, OnDes
     static ngAcceptInputType_multiTemplateDataRows: unknown;
     // (undocumented)
     ngAfterContentChecked(): void;
+    // (undocumented)
+    ngAfterContentInit(): void;
     // (undocumented)
     ngOnDestroy(): void;
     // (undocumented)

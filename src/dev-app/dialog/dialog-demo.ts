@@ -27,12 +27,10 @@ import {MatInputModule} from '@angular/material/input';
 import {MatSelectModule} from '@angular/material/select';
 import {DragDropModule} from '@angular/cdk/drag-drop';
 
-const defaultDialogConfig = new MatDialogConfig();
-
 @Component({
   selector: 'dialog-demo',
   templateUrl: 'dialog-demo.html',
-  styleUrls: ['dialog-demo.css'],
+  styleUrl: 'dialog-demo.css',
   // View encapsulation is disabled since we add the legacy dialog padding
   // styles that need to target the dialog (not only the projected content).
   encapsulation: ViewEncapsulation.None,
@@ -61,7 +59,7 @@ export class DialogDemo {
     height: '',
     minWidth: '',
     minHeight: '',
-    maxWidth: defaultDialogConfig.maxWidth,
+    maxWidth: '',
     maxHeight: '',
     position: {
       top: '',
@@ -75,6 +73,7 @@ export class DialogDemo {
   };
   numTemplateOpens = 0;
   enableLegacyPadding = false;
+  isScrollable = false;
 
   @ViewChild(TemplateRef) template: TemplateRef<any>;
 
@@ -110,6 +109,7 @@ export class DialogDemo {
   openContentElement() {
     const dialogRef = this.dialog.open(ContentElementDialog, this._getDialogConfig());
     dialogRef.componentInstance.actionsAlignment = this.actionsAlignment;
+    dialogRef.componentInstance.isScrollable = this.isScrollable;
   }
 
   openTemplate() {
@@ -159,7 +159,7 @@ export class DialogDemo {
     </div>
   `,
   encapsulation: ViewEncapsulation.None,
-  styles: [`.hidden-dialog { opacity: 0; }`],
+  styles: `.hidden-dialog { opacity: 0; }`,
   standalone: true,
   imports: [DragDropModule, MatInputModule, MatSelectModule],
 })
@@ -191,33 +191,36 @@ export class JazzDialog {
 
 @Component({
   selector: 'demo-content-element-dialog',
-  styles: [
-    `
+  styles: `
     img {
       max-width: 100%;
+      max-height: 800px;
     }
   `,
-  ],
   template: `
     <h2 mat-dialog-title>Neptune</h2>
 
     <mat-dialog-content>
-      <img src="https://upload.wikimedia.org/wikipedia/commons/5/56/Neptune_Full.jpg"/>
-
       <p>
         Neptune is the eighth and farthest known planet from the Sun in the Solar System. In the
         Solar System, it is the fourth-largest planet by diameter, the third-most-massive planet,
         and the densest giant planet. Neptune is 17 times the mass of Earth and is slightly more
         massive than its near-twin Uranus, which is 15 times the mass of Earth and slightly larger
         than Neptune. Neptune orbits the Sun once every 164.8 years at an average distance of 30.1
-        astronomical units (4.50×109 km). It is named after the Roman god of the sea and has the
+        astronomical units (4.50x109 km). It is named after the Roman god of the sea and has the
         astronomical symbol ♆, a stylised version of the god Neptune's trident.
       </p>
+
+      @if (isScrollable) {
+        @for (i of [1, 2, 3]; track $index) {
+          <img src="https://upload.wikimedia.org/wikipedia/commons/5/56/Neptune_Full.jpg"/>
+        }
+      }
     </mat-dialog-content>
 
     <mat-dialog-actions [align]="actionsAlignment">
       <button
-        mat-raised-button
+        mat-button
         color="primary"
         mat-dialog-close>Close</button>
 
@@ -238,24 +241,24 @@ export class JazzDialog {
   imports: [MatButtonModule, MatDialogTitle, MatDialogContent, MatDialogClose, MatDialogActions],
 })
 export class ContentElementDialog {
-  actionsAlignment: 'start' | 'center' | 'end';
+  actionsAlignment?: 'start' | 'center' | 'end';
+  isScrollable: boolean;
 
   constructor(public dialog: MatDialog) {}
 
   showInStackedDialog() {
-    this.dialog.open(IFrameDialog);
+    this.dialog.open(IFrameDialog, {maxWidth: '80vw'});
   }
 }
 
 @Component({
   selector: 'demo-iframe-dialog',
-  styles: [
-    `
+  styles: `
     iframe {
       width: 800px;
+      height: 500px;
     }
   `,
-  ],
   template: `
     <h2 mat-dialog-title>Neptune</h2>
 
@@ -265,7 +268,7 @@ export class ContentElementDialog {
 
     <mat-dialog-actions>
       <button
-        mat-raised-button
+        mat-button
         color="primary"
         mat-dialog-close>Close</button>
     </mat-dialog-actions>

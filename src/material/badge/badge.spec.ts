@@ -1,4 +1,4 @@
-import {ComponentFixture, TestBed, fakeAsync} from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {Component, DebugElement, ViewEncapsulation, ViewChild} from '@angular/core';
 import {By} from '@angular/platform-browser';
 import {MatBadge, MatBadgeModule} from './index';
@@ -12,8 +12,8 @@ describe('MatBadge', () => {
   describe('on an interative host', () => {
     let testComponent: BadgeOnInteractiveElement;
 
-    beforeEach(fakeAsync(() => {
-      TestBed.configureTestingModule({
+    beforeEach(async () => {
+      await TestBed.configureTestingModule({
         imports: [
           MatBadgeModule,
           BadgeOnInteractiveElement,
@@ -29,7 +29,7 @@ describe('MatBadge', () => {
 
       badgeHostDebugElement = fixture.debugElement.query(By.directive(MatBadge))!;
       badgeHostNativeElement = badgeHostDebugElement.nativeElement;
-    }));
+    });
 
     it('should update the badge based on attribute', () => {
       const badgeElement = badgeHostNativeElement.querySelector('.mat-badge-content')!;
@@ -278,7 +278,7 @@ describe('MatBadge', () => {
 @Component({
   // Explicitly set the view encapsulation since we have a test that checks for it.
   encapsulation: ViewEncapsulation.Emulated,
-  styles: ['button { color: hotpink; }'],
+  styles: 'button { color: hotpink; }',
   template: `
     <button [matBadge]="badgeContent"
             [matBadgeColor]="badgeColor"

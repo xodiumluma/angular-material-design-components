@@ -23,8 +23,8 @@ import {
   OnDestroy,
   Optional,
   ViewEncapsulation,
+  ANIMATION_MODULE_TYPE,
 } from '@angular/core';
-import {ANIMATION_MODULE_TYPE} from '@angular/platform-browser/animations';
 import {EMPTY, merge, Subscription} from 'rxjs';
 import {filter} from 'rxjs/operators';
 import {MatAccordionTogglePosition} from './accordion-base';
@@ -40,7 +40,7 @@ import {
  */
 @Component({
   selector: 'mat-expansion-panel-header',
-  styleUrls: ['expansion-panel-header.css'],
+  styleUrl: 'expansion-panel-header.css',
   templateUrl: 'expansion-panel-header.html',
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,

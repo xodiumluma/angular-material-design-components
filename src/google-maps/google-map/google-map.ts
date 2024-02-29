@@ -84,6 +84,12 @@ export class GoogleMap implements OnChanges, OnInit, OnDestroy {
   @Input() width: string | number | null = DEFAULT_WIDTH;
 
   /**
+   * The Map ID of the map. This parameter cannot be set or changed after a map is instantiated.
+   * See: https://developers.google.com/maps/documentation/javascript/reference/map#MapOptions.mapId
+   */
+  @Input() mapId: string | undefined;
+
+  /**
    * Type of map that should be rendered. E.g. hybrid map, terrain map etc.
    * See: https://developers.google.com/maps/documentation/javascript/reference/map#MapTypeId
    */
@@ -525,6 +531,7 @@ export class GoogleMap implements OnChanges, OnInit, OnDestroy {
       // Passing in an undefined `mapTypeId` seems to break tile loading
       // so make sure that we have some kind of default (see #22082).
       mapTypeId: this.mapTypeId || options.mapTypeId || DEFAULT_OPTIONS.mapTypeId,
+      mapId: this.mapId || options.mapId,
     };
   }
 

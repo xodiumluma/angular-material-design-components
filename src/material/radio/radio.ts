@@ -31,11 +31,11 @@ import {
   QueryList,
   ViewChild,
   ViewEncapsulation,
+  ANIMATION_MODULE_TYPE,
 } from '@angular/core';
 import {_MatInternalFormField, MatRipple, ThemePalette} from '@angular/material/core';
 import {FocusMonitor, FocusOrigin} from '@angular/cdk/a11y';
 import {UniqueSelectionDispatcher} from '@angular/cdk/collections';
-import {ANIMATION_MODULE_TYPE} from '@angular/platform-browser/animations';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 import {Subscription} from 'rxjs';
 
@@ -347,7 +347,7 @@ export class MatRadioGroup implements AfterContentInit, OnDestroy, ControlValueA
 @Component({
   selector: 'mat-radio-button',
   templateUrl: 'radio.html',
-  styleUrls: ['radio.css'],
+  styleUrl: 'radio.css',
   host: {
     'class': 'mat-mdc-radio-button',
     '[attr.id]': 'id',

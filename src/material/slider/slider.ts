@@ -28,9 +28,9 @@ import {
   ViewChild,
   ViewChildren,
   ViewEncapsulation,
+  ANIMATION_MODULE_TYPE,
 } from '@angular/core';
 import {MAT_RIPPLE_GLOBAL_OPTIONS, RippleGlobalOptions, ThemePalette} from '@angular/material/core';
-import {ANIMATION_MODULE_TYPE} from '@angular/platform-browser/animations';
 import {Subscription} from 'rxjs';
 import {
   _MatThumb,
@@ -58,7 +58,7 @@ import {MatSliderVisualThumb} from './slider-thumb';
 @Component({
   selector: 'mat-slider',
   templateUrl: 'slider.html',
-  styleUrls: ['slider.css'],
+  styleUrl: 'slider.css',
   host: {
     'class': 'mat-mdc-slider mdc-slider',
     '[class]': '"mat-" + (color || "primary")',

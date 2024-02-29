@@ -111,7 +111,6 @@ sass_binary(
     deps = [
         "//src/material:sass_lib",
         "//src/material-experimental:sass_lib",
-        "//src/material/core:theming_scss_lib",
     ],
 )
 
@@ -121,7 +120,6 @@ sass_binary(
     deps = [
         "//src/material:sass_lib",
         "//src/material-experimental:sass_lib",
-        "//src/material/core:theming_scss_lib",
     ],
 )
 

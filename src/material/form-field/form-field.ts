@@ -26,10 +26,10 @@ import {
   QueryList,
   ViewChild,
   ViewEncapsulation,
+  ANIMATION_MODULE_TYPE,
 } from '@angular/core';
 import {AbstractControlDirective} from '@angular/forms';
 import {ThemePalette} from '@angular/material/core';
-import {ANIMATION_MODULE_TYPE} from '@angular/platform-browser/animations';
 import {merge, Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 import {MAT_ERROR, MatError} from './directives/error';
@@ -133,7 +133,7 @@ interface MatFormFieldControl<T> extends _MatFormFieldControl<T> {}
   selector: 'mat-form-field',
   exportAs: 'matFormField',
   templateUrl: './form-field.html',
-  styleUrls: ['./form-field.css'],
+  styleUrl: './form-field.css',
   animations: [matFormFieldAnimations.transitionMessages],
   host: {
     'class': 'mat-mdc-form-field',

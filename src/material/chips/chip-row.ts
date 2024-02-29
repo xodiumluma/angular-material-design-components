@@ -7,7 +7,6 @@
  */
 
 import {ENTER} from '@angular/cdk/keycodes';
-import {ANIMATION_MODULE_TYPE} from '@angular/platform-browser/animations';
 import {
   AfterViewInit,
   Attribute,
@@ -24,6 +23,7 @@ import {
   Output,
   ViewChild,
   ViewEncapsulation,
+  ANIMATION_MODULE_TYPE,
 } from '@angular/core';
 import {DOCUMENT} from '@angular/common';
 import {MAT_RIPPLE_GLOBAL_OPTIONS, RippleGlobalOptions} from '@angular/material/core';
@@ -47,7 +47,7 @@ export interface MatChipEditedEvent extends MatChipEvent {
 @Component({
   selector: 'mat-chip-row, [mat-chip-row], mat-basic-chip-row, [mat-basic-chip-row]',
   templateUrl: 'chip-row.html',
-  styleUrls: ['chip.css'],
+  styleUrl: 'chip.css',
   host: {
     'class': 'mat-mdc-chip mat-mdc-chip-row mdc-evolution-chip',
     '[class.mat-mdc-chip-with-avatar]': 'leadingIcon',

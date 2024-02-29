@@ -17,9 +17,9 @@ import {
   ViewChild,
   ViewEncapsulation,
   numberAttribute,
+  ANIMATION_MODULE_TYPE,
 } from '@angular/core';
 import {ThemePalette} from '@angular/material/core';
-import {ANIMATION_MODULE_TYPE} from '@angular/platform-browser/animations';
 import {NgTemplateOutlet} from '@angular/common';
 
 /** Possible mode for a progress spinner. */
@@ -84,7 +84,7 @@ const BASE_STROKE_WIDTH = 10;
     '[attr.mode]': 'mode',
   },
   templateUrl: 'progress-spinner.html',
-  styleUrls: ['progress-spinner.css'],
+  styleUrl: 'progress-spinner.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   standalone: true,

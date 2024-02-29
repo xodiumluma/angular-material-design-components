@@ -6,7 +6,6 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {ANIMATION_MODULE_TYPE} from '@angular/platform-browser/animations';
 import {
   AfterViewInit,
   AfterContentInit,
@@ -32,6 +31,7 @@ import {
   inject,
   booleanAttribute,
   numberAttribute,
+  ANIMATION_MODULE_TYPE,
 } from '@angular/core';
 import {DOCUMENT} from '@angular/common';
 import {
@@ -65,7 +65,7 @@ export interface MatChipEvent {
   selector: 'mat-basic-chip, [mat-basic-chip], mat-chip, [mat-chip]',
   exportAs: 'matChip',
   templateUrl: 'chip.html',
-  styleUrls: ['chip.css'],
+  styleUrl: 'chip.css',
   host: {
     'class': 'mat-mdc-chip',
     '[class]': '"mat-" + (color || "primary")',

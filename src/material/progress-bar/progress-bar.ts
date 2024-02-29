@@ -23,10 +23,10 @@ import {
   InjectionToken,
   inject,
   numberAttribute,
+  ANIMATION_MODULE_TYPE,
 } from '@angular/core';
 import {DOCUMENT} from '@angular/common';
 import {ThemePalette} from '@angular/material/core';
-import {ANIMATION_MODULE_TYPE} from '@angular/platform-browser/animations';
 
 /** Last animation end data. */
 export interface ProgressAnimationEnd {
@@ -98,7 +98,7 @@ export type ProgressBarMode = 'determinate' | 'indeterminate' | 'buffer' | 'quer
     '[class.mdc-linear-progress--indeterminate]': '_isIndeterminate()',
   },
   templateUrl: 'progress-bar.html',
-  styleUrls: ['progress-bar.css'],
+  styleUrl: 'progress-bar.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   standalone: true,

@@ -20,9 +20,9 @@ import {
   ViewChild,
   ViewEncapsulation,
   InjectionToken,
+  ANIMATION_MODULE_TYPE,
 } from '@angular/core';
 import {MAT_RIPPLE_GLOBAL_OPTIONS, RippleGlobalOptions} from '@angular/material/core';
-import {ANIMATION_MODULE_TYPE} from '@angular/platform-browser/animations';
 import {MatListBase, MatListItemBase} from './list-base';
 import {MatListItemLine, MatListItemMeta, MatListItemTitle} from './list-item-sections';
 import {coerceBooleanProperty} from '@angular/cdk/coercion';
@@ -42,7 +42,7 @@ export const MAT_LIST = new InjectionToken<MatList>('MatList');
   host: {
     'class': 'mat-mdc-list mat-mdc-list-base mdc-list',
   },
-  styleUrls: ['list.css'],
+  styleUrl: 'list.css',
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [{provide: MatListBase, useExisting: MatList}],

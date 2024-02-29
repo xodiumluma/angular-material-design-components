@@ -5,13 +5,20 @@
 @use '@material/ripple' as mdc-ripple;
 @use '../core/style/layout-common';
 @use '@material/theme/custom-properties' as mdc-custom-properties;
+@use '../core/tokens/m2/mat/switch' as m2-mat-switch;
 @use '../core/tokens/m2/mdc/switch' as m2-mdc-switch;
+@use '../core/tokens/token-utils';
 
 @include mdc-custom-properties.configure($emit-fallback-values: false, $emit-fallback-vars: false) {
   $mdc-switch-token-slots: m2-mdc-switch.get-token-slots();
 
   // Add the MDC switch static styles.
   @include mdc-switch.static-styles-without-ripple();
+
+  // TODO(wagnermaciel): Use our custom token system to emit this css rule.
+  .mat-mdc-slide-toggle .mdc-switch--disabled + label {
+    color: var(--mdc-switch-disabled-label-text-color);
+  }
 
   .mdc-switch {
     // Add the official slots for the MDC switch
@@ -108,5 +115,129 @@
   // If our slide-toggle is enabled the cursor on label should appear as a pointer.
   .mdc-switch:enabled + .mdc-label {
     cursor: pointer;
+  }
+}
+
+// Used for M3 animations. Does not affect the M2 slide-toggle
+// because the width and height are static, and the margin is unused.
+.mdc-switch__handle {
+  transition:
+    width 75ms cubic-bezier(0.4, 0, 0.2, 1),
+    height 75ms cubic-bezier(0.4, 0, 0.2, 1),
+    margin 75ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+// The hidden and visible track represent whichever track is visible or
+// hidden in the ui. This could be the .mdc-switch__track :before or
+// :after depending on whether the switch is selected or unselected.
+//
+// The m2 slide-toggle uses transforms to hide & show the tracks while
+// the m3 slide-toggle uses opacity.
+
+@include token-utils.use-tokens(m2-mat-switch.$prefix, m2-mat-switch.get-token-slots()) {
+  .mdc-switch--selected .mdc-switch__track {
+    &::before {
+      @include token-utils.create-token-slot(opacity, hidden-track-opacity);
+      @include token-utils.create-token-slot(transition, hidden-track-transition);
+    }
+    &::after {
+      @include token-utils.create-token-slot(opacity, visible-track-opacity);
+      @include token-utils.create-token-slot(transition, visible-track-transition);
+    }
+  }
+
+  .mdc-switch--unselected .mdc-switch__track {
+    &::before {
+      @include token-utils.create-token-slot(opacity, visible-track-opacity);
+      @include token-utils.create-token-slot(transition, visible-track-transition);
+    }
+    &::after {
+      @include token-utils.create-token-slot(opacity, hidden-track-opacity);
+      @include token-utils.create-token-slot(transition, hidden-track-transition);
+    }
+  }
+}
+
+@include token-utils.use-tokens(m2-mat-switch.$prefix, m2-mat-switch.get-token-slots()) {
+  .mat-mdc-slide-toggle {
+    .mdc-switch--unselected .mdc-switch__handle {
+      @include token-utils.create-token-slot(width, unselected-handle-size);
+      @include token-utils.create-token-slot(height, unselected-handle-size);
+    }
+
+    .mdc-switch--selected .mdc-switch__handle {
+      @include token-utils.create-token-slot(width, selected-handle-size);
+      @include token-utils.create-token-slot(height, selected-handle-size);
+    }
+
+    .mdc-switch__handle:has(.mdc-switch__icons) {
+      @include token-utils.create-token-slot(width, with-icon-handle-size);
+      @include token-utils.create-token-slot(height, with-icon-handle-size);
+    }
+
+    &:active .mdc-switch:not(.mdc-switch--disabled) .mdc-switch__handle {
+      @include token-utils.create-token-slot(width, pressed-handle-size);
+      @include token-utils.create-token-slot(height, pressed-handle-size);
+    }
+  }
+}
+
+@include token-utils.use-tokens(m2-mat-switch.$prefix, m2-mat-switch.get-token-slots()) {
+  .mat-mdc-slide-toggle {
+    .mdc-switch--selected .mdc-switch__handle {
+      @include token-utils.create-token-slot(margin, selected-handle-horizontal-margin);
+
+      &:has(.mdc-switch__icons) {
+        @include token-utils.create-token-slot(margin, selected-with-icon-handle-horizontal-margin);
+      }
+    }
+
+    .mdc-switch--unselected .mdc-switch__handle {
+      @include token-utils.create-token-slot(margin, unselected-handle-horizontal-margin);
+
+      &:has(.mdc-switch__icons) {
+        @include token-utils.create-token-slot(
+          margin,
+          unselected-with-icon-handle-horizontal-margin,
+        );
+      }
+    }
+
+    &:active .mdc-switch--selected:not(.mdc-switch--disabled) .mdc-switch__handle {
+      @include token-utils.create-token-slot(margin, selected-pressed-handle-horizontal-margin);
+    }
+
+    &:active .mdc-switch--unselected:not(.mdc-switch--disabled) .mdc-switch__handle {
+      @include token-utils.create-token-slot(margin, unselected-pressed-handle-horizontal-margin);
+    }
+  }
+}
+
+@include token-utils.use-tokens(m2-mat-switch.$prefix, m2-mat-switch.get-token-slots()) {
+  .mdc-switch__track::after,
+  .mdc-switch__track::before {
+    @include token-utils.create-token-slot(border-width, track-outline-width);
+    @include token-utils.create-token-slot(border-color, track-outline-color);
+  }
+
+  .mdc-switch--selected .mdc-switch__track::after,
+  .mdc-switch--selected .mdc-switch__track::before {
+    @include token-utils.create-token-slot(border-width, selected-track-outline-width);
+  }
+
+  .mdc-switch--disabled .mdc-switch__track::after,
+  .mdc-switch--disabled .mdc-switch__track::before {
+    @include token-utils.create-token-slot(border-width, disabled-unselected-track-outline-width);
+    @include token-utils.create-token-slot(border-color, disabled-unselected-track-outline-color);
+  }
+}
+
+@include token-utils.use-tokens(m2-mat-switch.$prefix, m2-mat-switch.get-token-slots()) {
+  .mdc-switch--disabled.mdc-switch--selected .mdc-switch__handle::after {
+    @include token-utils.create-token-slot(opacity, disabled-selected-handle-opacity);
+  }
+
+  .mdc-switch--disabled.mdc-switch--unselected .mdc-switch__handle::after {
+    @include token-utils.create-token-slot(opacity, disabled-unselected-handle-opacity);
   }
 }

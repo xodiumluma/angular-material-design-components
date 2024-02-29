@@ -110,7 +110,7 @@
     <h2>Nav lists</h2>
     <mat-nav-list>
       @for (link of links; track link) {
-        <a mat-list-item [href]="link.href" [activated]="isActivated(link.href)">
+        <a mat-list-item [href]="link.href" [activated]="isActivated(link)">
           {{ link.name }}
         </a>
       }
@@ -120,7 +120,7 @@
     }
     <mat-nav-list>
       @for (link of links; track link; let last = $last) {
-        <a mat-list-item [href]="link.href" [activated]="isActivated(link.href)">
+        <a mat-list-item [href]="link.href" [activated]="isActivated(link)">
           <mat-icon matListItemIcon>folder</mat-icon>
           <span matListItemTitle>{{ link.name }}</span>
         </a>
@@ -242,6 +242,31 @@
         <span matListItemLine>Tertiary line</span>
       </mat-list-item>
     </mat-list>
+
+    <mat-selection-list>
+      <mat-list-option>Title</mat-list-option>
+      <mat-list-option lines="2">
+        <span matListItemTitle>Title</span>
+        <span>This is unscoped text content that is supposed to not wrap. The list has only
+        acquired two lines and therefore there is no space for wrapping.</span>
+      </mat-list-option>
+      <mat-list-option lines="3">
+        <span matListItemTitle>Title</span>
+        <span>This is unscoped text content that is supposed to wrap to the third line.
+          The list item acquire spaces for three lines and text should have an ellipsis in the
+          third line upon text overflow.</span>
+      </mat-list-option>
+      <mat-list-option>
+        <span matListItemTitle>Title</span>
+        <span>This is unscoped text content that is supposed to not wrap. The list has only
+        acquired two lines (automatically) and therefore there is no space for wrapping.</span>
+      </mat-list-option>
+      <mat-list-option>
+        <span matListItemTitle>Title</span>
+        <span matListItemLine>Secondary line</span>
+        <span matListItemLine>Tertiary line</span>
+      </mat-list-option>
+    </mat-selection-list>
 
     <button mat-raised-button (click)="showBoxes = !showBoxes">Show item boxes</button>
   </div>

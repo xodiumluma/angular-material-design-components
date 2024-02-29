@@ -25,6 +25,7 @@ import {
   MapRectangle,
   MapTrafficLayer,
   MapTransitLayer,
+  MapAdvancedMarker,
 } from '@angular/google-maps';
 
 const POLYLINE_PATH: google.maps.LatLngLiteral[] = [
@@ -58,7 +59,7 @@ let apiLoadingPromise: Promise<unknown> | null = null;
 @Component({
   selector: 'google-map-demo',
   templateUrl: 'google-map-demo.html',
-  styleUrls: ['google-map-demo.css'],
+  styleUrl: 'google-map-demo.css',
   standalone: true,
   imports: [
     CommonModule,
@@ -72,6 +73,7 @@ let apiLoadingPromise: Promise<unknown> | null = null;
     MapKmlLayer,
     MapMarker,
     MapMarkerClusterer,
+    MapAdvancedMarker,
     MapPolygon,
     MapPolyline,
     MapRectangle,
@@ -87,6 +89,7 @@ export class GoogleMapDemo {
   @ViewChild(MapCircle) circle: MapCircle;
 
   center = {lat: 24, lng: 12};
+  mapAdvancedMarkerPosition = {lat: 22, lng: 21};
   markerOptions = {draggable: false};
   markerPositions: google.maps.LatLngLiteral[] = [];
   zoom = 4;
@@ -142,6 +145,7 @@ export class GoogleMapDemo {
   isTrafficLayerDisplayed = false;
   isTransitLayerDisplayed = false;
   isBicyclingLayerDisplayed = false;
+  hasAdvancedMarker = false;
 
   mapTypeId: google.maps.MapTypeId;
   mapTypeIds = ['hybrid', 'roadmap', 'satellite', 'terrain'] as google.maps.MapTypeId[];
@@ -171,6 +175,13 @@ export class GoogleMapDemo {
 
   clickMarker(marker: MapMarker) {
     this.infoWindow.open(marker);
+  }
+
+  clickAdvancedMarker(advancedMarker: MapAdvancedMarker) {
+    this.infoWindow.openAdvancedMarkerElement(
+      advancedMarker.advancedMarker,
+      advancedMarker.advancedMarker.title,
+    );
   }
 
   handleRightclick() {
@@ -252,6 +263,10 @@ export class GoogleMapDemo {
 
   toggleBicyclingLayerDisplay() {
     this.isBicyclingLayerDisplayed = !this.isBicyclingLayerDisplayed;
+  }
+
+  toggleAdvancedMarker() {
+    this.hasAdvancedMarker = !this.hasAdvancedMarker;
   }
 
   calculateDirections() {

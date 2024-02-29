@@ -13,8 +13,8 @@ import {
   ChangeDetectionStrategy,
   Inject,
   Optional,
+  ANIMATION_MODULE_TYPE,
 } from '@angular/core';
-import {ANIMATION_MODULE_TYPE} from '@angular/platform-browser/animations';
 
 /**
  * Possible states for a pseudo checkbox.
@@ -39,7 +39,7 @@ export type MatPseudoCheckboxState = 'unchecked' | 'checked' | 'indeterminate';
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'mat-pseudo-checkbox',
-  styleUrls: ['pseudo-checkbox.css'],
+  styleUrl: 'pseudo-checkbox.css',
   template: '',
   host: {
     'class': 'mat-pseudo-checkbox',

@@ -26,8 +26,8 @@ import {
   QueryList,
   ViewChild,
   ViewEncapsulation,
+  ANIMATION_MODULE_TYPE,
 } from '@angular/core';
-import {ANIMATION_MODULE_TYPE} from '@angular/platform-browser/animations';
 import {
   MAT_RIPPLE_GLOBAL_OPTIONS,
   MatRipple,
@@ -40,7 +40,7 @@ import {FocusableOption, FocusMonitor} from '@angular/cdk/a11y';
 import {Directionality} from '@angular/cdk/bidi';
 import {ViewportRuler} from '@angular/cdk/scrolling';
 import {Platform} from '@angular/cdk/platform';
-import {MatInkBar, mixinInkBarItem} from '../ink-bar';
+import {MatInkBar, InkBarItem} from '../ink-bar';
 import {BehaviorSubject, Subject} from 'rxjs';
 import {startWith, takeUntil} from 'rxjs/operators';
 import {ENTER, SPACE} from '@angular/cdk/keycodes';
@@ -59,7 +59,7 @@ let nextUniqueId = 0;
   selector: '[mat-tab-nav-bar]',
   exportAs: 'matTabNavBar, matTabNav',
   templateUrl: 'tab-nav-bar.html',
-  styleUrls: ['tab-nav-bar.css'],
+  styleUrl: 'tab-nav-bar.css',
   host: {
     '[attr.role]': '_getRole()',
     'class': 'mat-mdc-tab-nav-bar mat-mdc-tab-header',
@@ -228,13 +228,6 @@ export class MatTabNav
   }
 }
 
-// Boilerplate for applying mixins to MatTabLink.
-const _MatTabLinkMixinBase = mixinInkBarItem(
-  class {
-    elementRef: ElementRef;
-  },
-);
-
 /**
  * Link inside a `mat-tab-nav-bar`.
  */
@@ -244,7 +237,7 @@ const _MatTabLinkMixinBase = mixinInkBarItem(
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   templateUrl: 'tab-link.html',
-  styleUrls: ['tab-link.css'],
+  styleUrl: 'tab-link.css',
   host: {
     'class': 'mdc-tab mat-mdc-tab-link mat-mdc-focus-indicator',
     '[attr.aria-controls]': '_getAriaControls()',
@@ -263,7 +256,7 @@ const _MatTabLinkMixinBase = mixinInkBarItem(
   imports: [MatRipple],
 })
 export class MatTabLink
-  extends _MatTabLinkMixinBase
+  extends InkBarItem
   implements AfterViewInit, OnDestroy, RippleTarget, FocusableOption
 {
   private readonly _destroyed = new Subject<void>();
@@ -323,7 +316,7 @@ export class MatTabLink
 
   constructor(
     private _tabNavBar: MatTabNav,
-    /** @docs-private */ override elementRef: ElementRef,
+    /** @docs-private */ public elementRef: ElementRef,
     @Optional() @Inject(MAT_RIPPLE_GLOBAL_OPTIONS) globalRippleOptions: RippleGlobalOptions | null,
     @Attribute('tabindex') tabIndex: string,
     private _focusMonitor: FocusMonitor,
@@ -372,6 +365,12 @@ export class MatTabLink
       if (this.disabled) {
         event.preventDefault();
       } else if (this._tabNavBar.tabPanel) {
+        // Only prevent the default action on space since it can scroll the page.
+        // Don't prevent enter since it can break link navigation.
+        if (event.keyCode === SPACE) {
+          event.preventDefault();
+        }
+
         this.elementRef.nativeElement.click();
       }
     }

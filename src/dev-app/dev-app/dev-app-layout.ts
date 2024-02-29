@@ -13,9 +13,9 @@ import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatListModule} from '@angular/material/list';
 import {MatButtonModule} from '@angular/material/button';
 import {RouterModule} from '@angular/router';
-import {MatIconModule} from '@angular/material/icon';
+import {MatIconModule, MatIconRegistry} from '@angular/material/icon';
 import {MatToolbarModule} from '@angular/material/toolbar';
-import {MatTooltipModule} from '@angular/material/tooltip';
+import {MatTooltip, MatTooltipModule} from '@angular/material/tooltip';
 import {DevAppDirectionality} from './dev-app-directionality';
 import {DevAppRippleOptions} from './ripple-options';
 import {getAppState, setAppState} from './dev-app-state';
@@ -24,7 +24,7 @@ import {getAppState, setAppState} from './dev-app-state';
 @Component({
   selector: 'dev-app-layout',
   templateUrl: 'dev-app-layout.html',
-  styleUrls: ['dev-app-layout.css'],
+  styleUrl: 'dev-app-layout.css',
   encapsulation: ViewEncapsulation.None,
   standalone: true,
   imports: [
@@ -110,12 +110,15 @@ export class DevAppLayout {
     @Inject(Directionality) private _dir: DevAppDirectionality,
     private _changeDetectorRef: ChangeDetectorRef,
     @Inject(DOCUMENT) private _document: Document,
+    private _iconRegistry: MatIconRegistry,
   ) {
     this.toggleTheme(this.state.darkTheme);
     this.toggleStrongFocus(this.state.strongFocusEnabled);
     this.toggleDensity(Math.max(this._densityScales.indexOf(this.state.density), 0));
     this.toggleRippleDisabled(this.state.rippleDisabled);
     this.toggleDirection(this.state.direction);
+    this.toggleM3(this.state.m3Enabled);
+    this.toggleColorApiBackCompat(this.state.colorApiBackCompat);
   }
 
   toggleTheme(value = !this.state.darkTheme) {
@@ -140,13 +143,19 @@ export class DevAppLayout {
     location.reload();
   }
 
-  toggleDensity(index?: number) {
+  toggleDensity(index?: number, tooltipInstance?: MatTooltip) {
     if (index == null) {
       index = (this._densityScales.indexOf(this.state.density) + 1) % this._densityScales.length;
     }
 
     this.state.density = this._densityScales[index];
     setAppState(this.state);
+
+    // Keep the tooltip open so we can see what the density was changed to. Ideally we'd
+    // always show the density in a badge, but the M2 badge is too large for the toolbar.
+    if (tooltipInstance) {
+      requestAnimationFrame(() => tooltipInstance.show(0));
+    }
   }
 
   toggleRippleDisabled(value = !this.state.rippleDisabled) {
@@ -168,9 +177,19 @@ export class DevAppLayout {
       (document.getElementById('theme-styles') as HTMLLinkElement).href = value
         ? 'theme-m3.css'
         : 'theme.css';
-      this.state.m3Enabled = value;
-      setAppState(this.state);
     }
+
+    this._iconRegistry.setDefaultFontSetClass(
+      value ? 'material-symbols-outlined' : 'material-icons',
+    );
+    this.state.m3Enabled = value;
+    setAppState(this.state);
+  }
+
+  toggleColorApiBackCompat(value = !this.state.colorApiBackCompat) {
+    this.state.colorApiBackCompat = value;
+    this._document.body.classList.toggle('demo-color-api-back-compat', value);
+    setAppState(this.state);
   }
 
   getDensityClass() {

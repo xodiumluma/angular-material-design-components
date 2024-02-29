@@ -4,27 +4,133 @@
 @use '../core/mdc-helpers/mdc-helpers';
 @use '../core/style/layout-common';
 @use '../core/focus-indicators/private' as focus-indicators-private;
-@use '../core/tokens/m2/mdc/chip' as m2-mdc-chip;
+@use '../core/tokens/m2/mdc/chip' as tokens-mdc-chip;
+@use '../core/tokens/m2/mat/chip' as tokens-mat-chip;
 @use '../core/tokens/token-utils';
 @use '@material/theme/custom-properties' as mdc-custom-properties;
 
 // The slots for tokens that will be configured in the theme can be emitted with no fallback.
 @include mdc-custom-properties.configure($emit-fallback-values: false, $emit-fallback-vars: false) {
-  $token-slots: m2-mdc-chip.get-token-slots();
+  $mdc-chip-token-slots: tokens-mdc-chip.get-token-slots();
+  $mat-chip-token-slots: tokens-mat-chip.get-token-slots();
 
   // Add the MDC chip static styles.
   @include mdc-chip.static-styles();
 
   .mat-mdc-standard-chip {
     // Add the official slots for the MDC chip.
-    @include mdc-chip-theme.theme-styles($token-slots);
+    @include mdc-chip-theme.theme-styles($mdc-chip-token-slots);
   }
 
   // Add additional slots for the MDC chip tokens, needed in Angular Material.
-  @include token-utils.use-tokens(m2-mdc-chip.$prefix, $token-slots) {
+  $disabled-trailing-icon-opacity: 1;
+
+  @include token-utils.use-tokens(tokens-mdc-chip.$prefix, $mdc-chip-token-slots) {
     .mat-mdc-chip-focus-overlay {
       @include token-utils.create-token-slot(background, focus-state-layer-color);
-      @include token-utils.create-token-slot(opacity, focus-state-layer-opacity);
+
+      .mat-mdc-chip-selected & {
+        @include token-utils.create-token-slot(background, selected-focus-state-layer-color);
+      }
+
+      .mat-mdc-chip:hover & {
+        @include token-utils.create-token-slot(background, hover-state-layer-color);
+        @include token-utils.create-token-slot(opacity, hover-state-layer-opacity);
+      }
+
+      .mat-mdc-chip-selected:hover & {
+        @include token-utils.create-token-slot(background, selected-hover-state-layer-color);
+        @include token-utils.create-token-slot(opacity, selected-hover-state-layer-opacity);
+      }
+
+      .mat-mdc-chip.cdk-focused & {
+        @include token-utils.create-token-slot(background, focus-state-layer-color);
+        @include token-utils.create-token-slot(opacity, focus-state-layer-opacity);
+      }
+
+      .mat-mdc-chip-selected.cdk-focused & {
+        @include token-utils.create-token-slot(background, selected-focus-state-layer-color);
+        @include token-utils.create-token-slot(opacity, selected-focus-state-layer-opacity);
+      }
+    }
+
+    .mdc-evolution-chip--disabled:not(.mdc-evolution-chip--selected) .mat-mdc-chip-avatar {
+      @include token-utils.create-token-slot(opacity, with-avatar-disabled-avatar-opacity);
+    }
+
+    .mdc-evolution-chip--disabled .mdc-evolution-chip__icon--trailing {
+      $disabled-trailing-icon-opacity:
+        token-utils.get-token-variable(with-trailing-icon-disabled-trailing-icon-opacity);
+
+      @include token-utils.create-token-slot(
+          opacity, with-trailing-icon-disabled-trailing-icon-opacity);
+    }
+
+    .mdc-evolution-chip--disabled.mdc-evolution-chip--selected .mdc-evolution-chip__checkmark {
+      @include token-utils.create-token-slot(opacity, with-icon-disabled-icon-opacity);
+    }
+  }
+
+  @include token-utils.use-tokens(tokens-mat-chip.$prefix, $mat-chip-token-slots) {
+    // Historically, MDC did not support disabled chips, so we needed our own disabled styles.
+    // Now that MDC supports disabled styles, we should switch to using theirs.
+    .mat-mdc-standard-chip {
+      &.mdc-evolution-chip--disabled {
+        @include token-utils.create-token-slot(opacity, disabled-container-opacity);
+      }
+
+      &.mdc-evolution-chip--selected {
+        .mdc-evolution-chip__icon--trailing {
+          @include token-utils.create-token-slot(color, selected-trailing-icon-color);
+        }
+
+        &.mdc-evolution-chip--disabled .mdc-evolution-chip__icon--trailing {
+          @include token-utils.create-token-slot(color, selected-disabled-trailing-icon-color);
+        }
+      }
+    }
+
+    .mat-mdc-chip-remove {
+      @include token-utils.create-token-slot(opacity, trailing-action-opacity);
+
+      &:focus {
+        @include token-utils.create-token-slot(opacity, trailing-action-focus-opacity);
+      }
+
+      &::after {
+        @include token-utils.create-token-slot(background, trailing-action-state-layer-color);
+      }
+
+      &:hover::after {
+        @include token-utils.create-token-slot(opacity, trailing-action-hover-state-layer-opacity);
+      }
+
+      &:focus::after {
+        @include token-utils.create-token-slot(opacity, trailing-action-focus-state-layer-opacity);
+      }
+    }
+
+    .mat-mdc-chip-selected .mat-mdc-chip-remove::after {
+      @include token-utils.create-token-slot(
+          background, selected-trailing-action-state-layer-color);
+    }
+
+    // If the trailing icon is a chip-remove button, we have to factor in the trailing action
+    // opacity as well as the disabled opacity.
+    .mdc-evolution-chip--disabled .mdc-evolution-chip__icon--trailing {
+      &.mat-mdc-chip-remove {
+        opacity: calc(
+          var(#{token-utils.get-token-variable(trailing-action-opacity)}) *
+          var(#{$disabled-trailing-icon-opacity})
+        );
+
+        &:focus {
+          opacity: calc(
+            var(#{token-utils.get-token-variable(trailing-action-focus-opacity)}) *
+            var(#{$disabled-trailing-icon-opacity})
+          );
+        }
+      }
     }
   }
 }
@@ -33,6 +139,7 @@
 // `theme-styles` mixin, but we can't at the time of writing.
 @mixin _missing-mdc-theme-styles() {
   .mat-mdc-standard-chip {
+    @include mdc-chip-theme.outline-style(solid);
     @include mdc-chip-theme.checkmark-size(mdc-chip-theme.$checkmark-size);
     @include mdc-chip-theme.trailing-action-size(mdc-chip-theme.$trailing-action-size);
     @include mdc-chip-theme.horizontal-padding(
@@ -55,13 +162,6 @@
       mdc-chip-theme.$trailing-action-leading-padding,
       mdc-chip-theme.$trailing-action-trailing-padding
     );
-
-    // MDC has some code looking for a `with-icon-selected-disabled-icon-color` token for this
-    // color, but the token isn't defined in the theme map so the validation throws an error.
-    // We don't change the color anyway so we can point it to the enable color instead.
-    &.mdc-evolution-chip--disabled .mdc-evolution-chip__checkmark {
-      color: var(--mdc-chip-with-icon-selected-icon-color, currentColor);
-    }
   }
 
   .mdc-evolution-chip--with-avatar {
@@ -96,12 +196,6 @@
       // very specific.
       stroke: CanvasText !important;
     }
-  }
-
-  // Angular Material supports disabled chips, which MDC does not.
-  // Dim the disabled chips and stop MDC from changing the icon color on click.
-  &.mdc-evolution-chip--disabled {
-    opacity: 0.4;
   }
 
   // MDC sets `overflow: hidden` on these elements in order to truncate the text. This is
@@ -169,14 +263,6 @@
 
   .mat-mdc-basic-chip & {
     display: none;
-  }
-
-  .mat-mdc-chip:hover & {
-    opacity: 0.04;
-  }
-
-  .mat-mdc-chip.cdk-focused & {
-    opacity: 0.12;
   }
 }
 
@@ -255,14 +341,6 @@
 }
 
 .mat-mdc-chip-remove {
-  // Fades out the trailing icon slightly so that it can become darker when focused.
-  // The MDC theming has variables for this, but the focus/hover states don't seem to work.
-  opacity: 0.54;
-
-  &:focus {
-    opacity: 1;
-  }
-
   &::before {
     $default-border-width: focus-indicators-private.$default-border-width;
     $offset: var(--mat-mdc-focus-indicator-border-width, #{$default-border-width});
@@ -271,6 +349,20 @@
     // MDC sets a padding a on the chip button which stretches out the focus indicator.
     left: 8px;
     right: 8px;
+  }
+
+  // Used as a state overlay.
+  &::after {
+    $offset: 2px;
+    content: '';
+    display: block;
+    opacity: 0;
+    position: absolute;
+    top: 0 - $offset;
+    bottom: 0 - $offset;
+    left: 8px - $offset;
+    right: 8px - $offset;
+    border-radius: 50%;
   }
 
   .mat-icon {

@@ -380,7 +380,7 @@ export class MatTabLabel extends CdkPortal {
 }
 
 // @public
-export class MatTabLabelWrapper extends _MatTabLabelWrapperMixinBase {
+export class MatTabLabelWrapper extends InkBarItem {
     constructor(elementRef: ElementRef);
     disabled: boolean;
     // (undocumented)
@@ -393,13 +393,13 @@ export class MatTabLabelWrapper extends _MatTabLabelWrapperMixinBase {
     // (undocumented)
     static ngAcceptInputType_disabled: unknown;
     // (undocumented)
-    static ɵdir: i0.ɵɵDirectiveDeclaration<MatTabLabelWrapper, "[matTabLabelWrapper]", never, { "fitInkBarToContent": { "alias": "fitInkBarToContent"; "required": false; }; "disabled": { "alias": "disabled"; "required": false; }; }, {}, never, never, true, never>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<MatTabLabelWrapper, "[matTabLabelWrapper]", never, { "disabled": { "alias": "disabled"; "required": false; }; }, {}, never, never, true, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<MatTabLabelWrapper, never>;
 }
 
 // @public
-export class MatTabLink extends _MatTabLinkMixinBase implements AfterViewInit, OnDestroy, RippleTarget, FocusableOption {
+export class MatTabLink extends InkBarItem implements AfterViewInit, OnDestroy, RippleTarget, FocusableOption {
     constructor(_tabNavBar: MatTabNav,
     elementRef: ElementRef, globalRippleOptions: RippleGlobalOptions | null, tabIndex: string, _focusMonitor: FocusMonitor, animationMode?: string);
     get active(): boolean;

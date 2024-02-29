@@ -16,13 +16,15 @@ import {MatIconModule} from '@angular/material/icon';
 @Component({
   selector: 'button-toggle-demo',
   templateUrl: 'button-toggle-demo.html',
-  styleUrls: ['button-toggle-demo.css'],
+  styleUrl: 'button-toggle-demo.css',
   standalone: true,
   imports: [CommonModule, FormsModule, MatButtonToggleModule, MatCheckboxModule, MatIconModule],
 })
 export class ButtonToggleDemo {
   isVertical = false;
   isDisabled = false;
+  hideSingleSelectionIndicator = false;
+  hideMultipleSelectionIndicator = false;
   favoritePie = 'Apple';
   pieOptions = ['Apple', 'Cherry', 'Pecan', 'Lemon'];
 }

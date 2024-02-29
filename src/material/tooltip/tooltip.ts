@@ -30,10 +30,10 @@ import {
   ViewContainerRef,
   ViewEncapsulation,
   inject,
+  ANIMATION_MODULE_TYPE,
 } from '@angular/core';
 import {DOCUMENT, NgClass} from '@angular/common';
 import {normalizePassiveListenerOptions, Platform} from '@angular/cdk/platform';
-import {ANIMATION_MODULE_TYPE} from '@angular/platform-browser/animations';
 import {AriaDescriber, FocusMonitor} from '@angular/cdk/a11y';
 import {Directionality} from '@angular/cdk/bidi';
 import {
@@ -892,7 +892,7 @@ export class MatTooltip implements OnDestroy, AfterViewInit {
 @Component({
   selector: 'mat-tooltip-component',
   templateUrl: 'tooltip.html',
-  styleUrls: ['tooltip.css'],
+  styleUrl: 'tooltip.css',
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {

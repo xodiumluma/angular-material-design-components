@@ -46,20 +46,24 @@ import {MatIconModule} from '@angular/material/icon';
 })
 export class FormFieldCustomControlExample {
   form: FormGroup = new FormGroup({
-    tel: new FormControl(new MyTel('', '', '')),
+    tel: new FormControl(null),
   });
 }
 
 /** Data structure for holding telephone number. */
 export class MyTel {
-  constructor(public area: string, public exchange: string, public subscriber: string) {}
+  constructor(
+    public area: string,
+    public exchange: string,
+    public subscriber: string,
+  ) {}
 }
 
 /** Custom `MatFormFieldControl` for telephone number input. */
 @Component({
   selector: 'example-tel-input',
   templateUrl: 'example-tel-input-example.html',
-  styleUrls: ['example-tel-input-example.css'],
+  styleUrl: 'example-tel-input-example.css',
   providers: [{provide: MatFormFieldControl, useExisting: MyTelInput}],
   host: {
     '[class.example-floating]': 'shouldLabelFloat',
